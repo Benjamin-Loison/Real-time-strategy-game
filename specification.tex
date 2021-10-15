@@ -1,0 +1,217 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+
+
+
+\title{Software Engineering -- specification}
+\author{% alphabetical ordering: feel free to change it at will
+	\textsc{Antoine GRIMOD},
+	\textsc{Arnaud DABY-SEESARAM},
+	\textsc{Gabriel JANTET} and
+	\textsc{Zibo YANG}}
+\date{September 2021}
+
+\newif\ifrts
+\def\rts{\ifrts RTS\else Real Time Strategy game (RTS)\rtstrue\fi}
+\def\ie{\textit{i.e.}}
+
+\begin{document}
+\maketitle
+
+\section{Project introduction}
+The project is to build a online multiplayer \rts. In this project, we intend to write
+two main applications: a server and a client.
+
+The \rts~will take place in a fantasy world in which each player evolves.
+Their main goal is to build and continuously improve a village or small town,
+and raise and interact with other villages and towns.
+The players controls and influence the number of inhabitants, their professions
+and resources usage\footnote{An inhabitant will cost resources. Thus, the player
+has to keep a balance between developing its place and increasing its size.}.
+\medskip
+
+The players will be able to interact with one another through:
+\begin{description}
+	\item[military campaigns] a player can raise an army and use it to attack
+	another player
+	\item[trades] two players can agree on a commercial trade
+\end{description}
+
+
+
+\section{Project management and technical choices}
+% TODO reformulate ?
+In order to keep track of the project advancement, we use a plain bare
+repository (with no web-GUI) available at \texttt{git.sofamaniac.xyz:rts.git}.
+The repository is accessibe for reading to anyone (everyone can clone it
+using \texttt{git clone git://git.sofamaniac.xyz/rts}).
+
+We will meet at least once a week during Software Engineering sessions and have
+a Discord channel in order to stay in touch during the week.
+\medskip
+
+We will probably\footnote{We might have a change of heart after the first two
+weeks.} use:
+\begin{itemize}
+	\item Rust for the server-side
+	\item Go for the client-side
+\end{itemize}
+
+None of us have ever used these languages in whole projects in the past, but we
+are willing to discover them. This said, if the group decide that one of the
+above language no longer suits the project aim or that another known language
+would be a better solution, we would switch to the latest.
+\medskip
+
+There exist static analysers for both these languages. We intend to try some of
+them on our code.
+\medskip
+
+Each distinct implementation task will be developed in separate git-branches.
+These will be merged as soon as the features have been improved and stabilised.
+An implementation will be considered over if it matches its specification and
+passes the corresponding tests (which could be created for this implementation).
+\bigskip
+
+The final work will be packaged:
+\begin{itemize}
+	\item in an archive for a manual installation
+	\item for several GNU/Linux-based OS
+	(at least ArchLinux, Debian and GuixOs will be included)
+\end{itemize}
+
+
+
+\section{Game description}
+\subsection{Species}
+Each player will choose a species for its character at the beginning of the game.
+They will choose among:
+\begin{description}
+	\item[elves]
+	Elves have access to magic. They will be able to develop new powers, nurture
+	them and use them.
+	These powers would help the player kick start the rebuilding of its village at first
+	(if any damage was to be caused by attacks), and eventually help the player
+	defend the village, using defensive spells.
+
+	An elf player will start its constructions slowly, but would store up a
+	capacity to start better in case of destruction, as magic would then kick
+	start the player.
+
+	\item[humans]
+	The humans will have access to technology. This technology would bring them stability
+	as they will be able to both defend themselves from enemies and computerise their blue
+	collar jobs such as mining or manufacturing clothes.
+
+	As for the elfic magic, the human technology would take time to unlock completely,
+	as the use of a piece of machinery for a certain amount of time might unlock a
+	new system.
+
+	\item[orcs]
+	The orcs will be more resilient than the above species, allowing them to build
+	heavier structures and faster than the other players. This strength will allow a
+	player to start the game faster.
+
+	Nonetheless, the orcs will not have tools to automatise the defence or the manufactures,
+	which means that such tasks will always monopolise inhabitants.
+\end{description}
+
+
+\subsection{Town specification}
+This section aims to give specifics on the different building types and the way a player can
+unlock new and better ones. It will be divided in, four sections, three ow which will cover the
+species specific structures a player can build and use.
+
+\subsubsection{Common structures}
+\begin{description}
+    \item[town hall] to build any other structure and give order to the population (\ie~controlling
+    how many citizen works in such and such area).
+
+    In case of an attack, if the town hall is destroyed, it needs to be rebuilt before any other
+    building.
+
+    \item[mines, forests, \dots] in order to gain resources, which are required to build the
+    structures and possibly trade with other players.
+
+    At the beginning of the game, each player will discover basic resources and inhabitants from
+    and with which build a town hall and start expoiting those resources.
+
+    \medskip
+    The forest will slowly grow as long as there exists a living tree. Thus, the player needs to
+    be careful on how they use the resources available.
+\end{description}
+
+\subsubsection{Elf village specific structures}
+\begin{description}
+    \item[Mana Tower] Automagically gather mana
+    \item[Academy of Magic]  Allocating inhabitants there allows the player to unlock new spells / abilities
+\end{description}
+\subsubsection{Human village specific structures}
+\begin{description}
+    \item[Research centre] By allocating inhabitants to the research centre, the player can collect
+    techno-points which can be used to unlock new technologies
+    \item[Automation centre ?] same as research centre but used to unlock automation upgrades (could be a building unlocked by research)
+\end{description}
+\subsubsection{Orc village specific structures}
+\begin{description}
+    \item[Orc breeding centre] Orcs inhabitants and soldier should be fast to produce, maybe add a building that automatically create an orc every few seconds
+\end{description}
+
+\subsection{Military specification}
+This section aims to give specifics on the different soldier types and the way a player can
+unlock new and better ones. It will be divided in, four sections, three ow which will cover the
+species specific military soldiers and structures a player can use.
+
+\subsubsection{Soldiers}
+We might specialize the units depending on their race, giving them bonuses and maluses
+For example for the first basic unit
+Men : att: +0; speed:+0; def:+0
+Elves: att:+0; speed:+1; def:-1
+Orcs: att:+1; speed: -1; def:+0
+
+\section{Other}
+The first tasks of the group is to define the elements of the game:
+\begin{enumerate}
+	\item The different building types, professions, \dots~for the every day
+	virtual life,
+	\item The specification of the army and its evolution,
+	\item The protocol to use and the repartition of the information between the
+	server and the client \ie~decide what will the server and the client each
+	store.
+\end{enumerate}
+
+Each of these three points lead to two implementations: one on the server-side
+and one on the client-side.
+\smallskip
+
+The group members are requested to write and complete the documentation related
+to their code, which is a way to split the work and ensures the correction of
+what is written.
+
+
+
+\bigskip
+Constraints:
+\begin{itemize}
+	\item Provide a specification of the project: explain the main goal of the project, present the tasks distribution within the team, the temporary schedule, \dots
+	\item Produce a documentation
+	\item Provide testing tools
+	\item Perform static analysis on the code
+	\item Package the final work
+\end{itemize}
+\begin{itemize}
+    \item The controls should be fully customisable
+    \item The client must be resource efficient
+\end{itemize}
+
+\section{Planning}
+\begin{itemize}
+	\item October 1: Git tutorial
+	\item October 5: Give our teachers an access to the git repository (which should contain the description / specification of the project: \~5 pages)
+	\item October 8: Presentation of the project to the other groups
+\end{itemize}
+
+\end{document}
+
