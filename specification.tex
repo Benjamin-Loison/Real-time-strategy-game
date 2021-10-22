@@ -42,6 +42,7 @@ The players will be able to interact with one another through:
 
 
 \section{Project management and technical choices}
+\subsection{Project management}
 % TODO reformulate ?
 In order to keep track of the project advancement, we use a plain bare
 repository (with no web-GUI) available at \texttt{git.sofamaniac.xyz:rts.git}.
@@ -50,7 +51,8 @@ using \texttt{git clone git://git.sofamaniac.xyz/rts}).
 
 We will meet at least once a week during Software Engineering sessions and have
 a Discord channel in order to stay in touch during the week.
-\medskip
+
+\subsection{Programming languages and implementation tests}
 
 We will probably\footnote{We might have a change of heart after the first two
 weeks.} use:
@@ -73,7 +75,106 @@ Each distinct implementation task will be developed in separate git-branches.
 These will be merged as soon as the features have been improved and stabilised.
 An implementation will be considered over if it matches its specification and
 passes the corresponding tests (which could be created for this implementation).
-\bigskip
+
+\subsection{Networking part}
+\subsubsection{Protocol}
+During the game, the server and the client might need to exchange data (map
+parts, location of the players, \dots).
+
+Due to the large number of clients, the server might have several requests at
+the same time. The client might wait for several requests to complete as well,
+especially during the launch, as the client will have to load the player's
+location, their wealth, the map, \dots
+
+\medskip
+
+The server and the client will share the following protocol:
+\begin{itemize}
+	\item On the start: The client opens a TCP connection to the server.
+	\item On the stop: The client sends an exit message and disconnects.
+\end{itemize}
+
+During the game, both the client and the server could use the following
+protocol to interact:
+\begin{enumerate}
+	\item \(A\) sends ``Q\texttt{\{id\}}.\texttt{\{type\}}:\texttt{query
+	string}'' to \(B\), where \texttt{\{id\}} should be replaces by a query id,
+	which is a string containing no dot`.', and the \texttt{type} is the query
+	type that is a string containing so semicolon ``:'' .
+
+	For example: ''1634309700-ClientId`` is a valid placeholder for
+	\texttt{\{id\}} and ``info'' is a valid placeholder for \texttt{\{type\}}.
+
+	The available queries are given below.
+
+	\item \(B\) sends ``A\texttt{\{id\}}.\dots'' to \(A\), where \texttt{\{id\}}
+	refers to the same string as received in the ``Q'' string.
+
+	\item \(A\) treats the answer from the server and send back
+	``S\texttt{\{id\}}.\dots``, where \texttt{\{id\}} stands for the query id,
+	and the \dots~replace the status (either ``ok'' or ``nok'').
+\end{enumerate}
+Where \(A\) represent the server (resp. the client), and \(B\) represent the
+client (resp. the server)
+
+
+
+\subsubsection{Tasks sharing between server and client}
+Running the client should not require heavy computational resources or use a
+large bandwidth. In order to respect that wish, this is the current repartition
+of the tasks between the client and the server:
+\begin{description}
+	\item[client]
+		Stores:
+			\begin{itemize}
+				\item The state of the parts map it has already visited
+				\item The position of some constructions
+			\end{itemize}
+
+		Computes:
+			\begin{itemize}
+				\item The local graphical effects
+				\item The movement of the player as long as the map to print
+				remains within the second boundary\footnote{See the description
+				of the map synchronisation between the client and the server.}.
+			\end{itemize}
+	\item[server]
+		Stores:
+			\begin{itemize}
+				\item The state of the map at all time
+				\item The position of the players
+				\item The possessions of the players
+			\end{itemize}
+
+		Computes:
+			\begin{itemize}
+				\item The remaining time for buildings
+				\item Effects of map-wide actions
+			\end{itemize}
+\end{description}
+
+\medskip
+
+This part of the specification is likely to quickly evolve. This is a list of
+improvement and changes that may be implemented some day:
+\begin{itemize}
+	\item Players have a cached version of what is on the map (for the parts
+	they have already walked), but the map might have changed between two visits
+	of a player.
+
+	To manage this evolution, these three solutions might work:
+	\begin{itemize}
+	\item Send the server some information it has on the map, to check its
+	validity
+	\item The server stores the previous positions of the players and queries
+	them to delete their cache of the updated parts of the map.
+	\item The client forgets the cached map of places that are outside the
+	third boundary\footnote{See the description of the map synchronisation
+	between the client and the server.}.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Application packaging}
 
 The final work will be packaged:
 \begin{itemize}
