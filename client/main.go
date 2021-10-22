@@ -5,6 +5,7 @@ import (
 	"log"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"image"
 	_ "image/png"
 	"image/color"
@@ -20,21 +21,55 @@ var (
 	inSelection = false
 	startSelection = [2]int{0, 0}
 	endSelection = [2]int{0, 0}
-    dino = loadImageFromFile("media/sprites/Dino_blue.png")
+    sprite = loadImageFromFile("media/sprites/Dino_blue.png")
+	treeSprite = loadImageFromFile("media/sprites/baum.png")
+	dino = Unit{0, 0, 0, sprite.SubImage(image.Rect(0, 0, 24, 24)).(*ebiten.Image)}
+	tree = Unit{200, 200, 0, treeSprite}
+	camera = Unit{0, 0, 0, sprite}	// TODO should be change to another more adapted type
+	zoomFactor = 1.0
 )
 
 
+type Unit struct {
+    x,y float64 //position
+    r   int //size of collision circle
+    sprite *ebiten.Image
+}
+
 type Game struct {
+	keys []ebiten.Key
 }
 
 func (g *Game) Update() error {
-	return nil
-}
+	//////////// Handling Keyboard events ////////////
+	g.keys = inpututil.AppendPressedKeys(g.keys[:0])
+	for _, p := range g.keys {
+		switch s := p.String(); s {
+		case "S":
+			dino.y += 5
+		case "Z":
+			dino.y -= 5
+		case "Q":
+			dino.x -= 5
+		case "D":
+			dino.x += 5
 
-type Unit struct {
-    x,y int //position
-    r   int //size of collision circle
-    sprite *ebiten.Image
+		case "ArrowUp":
+			camera.y -= 5
+		case "ArrowDown":
+			camera.y += 5
+		case "ArrowLeft":
+			camera.x -= 5
+		case "ArrowRight":
+			camera.x += 5
+
+		case "I":
+			zoomFactor += 0.5
+		case "K":
+			zoomFactor -= 0.5
+		}
+	}
+	return nil
 }
 
 func loadImageFromFile(path string) *ebiten.Image {
@@ -73,6 +108,15 @@ func drawSelectionRect(screen *ebiten.Image) {
 	}
 }
 
+func (u Unit) drawUnit(screen *ebiten.Image) {
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Reset()
+	op.ColorM.Reset()
+	op.GeoM.Translate(u.x, u.y)
+	op.GeoM.Translate(camera.x, camera.y)
+	op.GeoM.Scale(zoomFactor, zoomFactor)
+	screen.DrawImage(u.sprite, op)
+}
 func getSelctionRect() (int, int, int, int) {
 	return startSelection[0], startSelection[1], endSelection[0], endSelection[1]
 }
@@ -80,12 +124,17 @@ func getSelctionRect() (int, int, int, int) {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.White)
     ////////////
+	/*
     op := &ebiten.DrawImageOptions{}
     op.GeoM.Reset()
     op.ColorM.Reset()
     op.GeoM.Scale(6.0,6.0)
-	op.GeoM.Translate(screenWidth/2, screenHeight/2)
-    screen.DrawImage(dino.SubImage(image.Rect(0, 0, 24, 24)).(*ebiten.Image), op )
+	op.GeoM.Translate(dino.x, dino.y)
+	op.GeoM.Translate(camera.x, camera.y)
+    screen.DrawImage(dino.sprite.SubImage(image.Rect(0, 0, 24, 24)).(*ebiten.Image), op )
+	*/
+	dino.drawUnit(screen)
+	tree.drawUnit(screen)
     ////////////
 	drawSelectionRect(screen)
 }
