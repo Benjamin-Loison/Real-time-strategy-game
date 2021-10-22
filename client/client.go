@@ -1,41 +1,23 @@
 package main
+
 import (
 	"fmt"
 	"net"
-	"os"
-	"bufio"
-	"strings"
 )
 
-func write(conn *net.Conn, keep_going *bool, ch chan string) {
-	reader := bufio.NewReader(os.Stdin)
-	for *keep_going {
-		fmt.Print("Enter text: ")
-		text, _ := reader.ReadString('\n')
+// Two global maps store the queries that are to be treated (either by us, or
+// by the server)
+var server_queries map[string]string
+var client_queries map[string]string
+var client_id string
 
-		if (strings.Compare(text, "/exit\n") == 0) {
-			*keep_going = false
-			close(ch)
-		} else {
-			fmt.Fprintf(*conn, text)
-		}
-	}
-}
-func read (conn *net.Conn, keep_going *bool, ch chan string) {
-	p :=  make([]byte, 2048)
-	for *keep_going {
-		_, err := bufio.NewReader(*conn).Read(p)
-		if err == nil {
-			fmt.Printf("%s\n", p)
-		} else {
-			fmt.Printf("Some error %v\n", err)
-		}
-	}
-	close(ch)
-}
 
 func main() {
-	conn, err := net.Dial("udp", "192.168.9.128:8000")
+	// Define a client Id:
+	client_id = random_id(10)
+	fmt.Println("Client id: " + client_id)
+
+	conn, err := net.Dial("tcp", "138.231.144.134:8000")
 	if err != nil {
 		fmt.Printf("Some error %v", err)
 		return
@@ -46,15 +28,17 @@ func main() {
 	in_stdin := make(chan string)
 	in_server := make(chan string)
 
-	go read(&conn, &keep_going, in_stdin)
-	go write(&conn, &keep_going, in_server)
+	server_queries = make(map[string]string)
+	client_queries = make(map[string]string)
+
 
 	for keep_going {
 		select {
 		case s1 := <-in_stdin :
 			fmt.Println (s1)
+			to_server(&conn, "info", "myinformation")
 		case s2 := <-in_server:
-			fmt.Println(s2)
+			from_server(&conn, s2)
 		}
 	}
 
