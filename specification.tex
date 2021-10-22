@@ -97,20 +97,22 @@ The server and the client will share the following protocol:
 During the game, both the client and the server could use the following
 protocol to interact:
 \begin{enumerate}
-	\item \(A\) sends ``Q\texttt{\{id\}}\dots'' to \(B\), where \texttt{\{id\}}
-	should be replaces by a query id, which is a string ending with a dot`.'.
-	For example: ''1634309700-ClientId.`` is a valid placeholder for
-	\texttt{\{id\}}.
+	\item \(A\) sends ``Q\texttt{\{id\}}.\texttt{\{type\}}:\texttt{query
+	string}'' to \(B\), where \texttt{\{id\}} should be replaces by a query id,
+	which is a string containing no dot`.', and the \texttt{type} is the query
+	type that is a string containing so semicolon ``:'' .
 
-	The \dots{} represent the actual query. Their specification will be given
-	below.
+	For example: ''1634309700-ClientId`` is a valid placeholder for
+	\texttt{\{id\}} and ``info'' is a valid placeholder for \texttt{\{type\}}.
 
-	\item \(B\) sends ``A\texttt{\{id\}}\dots'' to \(A\), where \texttt{\{id\}}
+	The available queries are given below.
+
+	\item \(B\) sends ``A\texttt{\{id\}}.\dots'' to \(A\), where \texttt{\{id\}}
 	refers to the same string as received in the ``Q'' string.
 
 	\item \(A\) treats the answer from the server and send back
-	``S\texttt{\{id\}}\dots``, where \texttt{\{id\}} stands for the query id,
-	and
+	``S\texttt{\{id\}}.\dots``, where \texttt{\{id\}} stands for the query id,
+	and the \dots~replace the status (either ``ok'' or ``nok'').
 \end{enumerate}
 Where \(A\) represent the server (resp. the client), and \(B\) represent the
 client (resp. the server)
