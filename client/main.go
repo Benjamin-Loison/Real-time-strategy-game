@@ -24,21 +24,25 @@ var (
 	endSelection = [2]int{0, 0}
     sprite = loadImageFromFile("media/sprites/Dino_blue.png")
 	treeSprite = loadImageFromFile("media/sprites/baum.png")
-	dino = Unit{0, 0, 0, sprite.SubImage(image.Rect(0, 0, 24, 24)).(*ebiten.Image)}
-	tree = Unit{640, 360, 0, treeSprite}
-	camera = Unit{0, 0, 0, sprite}	// TODO should be change to another more adapted type
+	dino = Entity{0, 0, 0, sprite.SubImage(image.Rect(0, 0, 24, 24)).(*ebiten.Image), 6, false}
+	tree = Entity{640, 360, 0, treeSprite, 1.0, false}
+	camera = Entity{0, 0, 0,  nil , 1, false}	// TODO should be change to another more adapted type
 	zoomFactor = 1.0
 )
 
 
-type Unit struct {
+type Entity struct {
     x,y float64 //position
     r   int //size of collision circle
     sprite *ebiten.Image
+    sprite_base_scale float64
+    selected bool
 }
 
 type Game struct {
 	keys []ebiten.Key
+    friendlyEntities []*Entity
+    envEntities []*Entity
 }
 
 func (g *Game) Update() error {
@@ -107,22 +111,35 @@ func drawSelectionRect(screen *ebiten.Image) {
 	}
 
 	if inSelection {
-		ebitenutil.DrawRect(screen, float64(startSelection[0]), float64(startSelection[1]), float64(endSelection[0]), float64(endSelection[1]), Red)
+		//ebitenutil.DrawRect(screen, float64(startSelection[0]), float64(startSelection[1]), , float64(endSelection[1]), Red)
+
+        //dx := float64(endSelection[0]) - float64(startSelection[0])
+        //dy := float64(endSelection[1]) - float64(startSelection[1])
+        x1 := float64(startSelection[0])
+        y1 := float64(startSelection[1])
+        dx := float64(endSelection[0])
+        dy := float64(endSelection[1])
+
+        ebitenutil.DrawLine(screen, x1 , y1, x1 + dx, y1 , Red)
+        ebitenutil.DrawLine(screen, x1 , y1, x1 , y1+dy , Red)
+        ebitenutil.DrawLine(screen, x1+dx , y1, x1+dx , y1+dy , Red)
+        ebitenutil.DrawLine(screen, x1 , y1+dy, x1+dx , y1+dy , Red)
+        //ebitenutil.DrawLine(screen, x1 , y1, x1+x2 , y1+y2 , Red)
 	}
 }
 
-func (u Unit) drawUnit(screen *ebiten.Image) {
+func (e Entity) drawEntity(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Reset()
 	op.ColorM.Reset()
-    iw,ih := u.sprite.Size()
+    iw,ih := e.sprite.Size()
 	op.GeoM.Translate( - float64(iw)/2 , - float64(ih)/2 )
-	op.GeoM.Scale(zoomFactor, zoomFactor)
-	op.GeoM.Translate(u.x*zoomFactor, u.y*zoomFactor)
+	op.GeoM.Scale(zoomFactor*e.sprite_base_scale, zoomFactor*e.sprite_base_scale)
+	op.GeoM.Translate(e.x*zoomFactor, e.y*zoomFactor)
 	op.GeoM.Translate(-camera.x*zoomFactor, -camera.y*zoomFactor)
 	op.GeoM.Translate(-screenWidth*zoomFactor/2, -screenHeight*zoomFactor/2)
 	op.GeoM.Translate(screenWidth/2, screenHeight/2)
-	screen.DrawImage(u.sprite, op)
+	screen.DrawImage(e.sprite, op)
 }
 func getSelctionRect() (int, int, int, int) {
 	return startSelection[0], startSelection[1], endSelection[0], endSelection[1]
@@ -133,9 +150,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.White)
 
     // drawing the elements
-
-	dino.drawUnit(screen)
-	tree.drawUnit(screen)
+    for _, e := range g.envEntities {
+        e.drawEntity(screen)
+    }
+    for _, e := range g.friendlyEntities {
+        e.drawEntity(screen)
+    }
 
     ////////////
 	drawSelectionRect(screen)
@@ -145,12 +165,21 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return screenWidth, screenHeight
 }
 
+// Function to initialize the game
+func Init(g *Game) {
+    g.friendlyEntities = append(g.friendlyEntities, &dino)
+    g.envEntities = append(g.envEntities, &tree)
+}
+
 func main(){
+    // initializing the game
+    g := &Game{}
+    Init(g)
     //initializing ebiten
 	ebiten.SetWindowSize(screenWidth,screenHeight)
 	ebiten.SetWindowResizable(true)
 	ebiten.SetWindowTitle("EHO: Elves, humans and orks")
-	if err := ebiten.RunGame(&Game{}); err != nil {
+	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)
 	}
 }
