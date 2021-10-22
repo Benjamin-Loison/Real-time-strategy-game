@@ -14,6 +14,7 @@ import (
 const (
 	screenWidth  = 1280
 	screenHeight = 720
+    ZOOM_STEP = 0.01
 )
 
 var (
@@ -24,7 +25,7 @@ var (
     sprite = loadImageFromFile("media/sprites/Dino_blue.png")
 	treeSprite = loadImageFromFile("media/sprites/baum.png")
 	dino = Unit{0, 0, 0, sprite.SubImage(image.Rect(0, 0, 24, 24)).(*ebiten.Image)}
-	tree = Unit{200, 200, 0, treeSprite}
+	tree = Unit{640, 360, 0, treeSprite}
 	camera = Unit{0, 0, 0, sprite}	// TODO should be change to another more adapted type
 	zoomFactor = 1.0
 )
@@ -41,6 +42,7 @@ type Game struct {
 }
 
 func (g *Game) Update() error {
+
 	//////////// Handling Keyboard events ////////////
 	g.keys = inpututil.AppendPressedKeys(g.keys[:0])
 	for _, p := range g.keys {
@@ -64,11 +66,12 @@ func (g *Game) Update() error {
 			camera.x += 5
 
 		case "I":
-			zoomFactor += 0.5
+			zoomFactor += ZOOM_STEP
 		case "K":
-			zoomFactor -= 0.5
+			zoomFactor -= ZOOM_STEP
 		}
 	}
+    ////////////////////////////////////////////////
 	return nil
 }
 
@@ -112,9 +115,13 @@ func (u Unit) drawUnit(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Reset()
 	op.ColorM.Reset()
-	op.GeoM.Translate(u.x, u.y)
-	op.GeoM.Translate(camera.x, camera.y)
+    iw,ih := u.sprite.Size()
+	op.GeoM.Translate( - float64(iw)/2 , - float64(ih)/2 )
 	op.GeoM.Scale(zoomFactor, zoomFactor)
+	op.GeoM.Translate(u.x*zoomFactor, u.y*zoomFactor)
+	op.GeoM.Translate(-camera.x*zoomFactor, -camera.y*zoomFactor)
+	op.GeoM.Translate(-screenWidth*zoomFactor/2, -screenHeight*zoomFactor/2)
+	op.GeoM.Translate(screenWidth/2, screenHeight/2)
 	screen.DrawImage(u.sprite, op)
 }
 func getSelctionRect() (int, int, int, int) {
@@ -122,19 +129,14 @@ func getSelctionRect() (int, int, int, int) {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
+    // clearing the screen
 	screen.Fill(color.White)
-    ////////////
-	/*
-    op := &ebiten.DrawImageOptions{}
-    op.GeoM.Reset()
-    op.ColorM.Reset()
-    op.GeoM.Scale(6.0,6.0)
-	op.GeoM.Translate(dino.x, dino.y)
-	op.GeoM.Translate(camera.x, camera.y)
-    screen.DrawImage(dino.sprite.SubImage(image.Rect(0, 0, 24, 24)).(*ebiten.Image), op )
-	*/
+
+    // drawing the elements
+
 	dino.drawUnit(screen)
 	tree.drawUnit(screen)
+
     ////////////
 	drawSelectionRect(screen)
 }
@@ -144,7 +146,8 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func main(){
-	ebiten.SetWindowSize(1280,720)
+    //initializing ebiten
+	ebiten.SetWindowSize(screenWidth,screenHeight)
 	ebiten.SetWindowResizable(true)
 	ebiten.SetWindowTitle("EHO: Elves, humans and orks")
 	if err := ebiten.RunGame(&Game{}); err != nil {
