@@ -24,8 +24,8 @@ var (
 	endSelection = [2]int{0, 0}
     sprite = loadImageFromFile("media/sprites/Dino_blue.png")
 	treeSprite = loadImageFromFile("media/sprites/baum.png")
-	dino = Entity{0, 0, 0, sprite.SubImage(image.Rect(0, 0, 24, 24)).(*ebiten.Image), 6, false}
-	tree = Entity{640, 360, 0, treeSprite, 1.0, false}
+	dino = Entity{0, 0, 12, sprite.SubImage(image.Rect(0, 0, 24, 24)).(*ebiten.Image), 6, false}
+	tree = Entity{640, 360, 32, treeSprite, 1.0, false}
 	camera = Entity{0, 0, 0,  nil , 1, false}	// TODO should be change to another more adapted type
 	zoomFactor = 1.0
 )
@@ -93,6 +93,16 @@ func loadImageFromFile(path string) *ebiten.Image {
     return ebiten.NewImageFromImage(img)
 }
 
+
+func drawWireRect(screen *ebiten.Image, x, y, w, h float64, c color.Color) {
+	ebitenutil.DrawLine(screen, x   , y  , x+w , y   , c)
+	ebitenutil.DrawLine(screen, x   , y  , x   , y+h , c)
+	ebitenutil.DrawLine(screen, x+w , y  , x+w , y+h , c)
+	ebitenutil.DrawLine(screen, x   , y+h, x+w , y+h , c)
+
+}
+
+
 func drawSelectionRect(screen *ebiten.Image) {
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		if !inSelection {
@@ -111,34 +121,49 @@ func drawSelectionRect(screen *ebiten.Image) {
 	}
 
 	if inSelection {
-		//ebitenutil.DrawRect(screen, float64(startSelection[0]), float64(startSelection[1]), , float64(endSelection[1]), Red)
-
-        //dx := float64(endSelection[0]) - float64(startSelection[0])
-        //dy := float64(endSelection[1]) - float64(startSelection[1])
-        x1 := float64(startSelection[0])
-        y1 := float64(startSelection[1])
+        x  := float64(startSelection[0])
+        y  := float64(startSelection[1])
         dx := float64(endSelection[0])
         dy := float64(endSelection[1])
 
-        ebitenutil.DrawLine(screen, x1 , y1, x1 + dx, y1 , Red)
-        ebitenutil.DrawLine(screen, x1 , y1, x1 , y1+dy , Red)
-        ebitenutil.DrawLine(screen, x1+dx , y1, x1+dx , y1+dy , Red)
-        ebitenutil.DrawLine(screen, x1 , y1+dy, x1+dx , y1+dy , Red)
-        //ebitenutil.DrawLine(screen, x1 , y1, x1+x2 , y1+y2 , Red)
+		drawWireRect(screen, x, y, dx, dy, Red)
 	}
 }
 
-func (e Entity) drawEntity(screen *ebiten.Image) {
+
+func (e Entity) getScreenTransform() (*ebiten.DrawImageOptions) {
+
 	op := &ebiten.DrawImageOptions{}
+    iw,ih := e.sprite.Size()
+	
 	op.GeoM.Reset()
 	op.ColorM.Reset()
-    iw,ih := e.sprite.Size()
+	
 	op.GeoM.Translate( - float64(iw)/2 , - float64(ih)/2 )
 	op.GeoM.Scale(zoomFactor*e.sprite_base_scale, zoomFactor*e.sprite_base_scale)
 	op.GeoM.Translate(e.x*zoomFactor, e.y*zoomFactor)
 	op.GeoM.Translate(-camera.x*zoomFactor, -camera.y*zoomFactor)
 	op.GeoM.Translate(-screenWidth*zoomFactor/2, -screenHeight*zoomFactor/2)
 	op.GeoM.Translate(screenWidth/2, screenHeight/2)
+	
+	return op
+}
+
+
+func (e Entity) drawHitbox(screen *ebiten.Image) {
+	op := e.getScreenTransform()
+	iw, ih := e.sprite.Size()
+	x1, y1 := op.GeoM.Apply(0, 0)
+	x2, y2 := op.GeoM.Apply(float64(iw), float64(ih))
+	drawWireRect(screen, x1, y1, x2-x1, y2-y1, Red)
+}
+
+
+func (e Entity) drawEntity(screen *ebiten.Image) {
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Reset()
+	op.ColorM.Reset()
+	op = e.getScreenTransform()
 	screen.DrawImage(e.sprite, op)
 }
 func getSelctionRect() (int, int, int, int) {
@@ -152,9 +177,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
     // drawing the elements
     for _, e := range g.envEntities {
         e.drawEntity(screen)
+		e.drawHitbox(screen)
     }
     for _, e := range g.friendlyEntities {
         e.drawEntity(screen)
+		e.drawHitbox(screen)
     }
 
     ////////////
