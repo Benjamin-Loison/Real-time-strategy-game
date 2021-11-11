@@ -91,8 +91,8 @@ func manage_server_answer(answer_id string, answer_str string) {
 				// Split the whole answer
 				split_answer := strings.Split(answer_str, ",,")
 
-				w := strings.Split(splitted[1], ",")[3]
-				h := strings.Split(splitted[1], ",")[4]
+				w, _ := strconv.Atoi(strings.Split(splitted[1], ",")[3])
+				h, _ := strconv.Atoi(strings.Split(splitted[1], ",")[4])
 
 				// Fetch the initiam location
 				initial_position := strings.Split(split_answer[0], ",")
@@ -107,7 +107,7 @@ func manage_server_answer(answer_id string, answer_str string) {
 					elem_type := location_type_from_str(elem_split[0])
 					elem_int, _ := strconv.Atoi(elem_split[1])
 					elem_str := elem_split[2]
-					location_list := append(location_list,
+					location_list = append(location_list,
 						Location {elem_type, elem_int, elem_str})
 				}
 				

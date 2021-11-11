@@ -29,6 +29,7 @@ var (
 	dino = Entity{0, 0, 12, sprite.SubImage(image.Rect(0, 0, 24, 24)).(*ebiten.Image), 6, false}
 	tree = Entity{640, 360, 32, treeSprite, 1.0, false}
 	camera = Entity{0, 0, 0,  nil , 1, false}	// TODO should be change to another more adapted type
+	onScreenMap = Map{0, 0, 0, 0, make([]Entity, 0), make([]Entity, 0), make([]Entity, 0)}
 	zoomFactor = 1.0
 
 	client_chan chan string
@@ -38,9 +39,9 @@ var (
 type location_type int64
 const (
 	Floor location_type = 1
-	ElfBuilding
-	OrcBuilding
-	HumanBuilding
+	ElfBuilding = 2
+	OrcBuilding = 3
+	HumanBuilding = 4
 	)
 
 type Location struct {
@@ -58,6 +59,16 @@ type Entity struct {
 	selected bool
 }
 
+type Map struct {
+	origin_x int
+	origin_y int
+	w, h int
+	buildings []Entity
+	floor []Entity
+	entities []Entity
+}
+
+
 type Game struct {
 	keys []ebiten.Key
 	friendlyEntities []*Entity
@@ -67,6 +78,32 @@ type Game struct {
 	entityLayer *ebiten.Image
 	debugLayer *ebiten.Image
 	guiLayer *ebiten.Image
+}
+
+func update_map(init_x , init_y, w, h int, location_list []Location) {
+	
+	onScreenMap.origin_x = init_x
+	onScreenMap.origin_y = init_y
+	onScreenMap.w = w
+	onScreenMap.h = h
+	onScreenMap.buildings = make([]Entity, 0)
+	onScreenMap.floor = make([]Entity, 0)
+
+	for _, l := range location_list {
+		switch(l.loc_type) {
+			case ElfBuilding:
+				onScreenMap.buildings = append(onScreenMap.buildings, tree)
+			case OrcBuilding:
+				onScreenMap.buildings = append(onScreenMap.buildings, tree)
+			case HumanBuilding:
+				onScreenMap.buildings = append(onScreenMap.buildings, tree)
+			case Floor:
+				continue
+			default:
+				continue
+		}
+	}
+
 }
 
 func (g *Game) Update() error {
@@ -238,11 +275,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.White)	// while there is no background
 
 	// drawing the elements
-	for _, e := range g.envEntities {
+	for _, e := range onScreenMap.floor {
 		e.drawEntity(g.envLayer)
 		e.drawHitbox(g.debugLayer)
 	}
-	for _, e := range g.friendlyEntities {
+	for _, e := range onScreenMap.buildings {
 		e.drawEntity(g.entityLayer)
 		e.drawHitbox(g.debugLayer)
 	}
@@ -299,6 +336,8 @@ func Init(g *Game) {
 	g.entityLayer = ebiten.NewImage(screenWidth, screenHeight)
 	g.debugLayer  = ebiten.NewImage(screenWidth, screenHeight)
 	g.guiLayer	= ebiten.NewImage(screenWidth, screenHeight)
+
+	onScreenMap.buildings = append(onScreenMap.buildings, tree)
 }
 
 func get_player_location() (int, int) {
