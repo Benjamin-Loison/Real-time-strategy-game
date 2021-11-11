@@ -94,8 +94,8 @@ func createFloor(x, y int) (Entity) {
 // location_list contains all the points of interest in the provided area
 func update_map(init_x , init_y, w, h int, location_list []Location) {
 	
-	onScreenMap.origin_x = init_x
-	onScreenMap.origin_y = init_y
+	onScreenMap.origin_x = init_x + w/2 - screenWidth
+	onScreenMap.origin_y = init_y + h/2 - screenHeight
 	onScreenMap.w = w
 	onScreenMap.h = h
 	onScreenMap.buildings = make([]Entity, 0)
@@ -214,9 +214,6 @@ func (e Entity) getScreenTransform() (*ebiten.DrawImageOptions) {
 	op.GeoM.Reset()
 	op.ColorM.Reset()
 
-	// TODO check amount of translation needed
-	op.GeoM.Translate(float64(onScreenMap.origin_x), float64(onScreenMap.origin_y))
-	
 	op.GeoM.Translate( - float64(iw)/2 , - float64(ih)/2 )
 	op.GeoM.Scale(zoomFactor*e.sprite_base_scale, zoomFactor*e.sprite_base_scale)
 	op.GeoM.Translate(e.x*zoomFactor, e.y*zoomFactor)
@@ -237,8 +234,6 @@ func (e Entity) getScreenTranslation() (*ebiten.DrawImageOptions) {
 	op.GeoM.Reset()
 	op.ColorM.Reset()
 
-	op.GeoM.Translate(float64(onScreenMap.origin_x), float64(onScreenMap.origin_y))
-	
 	op.GeoM.Translate( - float64(iw)/2 , - float64(ih)/2 )
 	op.GeoM.Translate(e.x*zoomFactor, e.y*zoomFactor)
 	op.GeoM.Translate(-camera.x*zoomFactor, -camera.y*zoomFactor)
