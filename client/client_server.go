@@ -61,10 +61,25 @@ func manage_server_query(conn *net.Conn, query_id string, query_type string, que
 	}
 }
 
+func location_type_from_str(s string) location_type {
+	switch (s) {
+		case "Floor":
+			return Floor
+		case "ElfBuilding":
+			return ElfBuilding
+		case "OrcBuilding":
+			return OrcBuilding
+		case "HumanBuilding":
+			return HumanBuilding
+		default:
+			return Floor
+	}
+}
+
 func manage_server_answer(answer_id string, answer_str string) {
 	// Checks that the query exists
 	var ok bool
-	query_str, ok = client_queries[answer_id]
+	query_str, ok := client_queries[answer_id]
 	if(!ok) {
 		fmt.Println("New answer to unknown query!\n\tquery id: %s\n\tanswer:%s\n", answer_id, answer_str)
 	} else {
@@ -73,10 +88,31 @@ func manage_server_answer(answer_id string, answer_str string) {
 			case "info":
 				fmt.Println("[SERVER] ID: " + splitted[1])
 			case "map":
+				// Split the whole answer
 				split_answer := strings.Split(answer_str, ",,")
-				position_list := split_answer[1:]
-				initial_position := split_answer[0]
-				//TODO!
+
+				w := strings.Split(splitted[1], ",")[3]
+				h := strings.Split(splitted[1], ",")[4]
+
+				// Fetch the initiam location
+				initial_position := strings.Split(split_answer[0], ",")
+				init_x, _ := strconv.Atoi(initial_position[0])
+				init_y, _ := strconv.Atoi(initial_position[1])
+
+				// Fetch the descrition of the map
+				description_list := split_answer[1:]
+				location_list := make([]Location, 0)
+				for _, elem := range description_list {
+					elem_split := strings.Split(elem, ",")
+					elem_type := location_type_from_str(elem_split[0])
+					elem_int, _ := strconv.Atoi(elem_split[1])
+					elem_str := elem_split[2]
+					location_list := append(location_list,
+						Location {elem_type, elem_int, elem_str})
+				}
+				
+				// Update the map
+				update_map(init_x, init_y, w, h, location_list)
 			default:
 				fmt.Println("Got an answer for a query of unknown type.")
 		}
