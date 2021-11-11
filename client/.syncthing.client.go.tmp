@@ -68,7 +68,6 @@ func main() {
 
 	go handle_server(conn, chan_server)
 	go handle_local(chan_stdin)
-	go startGUI(gui_chan)
 
 	fmt.Println("[CLIENT] Starting the main client loop.")
 	for running {
