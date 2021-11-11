@@ -12,7 +12,7 @@ import (
 
 
 func logging(src string, message string) {
-	fmt.Println(time.Now().String() + "[" + src + "] " + message)
+	fmt.Println(time.Now().Format(time.ANSIC) + "[" + src + "] " + message)
 }
 
 // Two global maps store the queries that are to be treated (either by us, or
@@ -61,8 +61,13 @@ func startClient(gui_chan_ptr *chan string) {
 	chan_stdin := make(chan string)
 	chan_server := make(chan string)
 	*gui_chan_ptr = make(chan string)
-	host = "127.0.0.1"
-	port = 10000
+	if(len(os.Args) == 3) {
+		host = os.Args[1]
+		port, _ = strconv.Atoi(os.Args[2])
+	} else {
+		host = "127.0.0.1"
+		port = 10000
+	}
 
 	// Verbose
 	logging("CLIENT", "The client id is " + client_id)
@@ -77,6 +82,9 @@ func startClient(gui_chan_ptr *chan string) {
 
 	go handle_server(conn, chan_server)
 	go handle_local(chan_stdin)
+
+	logging("CLIENT", "Fetching the startup map.")
+	query_to_server(&conn, "map", "0,0,100,100")// Warning: static parameters.
 
 	logging("CLIENT", "Main loop is starting.")
 	for running {

@@ -18,11 +18,6 @@ import (
 
 
 
-// The following function sends an answer to the server
-func answer_server(conn *net.Conn, query_id string, query_ans string) {
-	_, _ = (*conn).Write([]byte("A" + query_id + "." + query_ans))
-}
-
 // The following decide what is to be done when the server sends a query to the client
 func manage_server_query(conn *net.Conn, query_id string, query_type string, query_str string) {
 	// Verbose
@@ -37,14 +32,14 @@ func manage_server_query(conn *net.Conn, query_id string, query_type string, que
 	switch(query_type) {
 	case "info":
 		// Send back the client's ID
-		answer_server(conn, query_id, client_id)
+		answer_to_server(conn, query_id, client_id)
 	case "map":
 		logging("Server → Client", "Ignoring: the server should not ask for the map.")
 	case "location":
 		switch (query_str) {
 			case "get":
 				x, y := get_player_location()
-				answer_server(conn, query_id, strconv.Itoa(x) + "," + strconv.Itoa(y))
+				answer_to_server(conn, query_id, strconv.Itoa(x) + "," + strconv.Itoa(y))
 			default:
 				if(strings.HasPrefix(query_str, "set,")) {
 					splitted := strings.Split(query_str, ",")
@@ -54,6 +49,7 @@ func manage_server_query(conn *net.Conn, query_id string, query_type string, que
 					set_player_location(player_id, x_coord, y_coord)
 				} else {
 					logging("Server → Client", "Ill-formed query.")
+					delete(server_queries, query_id)
 				}
 		}
 	default:
@@ -62,36 +58,23 @@ func manage_server_query(conn *net.Conn, query_id string, query_type string, que
 	}
 }
 
-func location_type_from_str(s string) location_type {
-	switch (s) {
-		case "Floor":
-			return Floor
-		case "ElfBuilding":
-			return ElfBuilding
-		case "OrcBuilding":
-			return OrcBuilding
-		case "HumanBuilding":
-			return HumanBuilding
-		default:
-			return Floor
-	}
-}
-
-func manage_server_answer(answer_id string, answer_str string) {
+func manage_server_answer(conn *net.Conn, answer_id string, answer_str string) {
 	// Verbose
 	logging("Server → Client",
 		fmt.Sprintf("QueiAnswer <id: %s>:\n\tanswer: %s",
 			answer_id, answer_str))
 	// Checks that the query exists
-	var ok bool
 	query_str, ok := client_queries[answer_id]
 	if(!ok) {
 		logging("Server → Client", "Unknown query id")
+		status_to_server(conn, answer_id, "nok")
+		return
 	} else {
 		splitted := strings.Split(strings.Trim(query_str, "\n"), ":")
 		switch(splitted[0]) {
 			case "info":
 				fmt.Println("[SERVER] ID: " + splitted[1])
+				status_to_server(conn, answer_id, "ok")
 			case "map":
 				// Split the whole answer
 				split_answer := strings.Split(answer_str, ",,")
@@ -118,8 +101,11 @@ func manage_server_answer(answer_id string, answer_str string) {
 				
 				// Update the map
 				update_map(init_x, init_y, w, h, location_list)
+				status_to_server(conn, answer_id, "ok")
 			default:
 				logging("Server → Client", "Unknown query type")
+				status_to_server(conn, answer_id, "nok")
+				return
 		}
 	}
 	delete(client_queries, answer_id)
@@ -149,7 +135,7 @@ func from_server(conn *net.Conn, str string) {
 			var a_id = (idrg.FindString(str))[1:]
 			var a_str = str[len(a_id) + 2:]
 			// Managing the parsed answer
-			manage_server_answer(a_id, a_str)
+			manage_server_answer(conn, a_id, a_str)
 		} else {
 			logging("Server → Client", "Ignoring: Ill-formed answer: " + str)
 		}

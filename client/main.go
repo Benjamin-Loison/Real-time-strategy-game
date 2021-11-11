@@ -26,8 +26,10 @@ var (
 	endSelection = [2]int{0, 0}
 	sprite = loadImageFromFile("media/sprites/Dino_blue.png")
 	treeSprite = loadImageFromFile("media/sprites/baum.png")
+	floorSprite = loadImageFromFile("media/sprites/floor.png")
 	dino = Entity{0, 0, 12, sprite.SubImage(image.Rect(0, 0, 24, 24)).(*ebiten.Image), 6, false}
 	tree = Entity{640, 360, 32, treeSprite, 1.0, false}
+	floor = Entity{640, 360, 32, floorSprite, 1.0, false}
 	camera = Entity{0, 0, 0,  nil , 1, false}	// TODO should be change to another more adapted type
 	onScreenMap = Map{0, 0, 0, 0, make([]Entity, 0), make([]Entity, 0), make([]Entity, 0)}
 	zoomFactor = 1.0
@@ -107,7 +109,8 @@ func update_map(init_x , init_y, w, h int, location_list []Location) {
 			case HumanBuilding:
 				onScreenMap.buildings = append(onScreenMap.buildings, createDummyEntity(i%w, i/w))
 			case Floor:
-				continue
+				onScreenMap.buildings = append(onScreenMap.floor, floor)
+				//continue
 			default:
 				continue
 		}
