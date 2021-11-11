@@ -20,7 +20,7 @@ const (
 )
 
 var (
-	Red	   = color.RGBA{255,0,0,255}
+	Red	   = color.RGBA{255, 0, 0, 255}
 	inSelection = false
 	startSelection = [2]int{0, 0}
 	endSelection = [2]int{0, 0}
@@ -129,6 +129,7 @@ func (g *Game) Update() error {
 	g.keys = inpututil.AppendPressedKeys(g.keys[:0])
 	for _, p := range g.keys {
 		switch s := p.String(); s {
+		// character movement
 		case "S":
 			dino.y += 5
 		case "Z":
@@ -137,7 +138,8 @@ func (g *Game) Update() error {
 			dino.x -= 5
 		case "D":
 			dino.x += 5
-
+		
+		// camera movement
 		case "ArrowUp":
 			camera.y -= 5
 		case "ArrowDown":
@@ -147,6 +149,7 @@ func (g *Game) Update() error {
 		case "ArrowRight":
 			camera.x += 5
 
+		// zoom changes
 		case "I":
 			zoomFactor += ZOOM_STEP
 		case "K":
