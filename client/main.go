@@ -284,6 +284,13 @@ func Init(g *Game) {
 	g.guiLayer    = ebiten.NewImage(screenWidth, screenHeight)
 }
 
+func get_player_location(x *int, y *int) {
+	*x = 0
+	*y = 0
+}
+func set_player_location(player_id string, x int, y int) {
+
+}
 func startGUI(client_chan chan string){
     // initializing the game
     g := &Game{}
