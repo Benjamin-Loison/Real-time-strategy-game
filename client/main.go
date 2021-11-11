@@ -288,6 +288,9 @@ func main(){
     // initializing the game
     g := &Game{}
     Init(g)
+	// Running the client-server communication service
+	client_chan = make(chan string)
+	client_main("127.0.0.1", 10000, client_chan)
     //initializing ebiten
 	ebiten.SetWindowSize(screenWidth,screenHeight)
 	ebiten.SetWindowResizable(true)
