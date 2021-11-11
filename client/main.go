@@ -35,6 +35,21 @@ var (
 )
 
 
+type location_type int64
+const (
+	Floor location_type = 1
+	ElfBuilding
+	OrcBuilding
+	HumanBuilding
+	)
+
+type Location struct {
+	loc_type location_type
+	int_arg int
+	str_arg string
+	// TODO options map[string]string
+}
+
 type Entity struct {
 	x,y float64 //position
 	r   int //size of collision circle
