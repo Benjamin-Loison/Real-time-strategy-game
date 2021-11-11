@@ -106,7 +106,6 @@ func update_map(init_x , init_y, w, h int, location_list []Location) {
 				continue
 		}
 	}
-
 }
 
 func (g *Game) Update() error {
