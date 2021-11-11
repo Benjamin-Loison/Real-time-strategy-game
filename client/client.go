@@ -7,7 +7,13 @@ import (
 	"strings"
 	"bufio"
 	"os"
+	"time"
 )
+
+
+func logging(src string, message string) {
+	fmt.Println(time.Now().String() + "[" + src + "] " + message)
+}
 
 // Two global maps store the queries that are to be treated (either by us, or
 // by the server)
@@ -21,11 +27,11 @@ var (
 )
 
 func handle_server(c net.Conn, channel chan string) {
-	fmt.Println("[CLIENT] handling the conenction.")
+	logging("server handler", "The server handler has started.")
 	for {
 		netData, err := bufio.NewReader(c).ReadString('\n')
 		if (err != nil) {
-			fmt.Println("[CLIENT] error while reading from server")
+			logging("CLIENT", "error while reading from server")
 			continue
 		}
 		channel <- strings.TrimSpace(string(netData))
@@ -33,7 +39,7 @@ func handle_server(c net.Conn, channel chan string) {
 }
 
 func handle_local(channel chan string) {
-	fmt.Println("[CLIENT] Handling stdin")
+	logging("stdin handler", "The stdin handler has started.")
 	var reader = bufio.NewReader(os.Stdin)
 	for {
 		message, _ := reader.ReadString('\n')
@@ -59,19 +65,20 @@ func startClient(gui_chan_ptr *chan string) {
 	port = 10000
 
 	// Verbose
-	fmt.Println("[CLIENT] Client id: " + client_id)
+	logging("CLIENT", "The client id is " + client_id)
 
 	conn, err := net.Dial("tcp", host + ":" + strconv.Itoa(port))
 	if err != nil {
-		fmt.Printf("Some error %v", err)
+		logging("CLIENT", fmt.Sprintf("Error durig TCP dial: %v", err))
 		return
 	}
-	fmt.Println("[CLIENT] Connection established with " + host + ":" + strconv.Itoa(port))
+	logging("CLIENT",
+		fmt.Sprintf("Connection established with %s:%d", host, port))
 
 	go handle_server(conn, chan_server)
 	go handle_local(chan_stdin)
 
-	fmt.Println("[CLIENT] Starting the main client loop.")
+	logging("CLIENT", "Main loop is starting.")
 	for running {
 		select {
 			case s1 := <-chan_stdin :
@@ -83,8 +90,9 @@ func startClient(gui_chan_ptr *chan string) {
 					case "!!STATUS":
 						fmt.Println("[CLIENT]: Status: ...")
 					default:
-						fmt.Println("Sending " + s1 + "to the server.")
-						to_server(&conn, "info", "myinformation")
+						logging("CLIENT",
+							fmt.Sprintf("Command %s unknown, querying info", s1))
+						query_to_server(&conn, "info", "")
 				}
 			case s2 := <-chan_server:
 				// Recieving s2 from the server

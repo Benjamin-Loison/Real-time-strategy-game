@@ -26,8 +26,9 @@ func answer_server(conn *net.Conn, query_id string, query_ans string) {
 // The following decide what is to be done when the server sends a query to the client
 func manage_server_query(conn *net.Conn, query_id string, query_type string, query_str string) {
 	// Verbose
-	fmt.Println("New query:\n\tid: " + query_id + "\n\t\ttype: " + query_type +
-		"\n\t\tquery: " + query_str + "\n")
+	logging("Server → Client",
+		fmt.Sprintf("Query <id: %s>:\n\ttype: %s\n\toptions: %s",
+			query_id, query_type, query_str))
 
 	// Add the query to the map
 	server_queries[query_id] = query_type + ":" + query_str
@@ -38,7 +39,7 @@ func manage_server_query(conn *net.Conn, query_id string, query_type string, que
 		// Send back the client's ID
 		answer_server(conn, query_id, client_id)
 	case "map":
-		fmt.Println("The server should not ask for the map.")
+		logging("Server → Client", "Ignoring: the server should not ask for the map.")
 	case "location":
 		switch (query_str) {
 			case "get":
@@ -52,11 +53,11 @@ func manage_server_query(conn *net.Conn, query_id string, query_type string, que
 					y_coord, _ := strconv.Atoi(splitted[3])
 					set_player_location(player_id, x_coord, y_coord)
 				} else {
-					fmt.Println("[CLIENT] Ill-formed query from server")
+					logging("Server → Client", "Ill-formed query.")
 				}
 		}
 	default:
-		fmt.Println("Unknown query type %s.\n", query_type)
+		logging("Server → Client", "Unknown query type.")
 		delete(server_queries, query_id)
 	}
 }
@@ -77,11 +78,15 @@ func location_type_from_str(s string) location_type {
 }
 
 func manage_server_answer(answer_id string, answer_str string) {
+	// Verbose
+	logging("Server → Client",
+		fmt.Sprintf("QueiAnswer <id: %s>:\n\tanswer: %s",
+			answer_id, answer_str))
 	// Checks that the query exists
 	var ok bool
 	query_str, ok := client_queries[answer_id]
 	if(!ok) {
-		fmt.Println("New answer to unknown query!\n\tquery id: %s\n\tanswer:%s\n", answer_id, answer_str)
+		logging("Server → Client", "Unknown query id")
 	} else {
 		splitted := strings.Split(strings.Trim(query_str, "\n"), ":")
 		switch(splitted[0]) {
@@ -114,9 +119,8 @@ func manage_server_answer(answer_id string, answer_str string) {
 				// Update the map
 				update_map(init_x, init_y, w, h, location_list)
 			default:
-				fmt.Println("Got an answer for a query of unknown type.")
+				logging("Server → Client", "Unknown query type")
 		}
-		fmt.Println("Answer:\n\tquery id: %s\n\tanswer:%s\n", answer_id, answer_str)
 	}
 	delete(client_queries, answer_id)
 }
@@ -124,8 +128,6 @@ func manage_server_answer(answer_id string, answer_str string) {
 func from_server(conn *net.Conn, str string) {
 	switch(str[0]) {
 	case 'Q':
-		// Verbosity
-		fmt.Println("Server sends new query: '%s'", str)
 		// Parsing the query
 		var rg = regexp.MustCompile(`Q[ 0-9a-zA-Z]+\.[a-zA-Z 0-9]+:[a-zA-Z0-9 ]*`)
 		var idrg = regexp.MustCompile(`[0-9a-zA-Z ]+`)
@@ -137,11 +139,9 @@ func from_server(conn *net.Conn, str string) {
 			// Managing the parsed query
 			manage_server_query(conn, q_id, q_type, q_str)
 		} else {
-			fmt.Printf("The query is ill-formed!\n")
+			logging("Server → Client", "Ignoring: Ill-formed query: " + str)
 		}
 	case 'A':
-		// Verbosity
-		fmt.Println("Server sends answer: '%s'", str)
 		// Parsing the answer
 		var rg = regexp.MustCompile(`A[ 0-9a-zA-Z]+\.[a-zA-Z0-9 ]*`)
 		var idrg = regexp.MustCompile(`[0-9a-zA-Z ]+`)
@@ -151,11 +151,9 @@ func from_server(conn *net.Conn, str string) {
 			// Managing the parsed answer
 			manage_server_answer(a_id, a_str)
 		} else {
-			fmt.Printf("The answer is ill-formed!\n")
+			logging("Server → Client", "Ignoring: Ill-formed answer: " + str)
 		}
 	case 'S':
-		// Verbosity
-		fmt.Println("Server sends status: '%s'", str)
 		// Parsing the status
 		var rg = regexp.MustCompile(`S[0-9a-zA-Z]+\.(ok|nok)`)
 		var idrg = regexp.MustCompile(`[0-9a-zA-Z ]+`)
@@ -168,10 +166,10 @@ func from_server(conn *net.Conn, str string) {
 				panic("The server is angry at us!!!")
 			}
 		} else {
-			fmt.Printf("The status is ill-formed!\n")
+			logging("Server → Client", "Ignoring: Ill-formed status: " + str)
 		}
 	default:
-		fmt.Println("The server sent '%s':\n\tbad query.\n", str)
+		logging("Server → Client", "Ignoring: Ill-formed message: " + str)
 	}
 }
 
