@@ -80,7 +80,12 @@ type Game struct {
 	guiLayer *ebiten.Image
 }
 
+func createDummyEntity(x, y int) (Entity) {
+	return Entity{float64(x), float64(y), 32, treeSprite, 1, false}
+}
+
 func update_map(init_x , init_y, w, h int, location_list []Location) {
+	// update the map using informations provided by the client
 	
 	onScreenMap.origin_x = init_x
 	onScreenMap.origin_y = init_y
@@ -89,21 +94,20 @@ func update_map(init_x , init_y, w, h int, location_list []Location) {
 	onScreenMap.buildings = make([]Entity, 0)
 	onScreenMap.floor = make([]Entity, 0)
 
-	for _, l := range location_list {
+	for i, l := range location_list {
 		switch(l.loc_type) {
 			case ElfBuilding:
-				onScreenMap.buildings = append(onScreenMap.buildings, tree)
+				onScreenMap.buildings = append(onScreenMap.buildings, createDummyEntity(i%w, i/w))
 			case OrcBuilding:
-				onScreenMap.buildings = append(onScreenMap.buildings, tree)
+				onScreenMap.buildings = append(onScreenMap.buildings, createDummyEntity(i%w, i/w))
 			case HumanBuilding:
-				onScreenMap.buildings = append(onScreenMap.buildings, tree)
+				onScreenMap.buildings = append(onScreenMap.buildings, createDummyEntity(i%w, i/w))
 			case Floor:
 				continue
 			default:
 				continue
 		}
 	}
-
 }
 
 func (g *Game) Update() error {
@@ -198,6 +202,9 @@ func (e Entity) getScreenTransform() (*ebiten.DrawImageOptions) {
 	
 	op.GeoM.Reset()
 	op.ColorM.Reset()
+
+	// TODO check amount of translation needed
+	op.GeoM.Translate(float64(onScreenMap.origin_x), float64(onScreenMap.origin_y))
 	
 	op.GeoM.Translate( - float64(iw)/2 , - float64(ih)/2 )
 	op.GeoM.Scale(zoomFactor*e.sprite_base_scale, zoomFactor*e.sprite_base_scale)
@@ -215,6 +222,8 @@ func (e Entity) getScreenTranslation() (*ebiten.DrawImageOptions) {
 	
 	op.GeoM.Reset()
 	op.ColorM.Reset()
+
+	op.GeoM.Translate(float64(onScreenMap.origin_x), float64(onScreenMap.origin_y))
 	
 	op.GeoM.Translate( - float64(iw)/2 , - float64(ih)/2 )
 	op.GeoM.Translate(e.x*zoomFactor, e.y*zoomFactor)
@@ -224,18 +233,6 @@ func (e Entity) getScreenTranslation() (*ebiten.DrawImageOptions) {
 	
 	return op
 }
-func (e Entity) courgette() (*ebiten.DrawImageOptions) {
-	op := &ebiten.DrawImageOptions{}
-	//iw,ih := e.sprite.Size()
-	
-	op.GeoM.Reset()
-	op.ColorM.Reset()
-
-	op.GeoM.Scale(zoomFactor*e.sprite_base_scale, zoomFactor*e.sprite_base_scale)
-
-	return op
-}
-
 
 func (e Entity) drawHitbox(screen *ebiten.Image) {
 	op := e.getScreenTransform()
@@ -284,8 +281,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		e.drawHitbox(g.debugLayer)
 	}
 
-	////////////
 	drawSelectionRect(g.guiLayer)
+	////////////
 
 	screen.DrawImage(g.envLayer, nil)
 	screen.DrawImage(g.entityLayer, nil)
