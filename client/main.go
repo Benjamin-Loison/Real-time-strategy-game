@@ -55,6 +55,8 @@ func main() {
 	chan_stdin := make(chan string)
 	chan_server := make(chan string)
 	gui_chan = make(chan string)
+	host = "127.0.0.1"
+	port = 10000
 
 	// Verbose
 	fmt.Println("[CLIENT] Client id: " + client_id)

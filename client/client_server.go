@@ -42,9 +42,7 @@ func manage_server_query(conn *net.Conn, query_id string, query_type string, que
 	case "location":
 		switch (query_str) {
 			case "get":
-				var x int
-				var y int
-				get_player_location(&x, &y)
+				x, y := get_player_location()
 				answer_server(conn, query_id, strconv.Itoa(x) + "," + strconv.Itoa(y))
 			default:
 				if(strings.HasPrefix(query_str, "set,")) {

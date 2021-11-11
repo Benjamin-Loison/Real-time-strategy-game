@@ -1,7 +1,7 @@
 package main
 
 import (
-    "os"
+	"os"
 	"log"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -16,15 +16,15 @@ import (
 const (
 	screenWidth  = 1280
 	screenHeight = 720
-    ZOOM_STEP = 0.01
+	ZOOM_STEP = 0.01
 )
 
 var (
-	Red       = color.RGBA{255,0,0,255}
+	Red	   = color.RGBA{255,0,0,255}
 	inSelection = false
 	startSelection = [2]int{0, 0}
 	endSelection = [2]int{0, 0}
-    sprite = loadImageFromFile("media/sprites/Dino_blue.png")
+	sprite = loadImageFromFile("media/sprites/Dino_blue.png")
 	treeSprite = loadImageFromFile("media/sprites/baum.png")
 	dino = Entity{0, 0, 12, sprite.SubImage(image.Rect(0, 0, 24, 24)).(*ebiten.Image), 6, false}
 	tree = Entity{640, 360, 32, treeSprite, 1.0, false}
@@ -34,17 +34,17 @@ var (
 
 
 type Entity struct {
-    x,y float64 //position
-    r   int //size of collision circle
-    sprite *ebiten.Image
-    sprite_base_scale float64
-    selected bool
+	x,y float64 //position
+	r   int //size of collision circle
+	sprite *ebiten.Image
+	sprite_base_scale float64
+	selected bool
 }
 
 type Game struct {
 	keys []ebiten.Key
-    friendlyEntities []*Entity
-    envEntities []*Entity
+	friendlyEntities []*Entity
+	envEntities []*Entity
 
 	envLayer *ebiten.Image
 	entityLayer *ebiten.Image
@@ -82,22 +82,22 @@ func (g *Game) Update() error {
 			zoomFactor -= ZOOM_STEP
 		}
 	}
-    ////////////////////////////////////////////////
+	////////////////////////////////////////////////
 	return nil
 }
 
 func loadImageFromFile(path string) *ebiten.Image {
-    f, err := os.Open(path)
-    if err != nil {
-		log.Fatal(err)
-    }
-    defer f.Close()
-
-    img, _, err := image.Decode(f)
+	f, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
 	}
-    return ebiten.NewImageFromImage(img)
+	defer f.Close()
+
+	img, _, err := image.Decode(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return ebiten.NewImageFromImage(img)
 }
 
 
@@ -127,10 +127,10 @@ func drawSelectionRect(screen *ebiten.Image) {
 	  inSelection = false
 	}
 	if inSelection {
-        x  := float64(startSelection[0])
-        y  := float64(startSelection[1])
-        dx := float64(endSelection[0])
-        dy := float64(endSelection[1])
+		x  := float64(startSelection[0])
+		y  := float64(startSelection[1])
+		dx := float64(endSelection[0])
+		dy := float64(endSelection[1])
 
 		drawWireRect(screen, x, y, dx, dy, Red)
 	}
@@ -140,7 +140,7 @@ func drawSelectionRect(screen *ebiten.Image) {
 func (e Entity) getScreenTransform() (*ebiten.DrawImageOptions) {
 
 	op := &ebiten.DrawImageOptions{}
-    iw,ih := e.sprite.Size()
+	iw,ih := e.sprite.Size()
 	
 	op.GeoM.Reset()
 	op.ColorM.Reset()
@@ -157,7 +157,7 @@ func (e Entity) getScreenTransform() (*ebiten.DrawImageOptions) {
 func (e Entity) getScreenTranslation() (*ebiten.DrawImageOptions) {
 
 	op := &ebiten.DrawImageOptions{}
-    iw,ih := e.sprite.Size()
+	iw,ih := e.sprite.Size()
 	
 	op.GeoM.Reset()
 	op.ColorM.Reset()
@@ -172,7 +172,7 @@ func (e Entity) getScreenTranslation() (*ebiten.DrawImageOptions) {
 }
 func (e Entity) courgette() (*ebiten.DrawImageOptions) {
 	op := &ebiten.DrawImageOptions{}
-    //iw,ih := e.sprite.Size()
+	//iw,ih := e.sprite.Size()
 	
 	op.GeoM.Reset()
 	op.ColorM.Reset()
@@ -211,7 +211,7 @@ func getSelctionRect() (int, int, int, int) {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-    // clearing the screen
+	// clearing the screen
 	screen.Clear()
 	g.envLayer.Clear()
 	g.entityLayer.Clear()
@@ -220,17 +220,17 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	screen.Fill(color.White)	// while there is no background
 
-    // drawing the elements
-    for _, e := range g.envEntities {
-        e.drawEntity(g.envLayer)
+	// drawing the elements
+	for _, e := range g.envEntities {
+		e.drawEntity(g.envLayer)
 		e.drawHitbox(g.debugLayer)
-    }
-    for _, e := range g.friendlyEntities {
-        e.drawEntity(g.entityLayer)
+	}
+	for _, e := range g.friendlyEntities {
+		e.drawEntity(g.entityLayer)
 		e.drawHitbox(g.debugLayer)
-    }
+	}
 
-    ////////////
+	////////////
 	drawSelectionRect(g.guiLayer)
 
 	screen.DrawImage(g.envLayer, nil)
@@ -275,27 +275,26 @@ func createCircle(r int) (*ebiten.Image) {
 
 // Function to initialize the game
 func Init(g *Game) {
-    g.friendlyEntities = append(g.friendlyEntities, &dino)
-    g.envEntities = append(g.envEntities, &tree)
+	g.friendlyEntities = append(g.friendlyEntities, &dino)
+	g.envEntities = append(g.envEntities, &tree)
 
-	g.envLayer    = ebiten.NewImage(screenWidth, screenHeight)
+	g.envLayer	= ebiten.NewImage(screenWidth, screenHeight)
 	g.entityLayer = ebiten.NewImage(screenWidth, screenHeight)
 	g.debugLayer  = ebiten.NewImage(screenWidth, screenHeight)
-	g.guiLayer    = ebiten.NewImage(screenWidth, screenHeight)
+	g.guiLayer	= ebiten.NewImage(screenWidth, screenHeight)
 }
 
-func get_player_location(x *int, y *int) {
-	*x = 0
-	*y = 0
+func get_player_location() (int, int) {
+	return int(camera.x), int(camera.y)
 }
-func set_player_location(player_id string, x int, y int) {
+func set_player_location(player_id string, x int, y int) {}
 
-}
+
 func startGUI(client_chan chan string){
-    // initializing the game
-    g := &Game{}
-    Init(g)
-    //initializing ebiten
+	// initializing the game
+	g := &Game{}
+	Init(g)
+	//initializing ebiten
 	ebiten.SetWindowSize(screenWidth,screenHeight)
 	ebiten.SetWindowResizable(true)
 	ebiten.SetWindowTitle("EHO: Elves, humans and orks")
