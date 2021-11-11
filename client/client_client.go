@@ -12,7 +12,7 @@ func query_to_server(conn *net.Conn, query_type string, query_str string) {
 	// Add the query to our pool
 	client_queries[id] = query_type + ":" + query_str
 
-	query = fmt.Sprintf("Q%s.%s:%s", id, query_type, query_str)
+	query := fmt.Sprintf("Q%s.%s:%s", id, query_type, query_str)
 	logging("to_server", fmt.Sprintf("Sending query %s", query))
 	// Send the query
 	_, _ = (*conn).Write([]byte(query))

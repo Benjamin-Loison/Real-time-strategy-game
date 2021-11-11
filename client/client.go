@@ -70,7 +70,7 @@ func main() {
 	conn, err := net.Dial("tcp", host + ":" + strconv.Itoa(port))
 	if err != nil {
 		logging("CLIENT", fmt.Sprintf("Error durig TCP dial: %v", err))
-		exit(-1)
+		return
 	}
 	logging("CLIENT",
 		fmt.Sprintf("Connection established with %s:%d", host, port))

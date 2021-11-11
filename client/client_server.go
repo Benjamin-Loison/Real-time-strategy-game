@@ -28,7 +28,7 @@ func manage_server_query(conn *net.Conn, query_id string, query_type string, que
 	// Verbose
 	logging("Server → Client",
 		fmt.Sprintf("Query <id: %s>:\n\ttype: %s\n\toptions: %s",
-			query_id, query_type,n query_str))
+			query_id, query_type, query_str))
 
 	// Add the query to the map
 	server_queries[query_id] = query_type + ":" + query_str
