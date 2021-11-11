@@ -1,6 +1,6 @@
 CC		= go build
 EXEC	= rts
-SRC		= $(wildcard *.go)
+SRC		= $(wildcard src/*.go)
 
 .PHONY: clean run
 
