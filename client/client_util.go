@@ -1,9 +1,12 @@
 package main
 import (
-	"crypto/rand"
-	"encoding/hex"
+	//"crypto/rand"
+	//"encoding/hex"
+	"fmt"
+	"time"
 )
 
+/*
 func Bytes(n int) []byte {
 	b := make([]byte, n)
 	_, err := rand.Read(b)
@@ -12,8 +15,11 @@ func Bytes(n int) []byte {
 	}
 	return b
 }
+*/
 
-func random_id(n int) string {
-	return hex.EncodeToString(Bytes(n))
+func random_id(id int) string {
+	t := time.Now().UnixMilli()	// get the time to the millisecond
+	s := fmt.Sprintf("%d.%d", id, t)
+	return s
 }
 

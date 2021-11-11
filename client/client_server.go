@@ -21,7 +21,7 @@ func answer_server(conn *net.Conn, query_id string, query_ans string) {
 	_, _ = (*conn).Write([]byte("A" + query_id + "." + query_ans))
 }
 
-// The following decide what is to be done whenthe server sends us a query
+// The following decide what is to be done when the server sends a query to the client
 func manage_server_query(conn *net.Conn, query_id string, query_type string, query_str string) {
 	// Verbose
 	fmt.Println("New query:\n\tid: " + query_id + "\n\t\ttype: " + query_type +
