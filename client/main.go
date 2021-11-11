@@ -87,6 +87,10 @@ func createDummyEntity(x, y int) (Entity) {
 	return Entity{float64(x), float64(y), 32, treeSprite, 1, false}
 }
 
+func createFloor(x, y int) (Entity) {
+	return Entity{float64(x), float64(y), 32, floorSprite, 1, false}
+}
+
 // update_map updates the onScreenMap variable using informations provided by the client
 // init_x, init_y are the coordinates of the upper left corner of the provided area
 // w (resp. h) is the width (resp. height) of the provided area
@@ -109,7 +113,7 @@ func update_map(init_x , init_y, w, h int, location_list []Location) {
 			case HumanBuilding:
 				onScreenMap.buildings = append(onScreenMap.buildings, createDummyEntity(i%w, i/w))
 			case Floor:
-				onScreenMap.buildings = append(onScreenMap.floor, floor)
+				onScreenMap.floor = append(onScreenMap.floor, createFloor(i%w, i/w))
 				//continue
 			default:
 				continue
@@ -354,6 +358,7 @@ func Init(g *Game) {
 	g.guiLayer	= ebiten.NewImage(screenWidth, screenHeight)
 
 	onScreenMap.buildings = append(onScreenMap.buildings, tree)
+	onScreenMap.floor = append(onScreenMap.floor, floor)
 }
 
 func get_player_location() (int, int) {
