@@ -64,10 +64,22 @@ func manage_server_query(conn *net.Conn, query_id string, query_type string, que
 func manage_server_answer(answer_id string, answer_str string) {
 	// Checks that the query exists
 	var ok bool
-	_, ok = client_queries[answer_id]
+	query_str, ok = client_queries[answer_id]
 	if(!ok) {
 		fmt.Println("New answer to unknown query!\n\tquery id: %s\n\tanswer:%s\n", answer_id, answer_str)
 	} else {
+		splitted := strings.Split(strings.Trim(query_str, "\n"), ":")
+		switch(splitted[0]) {
+			case "info":
+				fmt.Println("[SERVER] ID: " + splitted[1])
+			case "map":
+				split_answer := strings.Split(answer_str, ",,")
+				position_list := split_answer[1:]
+				initial_position := split_answer[0]
+				//TODO!
+			default:
+				fmt.Println("Got an answer for a query of unknown type.")
+		}
 		fmt.Println("Answer:\n\tquery id: %s\n\tanswer:%s\n", answer_id, answer_str)
 	}
 	delete(client_queries, answer_id)

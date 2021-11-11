@@ -215,6 +215,23 @@ been dealt with.
 		player's location.\\\hline
 \end{tabular}
 
+
+\subsubsection{The map query}
+A client can query a map using \texttt{Q<id>.map:x,y,w,h}. This asks the server
+the map centered on \((x,\,y)\), with width \(w\) and height \(h\).
+
+The answer has the following form:
+\texttt{A<id>.i,j,,<descr>,,<descr>,,<descr>,,\dots}, where:
+\begin{itemize}
+	\item \((i,\,j)\) is the coordinate of the upper left location of the
+	returned sub-rectangle of the map
+	\item \texttt{<descr>} is the description of a location's block. This
+	description has the form \texttt{TYPE,INT,STR}.
+
+	The locations are given line by line (each line is of length \(w\)) and
+	there are \(h\) lines.
+\end{itemize}
+
 \subsection{Application packaging}
 
 The final work will be packaged:
