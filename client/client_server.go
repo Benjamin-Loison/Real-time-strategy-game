@@ -3,6 +3,8 @@ import (
 	"fmt"
 	"net"
 	"regexp"
+	"strconv"
+	"strings"
 	)
 
 /*
@@ -33,8 +35,28 @@ func manage_server_query(conn *net.Conn, query_id string, query_type string, que
 	// Manage the query depending on its type:
 	switch(query_type) {
 	case "info":
-		// Answers.
+		// Send back the client's ID
 		answer_server(conn, query_id, client_id)
+	case "map":
+		fmt.Println("The server should not ask for the map.")
+	case "location":
+		switch (query_str) {
+			case "get":
+				var x int
+				var y int
+				get_player_location(&x, &y)
+				answer_server(conn, query_id, strconv.Itoa(x) + "," + strconv.Itoa(y))
+			default:
+				if(strings.HasPrefix(query_str, "set,")) {
+					splitted := strings.Split(query_str, ",")
+					player_id := splitted[1]
+					x_coord, _ := strconv.Atoi(splitted[2])
+					y_coord, _ := strconv.Atoi(splitted[3])
+					set_player_location(player_id, x_coord, y_coord)
+				} else {
+					fmt.Println("[CLIENT] Ill-formed query from server")
+				}
+		}
 	default:
 		fmt.Println("Unknown query type %s.\n", query_type)
 		delete(server_queries, query_id)

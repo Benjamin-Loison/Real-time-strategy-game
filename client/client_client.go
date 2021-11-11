@@ -3,6 +3,7 @@ import (
 	"fmt"
 	"net"
 )
+
 func to_server(conn *net.Conn, query_type string, query_str string) {
 	// Generate a query id:
 	var id = ""
