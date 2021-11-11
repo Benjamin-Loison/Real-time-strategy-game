@@ -41,7 +41,7 @@ func handle_local(channel chan string) {
 	}
 }
 
-func main() {
+func startClient(gui_chan_ptr *chan string) {
 	/* Useful variables:
 		running
 			controls the main loop
@@ -54,7 +54,7 @@ func main() {
 	client_queries = make(map[string]string)
 	chan_stdin := make(chan string)
 	chan_server := make(chan string)
-	gui_chan = make(chan string)
+	*gui_chan_ptr = make(chan string)
 	host = "127.0.0.1"
 	port = 10000
 
@@ -70,7 +70,6 @@ func main() {
 
 	go handle_server(conn, chan_server)
 	go handle_local(chan_stdin)
-	go startGUI(gui_chan)
 
 	fmt.Println("[CLIENT] Starting the main client loop.")
 	for running {

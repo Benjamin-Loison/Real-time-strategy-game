@@ -30,6 +30,8 @@ var (
 	tree = Entity{640, 360, 32, treeSprite, 1.0, false}
 	camera = Entity{0, 0, 0,  nil , 1, false}	// TODO should be change to another more adapted type
 	zoomFactor = 1.0
+
+	client_chan chan string
 )
 
 
@@ -290,7 +292,10 @@ func get_player_location() (int, int) {
 func set_player_location(player_id string, x int, y int) {}
 
 
-func startGUI(client_chan chan string){
+func main(){
+	// starting the client
+	go startClient(&client_chan)
+
 	// initializing the game
 	g := &Game{}
 	Init(g)
