@@ -80,12 +80,16 @@ type Game struct {
 	guiLayer *ebiten.Image
 }
 
+// createDummyEntity returns an entity whose position is (x, y) on the map
 func createDummyEntity(x, y int) (Entity) {
 	return Entity{float64(x), float64(y), 32, treeSprite, 1, false}
 }
 
+// update_map updates the onScreenMap variable using informations provided by the client
+// init_x, init_y are the coordinates of the upper left corner of the provided area
+// w (resp. h) is the width (resp. height) of the provided area
+// location_list contains all the points of interest in the provided area
 func update_map(init_x , init_y, w, h int, location_list []Location) {
-	// update the map using informations provided by the client
 	
 	onScreenMap.origin_x = init_x
 	onScreenMap.origin_y = init_y
@@ -110,6 +114,8 @@ func update_map(init_x , init_y, w, h int, location_list []Location) {
 	}
 }
 
+// Update handle all the operations that should be done at every tick
+// for example looking and handling keyboard inputs
 func (g *Game) Update() error {
 
 	//////////// Handling Keyboard events ////////////
@@ -158,7 +164,7 @@ func loadImageFromFile(path string) *ebiten.Image {
 	return ebiten.NewImageFromImage(img)
 }
 
-
+// drawWireRect draws a wireframe rectangle
 func drawWireRect(screen *ebiten.Image, x, y, w, h float64, c color.Color) {
 	ebitenutil.DrawLine(screen, x   , y  , x+w , y   , c)
 	ebitenutil.DrawLine(screen, x   , y  , x   , y+h , c)
@@ -166,7 +172,7 @@ func drawWireRect(screen *ebiten.Image, x, y, w, h float64, c color.Color) {
 	ebitenutil.DrawLine(screen, x   , y+h, x+w , y+h , c)
 }
 
-
+// drawSelectionRect draws to screen the selection box
 func drawSelectionRect(screen *ebiten.Image) {
 
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
@@ -195,6 +201,7 @@ func drawSelectionRect(screen *ebiten.Image) {
 }
 
 
+// getScreenTransform returns the transformation to be applied to draw entity e
 func (e Entity) getScreenTransform() (*ebiten.DrawImageOptions) {
 
 	op := &ebiten.DrawImageOptions{}
@@ -215,6 +222,9 @@ func (e Entity) getScreenTransform() (*ebiten.DrawImageOptions) {
 	return op
 }
 
+
+// getScreenTranslation returns only the translation part of the transformation needed
+// to draw e
 func (e Entity) getScreenTranslation() (*ebiten.DrawImageOptions) {
 
 	op := &ebiten.DrawImageOptions{}
@@ -234,6 +244,7 @@ func (e Entity) getScreenTranslation() (*ebiten.DrawImageOptions) {
 	return op
 }
 
+// drawHitbox draws the collision box of e onto screen
 func (e Entity) drawHitbox(screen *ebiten.Image) {
 	op := e.getScreenTransform()
 	iw, ih := e.sprite.Size()
@@ -257,10 +268,14 @@ func (e Entity) drawEntity(screen *ebiten.Image) {
 	op = e.getScreenTransform()
 	screen.DrawImage(e.sprite, op)
 }
+
+// getSelctionRect returns the coordinates of the top left corner
+// as well as its width and height
 func getSelctionRect() (int, int, int, int) {
 	return startSelection[0], startSelection[1], endSelection[0], endSelection[1]
 }
 
+// Draw is called on every game tick to update the displayed image
 func (g *Game) Draw(screen *ebiten.Image) {
 	// clearing the screen
 	screen.Clear()
@@ -315,6 +330,7 @@ func (c *circle) At(x, y int) color.Color {
 	return color.Alpha{0}
 }
 
+// createCircle returns an image containing a circle of radius r
 func createCircle(r int) (*ebiten.Image) {
 	dst := image.NewRGBA(image.Rect(0, 0, 2*r, 2*r))
 	redctangle := image.NewRGBA(image.Rect(0, 0, 2*r, 2*r))
