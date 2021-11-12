@@ -10,27 +10,54 @@ use bufstream::BufStream;
 use std::io::BufRead;
 use regex::Regex;
 
-fn parse_query(id: &str, command: &str, options: &str) {
-}
-fn parse_answer(id: &str, command: &str, options: &str) {
-}
-fn parse_status(id: &str, options: &str) {
+fn logging(from: &str, msg: &str) {
+	println!("[{}]: {}", from, msg);
 }
 
+fn answer_client(stream: &mut BufStream<TcpStream>, id: &str, option: &str) {
+	let ans = format!("A{}.{}\n", id, option);
+	stream.write(ans.as_bytes());
+	stream.flush();
+}
 
-fn parse_incoming(msg: &str) {
+fn parse_query(stream: &mut BufStream<TcpStream>, id: &str, command: &str, options: &str) {
+	match command {
+		"info" => {
+			answer_client(stream, id, "MyId"); // TODO
+		}
+		_ => {
+			logging("parse_query", "Unknown command.")
+		}
+	}
+}
+fn parse_answer(stream: &mut BufStream<TcpStream>, id: &str, command: &str, options: &str) {
+	// TODO
+}
+
+fn parse_status(stream: &mut BufStream<TcpStream>, id: &str, options: &str) {
+	match options {
+		"ok" => {
+			logging(id, "Status Ok");
+		}
+		_ => {
+			logging(id, "Status not Ok");
+		}
+	}
+}
+
+fn parse_incoming(stream: &mut BufStream<TcpStream>, msg: &str) {
     let re_query = Regex::new(r"Q([a-zA-Z0-9]+).([a-zA-Z0-9]+):([a-zA-Z0-9,]*)").unwrap();
     let re_answer = Regex::new(r"A([a-zA-Z0-9]+).([a-zA-Z0-9]+):([a-zA-Z0-9,]*)").unwrap();
     let re_status = Regex::new(r"S([a-zA-Z0-9]+).(ok|nok)").unwrap();
     if re_query.is_match(msg) {
         let cap = re_query.captures(msg).unwrap();
-        parse_query(&cap[1], &cap[2], &cap[3]);
+        parse_query(stream, &cap[1], &cap[2], &cap[3]);
     } else if re_answer.is_match(msg) {
         let cap = re_answer.captures(msg).unwrap();
-        parse_answer(&cap[1], &cap[2], &cap[3]);
+        parse_answer(stream, &cap[1], &cap[2], &cap[3]);
     } else if re_status.is_match(msg) {
-        let cap = re_query.captures(msg).unwrap();
-        parse_status(&cap[1], &cap[2]);
+        let cap = re_status.captures(msg).unwrap();
+        parse_status(stream, &cap[1], &cap[2]);
     } else {
         println!("Invalid incoming message");
     }
@@ -38,13 +65,10 @@ fn parse_incoming(msg: &str) {
 
 fn handle_connection(stream: &mut BufStream<TcpStream>) {
 	loop {
-		stream.write(b" > ").unwrap();
-		stream.flush().unwrap();
-
 		let mut reads = String::new();
 		stream.read_line(&mut reads).unwrap(); //TODO: non-blocking read
 		if reads.trim().len() != 0 {
-            parse_incoming(reads.trim());
+			parse_incoming(stream, reads.trim());
 		}
 	}
 }
