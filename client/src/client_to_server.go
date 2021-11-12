@@ -6,11 +6,11 @@ import (
 
 // The following function sends an answer to the server
 func answer_to_server(conn *net.Conn, query_id string, query_ans string) {
-	_, _ = (*conn).Write([]byte("A" + query_id + "." + query_ans))
+	_, _ = (*conn).Write([]byte("A" + query_id + "." + query_ans + "\n"))
 }
 
 func status_to_server(conn *net.Conn, query_id string, query_status string) {
-	_, _ = (*conn).Write([]byte("S" + query_id + "." + query_status))
+	_, _ = (*conn).Write([]byte("S" + query_id + "." + query_status + "\n"))
 }
 
 
@@ -25,6 +25,6 @@ func query_to_server(conn *net.Conn, query_type string, query_str string) {
 	query := fmt.Sprintf("Q%s.%s:%s", id, query_type, query_str)
 	logging("to_server", fmt.Sprintf("Sending query %s", query))
 	// Send the query
-	_, _ = (*conn).Write([]byte(query))
+	_, _ = (*conn).Write([]byte(query + "\n"))
 }
 
