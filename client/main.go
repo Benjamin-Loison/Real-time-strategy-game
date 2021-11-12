@@ -283,7 +283,7 @@ func Init(g *Game) {
 	g.debugLayer  = ebiten.NewImage(screenWidth, screenHeight)
 	g.guiLayer    = ebiten.NewImage(screenWidth, screenHeight)
 }
-
+/*
 func main(){
     // initializing the game
     g := &Game{}
@@ -296,3 +296,4 @@ func main(){
 		log.Fatal(err)
 	}
 }
+*/

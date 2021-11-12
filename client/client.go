@@ -17,12 +17,12 @@ func main() {
 	client_id = random_id(10)
 	fmt.Println("Client id: " + client_id)
 
-	conn, err := net.Dial("tcp", "138.231.144.134:8000")
+	conn, err := net.Dial("tcp", "localhost:8888")
 	if err != nil {
 		fmt.Printf("Some error %v", err)
 		return
 	}
-
+    //fmt.Printf("coming1")
 	keep_going := true
 
 	in_stdin := make(chan string)
