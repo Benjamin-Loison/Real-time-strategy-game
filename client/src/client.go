@@ -66,7 +66,7 @@ func startClient(gui_chan_ptr *chan string) {
 		port, _ = strconv.Atoi(os.Args[2])
 	} else {
 		host = "127.0.0.1"
-		port = 8888
+		port = 10000
 	}
 
 	// Verbose

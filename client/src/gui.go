@@ -355,21 +355,6 @@ func Init(g *Game) {
 	onScreenMap.buildings = append(onScreenMap.buildings, tree)
 	onScreenMap.floor = append(onScreenMap.floor, floor)
 }
-/*
-func main(){
-    // initializing the game
-    g := &Game{}
-    Init(g)
-    //initializing ebiten
-	ebiten.SetWindowSize(screenWidth,screenHeight)
-	ebiten.SetWindowResizable(true)
-	ebiten.SetWindowTitle("EHO: Elves, humans and orks")
-	if err := ebiten.RunGame(g); err != nil {
-		log.Fatal(err)
-	}
-}
-*/
-
 
 func get_player_location() (int, int) {
 	return int(camera.x), int(camera.y)
