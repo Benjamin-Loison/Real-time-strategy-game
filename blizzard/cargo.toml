@@ -1,0 +1,10 @@
+[workspace]
+
+members = [
+    "server",
+    "uid",
+    "engine",
+    "engine/engine_derive",
+    "example",
+    "math",
+]

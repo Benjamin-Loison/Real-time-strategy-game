@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{geometry}
+\usepackage{float}
 
 
 
@@ -172,6 +173,63 @@ improvement and changes that may be implemented some day:
 	third boundary\footnote{See the description of the map synchronisation
 	between the client and the server.}.
 	\end{itemize}
+\end{itemize}
+
+\subsection{Protocol specification}
+The protocol specifies how the server can send queries to a client (or how a
+client can query the server).
+
+\subsubsection{Semantic of the messages}
+\begin{figure}[H]
+	\centering
+	{\tt
+	\begin{tabular}{rrl}
+		<message> & := & <query> | <answer> | <status>\\
+		<query> & := & Q<id>.<keyword>:<option>\\
+		<answer> & := &A<id>.<option>\\
+		<status> & := &S<id>.ok\\
+			&|& S<id>.nok\\
+		<id> &:= & [a-zA-Z0-9]+\\
+		<keyword> &:= & [a-zA-Z0-9]+\\
+		<option> &:= & [a-zA-Z0-9,]*\\
+	\end{tabular}
+	}
+	\caption{Semantic of the messages sent between the client and the server}
+\end{figure}
+
+The \texttt{<id>} element has to be unique for a given query. It will be used
+by the answer and status messages that follow to identifies the query that has
+been dealt with.
+
+\subsubsection{List of valid queries}
+\begin{tabular}{|l|l|l|}
+	\hline
+	\textbf{Keyword}&\textbf{Option}&Meaning\\\hline
+	info&\(\epsilon\)&Ask a client ID (if the server is the sender\\
+		 &&Ask the server ID (if a client is the sender\\\hline
+	map&x,y,w,h&Client to server:\\
+		&& Send the map centered on \((x,\,y)\), of width \(w\) and height
+		\(h\)\\\hline
+	location & get & Server to Client: ask a player's location\\\hline
+	location & set,<player's id> & Server to Client: Send a client another
+		player's location.\\\hline
+\end{tabular}
+
+
+\subsubsection{The map query}
+A client can query a map using \texttt{Q<id>.map:x,y,w,h}. This asks the server
+the map centered on \((x,\,y)\), with width \(w\) and height \(h\).
+
+The answer has the following form:
+\texttt{A<id>.i,j,,<descr>,,<descr>,,<descr>,,\dots}, where:
+\begin{itemize}
+	\item \((i,\,j)\) is the coordinate of the upper left location of the
+	returned sub-rectangle of the map
+	\item \texttt{<descr>} is the description of a location's block. This
+	description has the form \texttt{TYPE,INT,STR}.
+
+	The locations are given line by line (each line is of length \(w\)) and
+	there are \(h\) lines.
 \end{itemize}
 
 \subsection{Application packaging}
