@@ -355,7 +355,6 @@ func Init(g *Game) {
 	onScreenMap.buildings = append(onScreenMap.buildings, tree)
 	onScreenMap.floor = append(onScreenMap.floor, floor)
 }
-<<<<<<< HEAD:client/main.go
 /*
 func main(){
     // initializing the game
@@ -370,11 +369,10 @@ func main(){
 	}
 }
 */
-=======
+
 
 func get_player_location() (int, int) {
 	return int(camera.x), int(camera.y)
 }
 func set_player_location(player_id string, x int, y int) {}
 
->>>>>>> 6b55ea1401cdcdaa1535dc0d11f8f2e62f49164c:client/src/gui.go
