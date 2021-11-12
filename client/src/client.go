@@ -84,6 +84,7 @@ func startClient(gui_chan_ptr *chan string) {
 	go handle_local(chan_stdin)
 
 	logging("CLIENT", "Fetching the startup map.")
+	query_to_server(&conn, "info", "")// Warning: static parameters.
 	query_to_server(&conn, "map", "0,0,100,100")// Warning: static parameters.
 
 	logging("CLIENT", "Main loop is starting.")
