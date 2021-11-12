@@ -70,17 +70,17 @@ fn client(msg: Message, port: u32, mut back1: &mut String, playerlist: Arc<Mutex
         Message::Query{ID, ttype, option} => {
             let mut list = playerlist.lock().unwrap();
             let prov = list.provide();
-            *back1 = format!{"A{}:{}", port, prov};
+            *back1 = format!{"A{}:{}\n", port, prov};
         }
         Message::Answer{ID, feedback} => {
             let back2:&str = "OK";
-            *back1 = format!{"S{}:{}", port, back2};
+            *back1 = format!{"S{}:{}\n", port, back2};
         }
         Message::Status{ID, feedback1} => {
         }
         Message::None => {
             let back2:&str = "what are you asking for?";
-            *back1 = format!{"Q{}.{}:{}", port, "ask", back2};
+            *back1 = format!{"Q{}.{}:{}\n", port, "ask", back2};
         }    
     }
 }
@@ -120,10 +120,6 @@ fn get(msg: Message) -> Result<Position, &'static str> {
 
 fn handle_connection(stream: &mut BufStream<TcpStream>, playerlist: Arc<Mutex<PositionRegistry>>, adr: u32) {
 	loop {
-	    
-		stream.write(b" > ").unwrap();
-		stream.flush().unwrap();
-
 		let mut reads = String::new();
 		stream.read_line(&mut reads).unwrap(); //TODO: non-blocking read
 		
