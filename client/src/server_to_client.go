@@ -61,7 +61,7 @@ func manage_server_query(conn *net.Conn, query_id string, query_type string, que
 func manage_server_answer(conn *net.Conn, answer_id string, answer_str string) {
 	// Verbose
 	logging("Server → Client",
-		fmt.Sprintf("QueiAnswer <id: %s>:\n\tanswer: %s",
+		fmt.Sprintf("Recieving answer <id: %s>: answer= %s",
 			answer_id, answer_str))
 	// Checks that the query exists
 	query_str, ok := client_queries[answer_id]
@@ -73,14 +73,17 @@ func manage_server_answer(conn *net.Conn, answer_id string, answer_str string) {
 		splitted := strings.Split(strings.Trim(query_str, "\n"), ":")
 		switch(splitted[0]) {
 			case "info":
-				fmt.Println("[SERVER] ID: " + splitted[1])
+				serverID = answer_str
+				fmt.Println("[SERVER] ID: " + serverID)
 				status_to_server(conn, answer_id, "ok")
 			case "map":
+				//logging("Server → Client", "The query was " + query_str)
+				logging("Server → Client", fmt.Sprintf("[map] <%s> %s", answer_id, answer_str))
 				// Split the whole answer
 				split_answer := strings.Split(answer_str, ",,")
 
-				w, _ := strconv.Atoi(strings.Split(splitted[1], ",")[3])
-				h, _ := strconv.Atoi(strings.Split(splitted[1], ",")[4])
+				w, _ := strconv.Atoi(strings.Split(splitted[1], ",")[2])
+				h, _ := strconv.Atoi(strings.Split(splitted[1], ",")[3])
 
 				// Fetch the initiam location
 				initial_position := strings.Split(split_answer[0], ",")
@@ -112,6 +115,7 @@ func manage_server_answer(conn *net.Conn, answer_id string, answer_str string) {
 }
 
 func from_server(conn *net.Conn, str string) {
+	logging("Server → Client", "Recieving " + str)
 	switch(str[0]) {
 	case 'Q':
 		// Parsing the query
@@ -141,7 +145,7 @@ func from_server(conn *net.Conn, str string) {
 		}
 	case 'S':
 		// Parsing the status
-		var rg = regexp.MustCompile(`S[0-9a-zA-Z]+\.(ok|nok)`)
+		var rg = regexp.MustCompile(`S[0-9a-zA-Z]+\.([o|O][k|K]|[n|N][o|O][k|K])`)
 		var idrg = regexp.MustCompile(`[0-9a-zA-Z ]+`)
 		if (rg.MatchString(str)) {// the query is valid
 			var s_id = (idrg.FindString(str))[1:]

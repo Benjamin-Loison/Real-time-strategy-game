@@ -4,11 +4,11 @@ SRC		= $(wildcard src/*.go)
 
 .PHONY: clean run
 
-run: $(EXEC)
-	./$(EXEC)
-
 $(EXEC): $(SRC)
 	$(CC) -o $(EXEC) $^
+
+run: $(EXEC)
+	./$(EXEC)
 
 clean:
 	rm $(EXEC)

@@ -6,11 +6,15 @@ import (
 
 // The following function sends an answer to the server
 func answer_to_server(conn *net.Conn, query_id string, query_ans string) {
-	_, _ = (*conn).Write([]byte("A" + query_id + "." + query_ans + "\n"))
+	str := "A" + query_id + "." + query_ans + "\n"
+	logging("Sending the answer: ", str)
+	_, _ = (*conn).Write([]byte(str))
 }
 
 func status_to_server(conn *net.Conn, query_id string, query_status string) {
-	_, _ = (*conn).Write([]byte("S" + query_id + "." + query_status + "\n"))
+	str := "S" + query_id + "." + query_status + "\n"
+	logging("Sending the status: ", str)
+	_, _ = (*conn).Write([]byte(str))
 }
 
 

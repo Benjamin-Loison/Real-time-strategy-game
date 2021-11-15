@@ -34,7 +34,7 @@ func location_type_from_str(s string) location_type {
 
 func random_id(id int) string {
 	t := time.Now().UnixMilli()	// get the time to the millisecond
-	s := fmt.Sprintf("%d%d", id, t)
+	s := fmt.Sprintf("%d%d", t, id)
 	return s
 }
 

@@ -11,6 +11,9 @@ import (
 )
 
 
+var serverID string
+
+
 func logging(src string, message string) {
 	fmt.Println(time.Now().Format(time.ANSIC) + "[" + src + "] " + message)
 }
@@ -31,7 +34,8 @@ func handle_server(c net.Conn, channel chan string) {
 	for {
 		netData, err := bufio.NewReader(c).ReadString('\n')
 		if (err != nil) {
-			logging("CLIENT", "error while reading from server")
+			logging("Socket", fmt.Sprintf("error while reading from server: %v", err))
+			time.Sleep(1 * time.Second)
 			continue
 		}
 		channel <- strings.TrimSpace(string(netData))
@@ -47,7 +51,7 @@ func handle_local(channel chan string) {
 	}
 }
 
-func startClient(gui_chan_ptr *chan string) {
+func startClient(gui_chan_ptr *chan string, config Configuration) {
 	/* Useful variables:
 		running
 			controls the main loop
@@ -65,8 +69,8 @@ func startClient(gui_chan_ptr *chan string) {
 		host = os.Args[1]
 		port, _ = strconv.Atoi(os.Args[2])
 	} else {
-		host = "127.0.0.1"
-		port = 10000
+		host = config.hostname
+		port = config.port
 	}
 
 	// Verbose
@@ -74,7 +78,8 @@ func startClient(gui_chan_ptr *chan string) {
 
 	conn, err := net.Dial("tcp", host + ":" + strconv.Itoa(port))
 	if err != nil {
-		logging("CLIENT", fmt.Sprintf("Error durig TCP dial: %v", err))
+		logging("Connection", fmt.Sprintf("Error durig TCP dial: %v", err))
+		logging("Connection", fmt.Sprintf("\tHostname: %s, port: %d", host, port))
 		return
 	}
 	logging("CLIENT",
@@ -83,9 +88,11 @@ func startClient(gui_chan_ptr *chan string) {
 	go handle_server(conn, chan_server)
 	go handle_local(chan_stdin)
 
-	logging("CLIENT", "Fetching the startup map.")
+	time.Sleep(5 * time.Second)
 	query_to_server(&conn, "info", "")// Warning: static parameters.
+	time.Sleep(time.Second)
 	query_to_server(&conn, "map", "0,0,100,100")// Warning: static parameters.
+	//#query_to_server(&conn, "location", "0,0,100,100")// Warning: static parameters.
 
 	logging("CLIENT", "Main loop is starting.")
 	for running {
