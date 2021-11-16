@@ -191,7 +191,7 @@ func (g *Game) Update() error {
 }
 
 func loadImageFromFile(path string) *ebiten.Image {
-	path = "../media/sprites/" + path
+	path = "media/sprites/" + path
 	f, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
