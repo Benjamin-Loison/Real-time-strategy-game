@@ -11,7 +11,8 @@ func main(){
 	config := loadConfig("conf/conf.json")
 
 	// starting the client
-	go startClient(&client_chan, config)
+	running = true
+	go run_client(&client_chan, config, &running)
 
 	// initializing the game
 	g := &Game{}
@@ -25,6 +26,6 @@ func main(){
 		// Question: est-ce qu'on garde log? Si oui, est-ce que c'est aps
 		// overkill (log systèmes ? ou  stderr, quel context ?)
 		log.Fatal(err)
-		os.Exit(1)
+		return
 	}
 }

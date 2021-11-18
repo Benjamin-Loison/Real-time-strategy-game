@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 	"log"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -121,6 +122,9 @@ func update_map(init_x , init_y, w, h int, location_list []Location) {
 // Update handle all the operations that should be done at every tick
 // for example looking and handling keyboard inputs
 func (g *Game) Update() error {
+	if running == false {
+		return errors.New("End of the game.")
+	}
 
 	//////////// Handling Keyboard events ////////////
 	g.keys = inpututil.AppendPressedKeys(g.keys[:0])

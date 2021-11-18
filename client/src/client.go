@@ -19,6 +19,9 @@ func logging(src string, message string) {
 }
 
 var (
+	// Controls the main event loop
+	running bool
+
 	// server_queries (resp. client_queries) map[string] string store the active queries,
 	// i.e. queries which have not been set valid by the return of an "ok"
 	// status (resp. while no correcr answer has been sent).
@@ -64,58 +67,56 @@ func handle_local(channel chan string) {
 	logging("stdin", "Stopping routing traffic.")
 }
 
-func startClient(gui_chan_ptr *chan string, config Configuration) {
+func run_client(gui_chan_ptr *chan string, config Configuration, running *bool) {
 	/* Useful variables:
 		running
-			controls the main loop
+		*	controls the main loop
 		clientID
 			random ID for the client
 	*/
-	running := true
 	client_id = random_id(10)
 	server_queries = make(map[string]string)
 	client_queries = make(map[string]string)
 	chan_stdin := make(chan string)
 	chan_server := make(chan string)
 	*gui_chan_ptr = make(chan string)
-	if(len(os.Args) == 3) {
-		host = os.Args[1]
-		port, _ = strconv.Atoi(os.Args[2])
-	} else {
-		host = config.hostname
-		port = config.port
-	}
 
 	// Verbose
 	logging("CLIENT", "The client id is " + client_id)
 
-	conn, err := net.Dial("tcp", host + ":" + strconv.Itoa(port))
+	conn, err := net.Dial("tcp", config.hostname + ":" + strconv.Itoa(config.port))
 	if err != nil {
 		logging("Connection", fmt.Sprintf("Error durig TCP dial: %v", err))
-		logging("Connection", fmt.Sprintf("\tHostname: %s, port: %d", host, port))
+		logging("Connection", fmt.Sprintf("\tHostname: %s, port: %d", config.hostname, config.port))
 		return
 	}
+	defer conn.Close()
 	logging("CLIENT",
 		fmt.Sprintf("Connection established with %s:%d", host, port))
 
+	// Listen the standart input and the server in co-processes
 	go handle_server(conn, chan_server)
 	go handle_local(chan_stdin)
 
+	// Wait for the co-processes to dump their initial messages
 	time.Sleep(5 * time.Second)
+
+	// Initiate the game: ask the server for its identification number
 	query_to_server(&conn, "info", "")// Warning: static parameters.
 	time.Sleep(time.Second)
 	query_to_server(&conn, "map", "0,0,100,100")// Warning: static parameters.
 	//query_to_server(&conn, "location", "0,0,100,100")// Warning: static parameters.
 
 	logging("CLIENT", "Main loop is starting.")
-	for running {
+	for *running {
 		select {
 			case s1 := <-chan_stdin :
 				// Recieving s1 from the terminal
 				switch strings.Trim(s1, "\n") {
 					case "!!QUIT":
-						running = false
 						gui_chan <- "QUIT"
+						*running = false
+						return
 					case "!!STATUS":
 						fmt.Println("[CLIENT]: Status: ...")
 					default:
@@ -129,6 +130,5 @@ func startClient(gui_chan_ptr *chan string, config Configuration) {
 		}
 	}
 
-	conn.Close()
 }
 
