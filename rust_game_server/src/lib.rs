@@ -68,7 +68,8 @@ impl Position {
         println!("position({},{})", self.x, self.y);
     }
     pub fn provide(&self) -> String {
-        format!("position:({},{})", self.x, self.y)
+        //format!("position:({},{})", self.x, self.y)
+        format!("({},{})", self.x, self.y)
     }
 }
 

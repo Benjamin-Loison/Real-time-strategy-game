@@ -82,7 +82,7 @@ pub fn prepare_inside_players(stream: TcpStream, owner: String, playerlist: Arc<
 				for (ids, entitys) in list {
 					let stream_clone1_clone = stream_clone1.try_clone().unwrap();
 					let mut output = String::new();
-					output.push_str(&format!("set ids:{} {}",ids, entitys.position.provide()));
+					output.push_str(&format!("set {} {}",ids, entitys.position.provide()));
 					query_client(stream_clone1_clone, &id.to_string(), &output);
 				}
 			}
@@ -90,19 +90,6 @@ pub fn prepare_inside_players(stream: TcpStream, owner: String, playerlist: Arc<
 				query_client(stream_clone1, &id.to_string(), "get");
 			}
 		}
-		/*
-		let mut output = String::from("set ");
-		match thestring {
-			"set" => {
-				output.push_str(&playerlist_unwrap.players_nearby(*id));
-				output.push_str("\n");
-				query_client(stream_clone1, &id.to_string(), &output);
-			}
-			_ => {
-				query_client(stream_clone1, &id.to_string(), "get");
-			}
-		}
-		*/
 	}
 }
 
