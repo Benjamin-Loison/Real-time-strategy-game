@@ -80,9 +80,10 @@ pub fn prepare_inside_players(stream: TcpStream, owner: String, playerlist: Arc<
 				let list = playerlist_unwrap.players_nearby(*id);
 				//let stream_clone1_clone = stream_clone1.try_clone().unwrap();
 				for (ids, entitys) in list {
+					println!();
 					let stream_clone1_clone = stream_clone1.try_clone().unwrap();
 					let mut output = String::new();
-					output.push_str(&format!("set {} {}",ids, entitys.position.provide()));
+					output.push_str(&format!("set,{},{}",ids, entitys.position.provide()));
 					query_client(stream_clone1_clone, &id.to_string(), &output);
 				}
 			}
@@ -99,6 +100,8 @@ pub fn send_map_data(stream: TcpStream, id: &str, options: &str, playerlist: Arc
 	let mut playerlist_clone1 = Arc::clone(&playerlist);
 	let mut playerlist_clone2 = Arc::clone(&playerlist);
 	let mut stream_clone2 = stream.try_clone().unwrap();
+	println!("the string I receive:{}", options);
+	println!("lets print vec:{:?}", xywh);
 	position_update(stream, id, xywh[0], xywh[1], xywh[2], xywh[3], playerlist_clone1, sender);
 	let playerlist_clone2_unwrap = playerlist_clone2.lock().unwrap();
 	let playerlist_clone2_unwrap_clone = playerlist_clone2_unwrap.clone();
@@ -201,7 +204,7 @@ sender: Sender<Arc<Mutex<EntityRegistry>>>) {
 			let mut streamreader = BufReader::new(&stream_clone1);
 			let mut reads = String::new();
 			streamreader.read_line(&mut reads).unwrap(); //TODO: non-blocking read
-			//println!("the message I receive: {}", reads);
+			println!("the message I receive: {}", reads);
 			let mut playerlist_cloned1 = Arc::clone(&playerlist_clone1);
 			if reads.trim().len() != 0 {
 				parse_incoming(stream_clone1_new, reads.trim(), playerlist_cloned1, sender_thread);

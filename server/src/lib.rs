@@ -69,7 +69,7 @@ impl Position {
     }
     pub fn provide(&self) -> String {
         //format!("position:({},{})", self.x, self.y)
-        format!("({},{})", self.x, self.y)
+        format!("{},{}", self.x, self.y)
     }
 }
 
@@ -119,7 +119,7 @@ impl Thing {
     pub fn provide(&self) -> String {
         let type_info = self.thetype.provide();
         let id_info = format!("{}", self.id);
-        format!{"{} {} {}", type_info, id_info, self.thestring}
+        format!{"{},{},{}", type_info, id_info, self.thestring}
     }
 }
 
@@ -163,7 +163,10 @@ impl EntityRegistry {
                 //println!("printold:{:?}", old_ownership);
                 let mut old_ownership1 = old_ownership.clone();
                 //println!("printid:{}", id);
-                old_ownership1.push(id);
+                if old_ownership1.contains(&id) == false {
+                    old_ownership1.push(id);
+                }
+                //old_ownership1.push(id);
                 //println!("printold1:{:?}", old_ownership1);
                 new_ownership = old_ownership1.to_vec();
                 //println!("printnew:{:?}", new_ownership);
@@ -237,7 +240,7 @@ impl EntityRegistry {
                 output.push_str(&format!(",,"));
                 output.push_str(&new_thing.provide());
             }
-            output.push_str("\n");
+           // output.push_str("\n");
         }
         println!("the bigframe of player {}: \n{}", id, &output);
         return output;
@@ -283,7 +286,7 @@ impl EntityRegistry {
 			let mut owner_clone = new_entity.owner.clone();
 			let mut view_clone = new_entity.view.clone();
 			let mut position_clone = new_entity.position.clone();
-			if self.inside_or_not(fixed_entity_clone, new_entity) == true {
+			if self.inside_or_not(fixed_entity_clone, new_entity) & (new_id != id) {
 				internal_playerlist.update("human", new_id, position_clone, owner_clone, view_clone.x, view_clone.y);
 			}
 		}
