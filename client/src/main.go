@@ -1,63 +1,46 @@
 package main
 
 import (
-	"io/ioutil"
-	"fmt"
 	"log"
 	"github.com/hajimehoshi/ebiten/v2"
 	_ "image/png"
-	"encoding/json"
-	"os"
-	"flag"
 )
-type Configuration struct {
-	hostname string `json:"hostname"`
-	port     int `json:"port"`
-}
-var client_chan chan string
 
-func loadConfig(file_name string) Configuration {
-	// Read the main configuration file
-	file, err := ioutil.ReadFile(file_name)
-	if err != nil {
-		logging("Conf loader", fmt.Sprintf("Cannot open the config file: %v", err))
-		os.Exit(-1)
-	}
-	//defer file.Close()
+var (
+	// Stores teh server ID string
+	serverID string
 
-	var configuration Configuration
-	var conf map[string]interface{}
+	// server_queries (resp. client_queries) map[string] string store the active queries,
+	// i.e. queries which have not been set valid by the return of an "ok"
+	// status (resp. while no correcr answer has been sent).
+	server_queries map[string]string
+	client_queries map[string]string
 
-	err = json.Unmarshal(file, &conf)
-	if err != nil {
-		logging("Conf loader", fmt.Sprintf("Cannot parse the config file: %v", err))
-		configuration = Configuration {hostname: "138.231.144.134", port: 80}
-	} else {
-		configuration = Configuration {
-			hostname: conf["hostname"].(string),
-			port: int(conf["port"].(float64))}
-	}
+	// The random client ID
+	client_id string
 
-	// Parse the command line
-	override_addr_parsed := flag.String("n", configuration.hostname, "Hostname of the server (ip address or name)")
-	override_port_parsed := flag.Int("p", configuration.port, "Port of the remote server")
-	flag.Parse()
+	// The ip address and port of the server
+	host string
+	port int
 
-	configuration.hostname = *override_addr_parsed
-	configuration.port = *override_port_parsed
+	// The channel that interacts with the gui part of the code (not required at
+	// the moment)
+	gui_chan chan string
+	map_chan chan ServerMap
+)
 
-	logging("Conf loader",
-		fmt.Sprintf("Hostname: %s, port: %d", configuration.hostname, configuration.port))
+type ServerMap struct {
+	x_init, y_init, w, h int
+	loc []Location
 
-	return configuration
 }
 
 func main(){
 	// Load the configuration
 	config := loadConfig("conf/conf.json")
 
-	// starting the client
-	go startClient(&client_chan, config)
+	// starting a co-process to deal with the server
+	go run_client(&client_chan, &map_chan, config)
 
 	// initializing the game
 	g := &Game{}
@@ -67,6 +50,10 @@ func main(){
 	ebiten.SetWindowResizable(true)
 	ebiten.SetWindowTitle("EHO: Elves, humans and orks")
 	if err := ebiten.RunGame(g); err != nil {
+		logging("GUI", "Unexpected failure of the graphical engine.")
+		// Question: est-ce qu'on garde log? Si oui, est-ce que c'est aps
+		// overkill (log systèmes ? ou  stderr, quel context ?)
 		log.Fatal(err)
+		return
 	}
 }

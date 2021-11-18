@@ -6,3 +6,5 @@ authors = ["Clemens Wallrath <dev@nervengiftlabs.de>"]
 [dependencies]
 bufstream = "0.1"
 regex = "1"
+crossbeam-channel = "0.5"
+
