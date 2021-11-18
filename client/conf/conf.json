@@ -8,5 +8,6 @@
         "Right": "R",
         "Up": "U",
         "Down": "D"
-    }
+    },
+    "Pseudo": "JoueurTest"
 }

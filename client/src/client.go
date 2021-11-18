@@ -1,34 +1,21 @@
 package main
 
 import (
-	"fmt"
-	"net"
-	"strconv"
-	"strings"
-	"bufio"
-	"os"
-	"time"
+    "net"
+    "fmt"
+    "strconv"
+    "bufio"
+    "time"
+    "strings"
 )
 
 // Main fucntion for the part of the client that chats both with the server and
 // the gui part.
-func run_client(gui_chan_ptr *chan string, map_chan *chan ServerMap, config Configuration_t) {
-	// Initialisation of useful variables (descsribed at their declaration in
-	// main.go)
-	client_id = random_id(10)
-	server_queries = make(map[string]string)
-	client_queries = make(map[string]string)
-
-	// Channel to speak with the gui part of the app
-	*gui_chan_ptr = make(chan string, 2)
-	*map_chan = make(chan ServerMap, 2)
-
-	// Channels to speak with the server and the terminal
-	chan_stdin := make(chan string, 2)
-	chan_server := make(chan string, 2)
-
+func run_client(config Configuration_t) {
 	// Verbose
-	logging("CLIENT", "The client id is " + client_id)
+	logging("CLIENT", "The client id is " + config.Pseudo)
+
+    chan_server := make(chan string, 2)
 
 	conn, err := net.Dial("tcp", config.Server.Hostname + ":" + strconv.Itoa(config.Server.Port))
 	if err != nil {
@@ -38,47 +25,27 @@ func run_client(gui_chan_ptr *chan string, map_chan *chan ServerMap, config Conf
 	}
 	defer conn.Close()
 	logging("CLIENT",
-		fmt.Sprintf("Connection established with %s:%d", host, port))
+		fmt.Sprintf("Connection established with %s:%d", config.Server.Hostname, config.Server.Port))
 
 	// Listen the standart input and the server in co-processes
 	go handle_server(conn, chan_server)
-	go handle_local(chan_stdin)
+	//go handle_local(chan_stdin)
 
 	// Wait for the co-processes to dump their initial messages
 	time.Sleep(time.Second)
 
 	// Initiate the game: ask the server for its identification number
-	query_to_server(&conn, "info", "")// Warning: static parameters.
-	query_to_server(&conn, "map", "0,0,100,100")// Warning: static parameters.
+	//query_to_server(&conn, "info", "")// Warning: static parameters.
+	//query_to_server(&conn, "map", "0,0,100,100")// Warning: static parameters.
 	//query_to_server(&conn, "location", "0,0,100,100")// Warning: static parameters.
-
-
-	// TODO
-	testes := ServerMap { 0, 0, 1, 1, []Location{Location{Floor, 0, "a"}} }
-	*map_chan <- testes
-	// TODO
 
 	logging("CLIENT", "Main loop is starting.")
 	for {
 		select {
-			case s1 := <-chan_stdin :
-				// Recieving s1 from the terminal
-				switch strings.Trim(s1, "\n") {
-					case "QUIT":
-						chan_server <- "QUIT"
-						chan_stdin <- "QUIT"
-						*gui_chan_ptr <- "QUIT"
-						logging("CLIENT", "Ciao!")
-						return
-					case "!!STATUS":
-						fmt.Println("[CLIENT]: Status: ...")
-					default:
-						logging("CLIENT",
-							fmt.Sprintf("Command %s unknown. Ignoring", s1), 31)
-				}
 			case s2 := <-chan_server:
 				// Recieving s2 from the server
-				from_server(&conn, s2)
+                print(s2)
+            default:
 		}
 	}
 
@@ -93,6 +60,7 @@ func handle_server(c net.Conn, channel chan string) {
 		select {
 			case x, _ := <-channel :
 				if x == "QUIT" {
+	                logging("server handler", "Stopping routing traffic.")
 					return
 				}
 			default :
@@ -107,37 +75,4 @@ func handle_server(c net.Conn, channel chan string) {
 		}
 		channel <- strings.TrimSpace(string(netData))
 	}
-	logging("server handler", "Stopping routing traffic.")
 }
-
-// This function reads from the standart input (terminal) and sends back to the
-// main function the recieved messages
-func handle_local(channel chan string) {
-	logging("stdin", "Starting routing traffic.")
-	var reader = bufio.NewReader(os.Stdin)
-	for {
-		select {
-			case x, _ := <-channel :
-				if x == "QUIT" {
-					return
-				}
-			default :
-				// nop
-		}
-		message, _ := reader.ReadString('\n')
-		channel <- message
-	}
-	logging("stdin", "Stopping routing traffic.")
-}
-
-// Logging fucntion used instead of the "log" package
-func logging(src string, message string, color ...int) {
-	if len(color) > 0 {
-		//fmt.Printf("\033[%dm", color)
-	}
-	fmt.Println(time.Now().Format(time.ANSIC) + "[" + src + "] " + message)
-	if len(color) > 0 {
-		//fmt.Printf("\033[0m")
-	}
-}
-

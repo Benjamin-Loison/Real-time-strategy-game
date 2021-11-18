@@ -22,6 +22,7 @@ type Keys_t struct {
 type Configuration_t struct {
     Server Server_t `json:"Server"`
     Keys Keys_t `json:Keys"`
+    Pseudo string `json:Pseudo"`
 }
 var client_chan chan string
 

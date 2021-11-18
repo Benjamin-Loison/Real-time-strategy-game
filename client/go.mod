@@ -3,6 +3,7 @@ module teamrts/rts
 go 1.17
 
 require (
+	github.com/gen2brain/raylib-go/raylib v0.0.0-20211114111602-29ba3cc50849 // indirect
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20210727001814-0db043d8d5be // indirect
 	github.com/hajimehoshi/ebiten/v2 v2.2.0 // indirect
 	github.com/jezek/xgb v0.0.0-20210312150743-0e0f116e1240 // indirect

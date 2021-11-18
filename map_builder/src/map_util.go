@@ -29,7 +29,7 @@ const (
     Player2       = 2
     NoOne         = 0
 
-    tileSize  int32 = 32
+    TileSize  int32 = 32
     fontSize int32 = 20
 )
 
@@ -44,14 +44,14 @@ type Map struct {
     Grid [][]Tile `json:"Grid"`
 }
 
-func check(e error) {
+func Check(e error) {
     if e != nil {
         panic(e)
     }
 }
 
 
-func makeMap(width, height int32) Map {
+func MakeMap(width, height int32) Map {
     m := make([][]Tile, width)
     for i := range m {
         m[i] = make([]Tile, height)
@@ -62,58 +62,58 @@ func makeMap(width, height int32) Map {
     return Map{width, height, m}
 }
 
-func drawTile(x,y int32,tileType TileType, startpoint Owner){
+func DrawTile(x,y int32,tileType TileType, startpoint Owner){
     switch tileType {
     case Rock :
-        rl.DrawCircle(tileSize*x+tileSize/2.0,tileSize*y+tileSize/2.0,0.5*float32(tileSize),rl.DarkGray)
+        rl.DrawCircle(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.DarkGray)
     case Gold :
-        rl.DrawCircle(tileSize*x+tileSize/2.0,tileSize*y+tileSize/2.0,0.5*float32(tileSize),rl.Gold)
+        rl.DrawCircle(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.Gold)
     case Tree :
-        rl.DrawCircle(tileSize*x+tileSize/2.0,tileSize*y+tileSize/2.0,0.5*float32(tileSize),rl.Green)
+        rl.DrawCircle(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.Green)
     default:
     }
     switch startpoint {
     case Player1 :
-        rl.DrawText( "P1" ,tileSize*x+tileSize/5.0,tileSize*y+tileSize/5.0, fontSize,rl.Blue)
+        rl.DrawText( "P1" ,TileSize*x+TileSize/5.0,TileSize*y+TileSize/5.0, fontSize,rl.Blue)
     case Player2 :
-        rl.DrawText( "P2" ,tileSize*x+tileSize/5.0,tileSize*y+tileSize/5.0, fontSize,rl.Red)
+        rl.DrawText( "P2" ,TileSize*x+TileSize/5.0,TileSize*y+TileSize/5.0, fontSize,rl.Red)
     default:
     }
 }
 
-func drawMap(gmap Map) {
-    rl.DrawRectangle(0,0,gmap.Width*tileSize,gmap.Height*tileSize, GroundColor)
+func DrawMap(gmap Map) {
+    rl.DrawRectangle(0,0,gmap.Width*TileSize,gmap.Height*TileSize, GroundColor)
 
     for i:= int32(0); i < gmap.Width ; i++ {
         for j:= int32(0); j < gmap.Height ; j++ {
-            drawTile(i,j,gmap.Grid[i][j].Tile_Type, gmap.Grid[i][j].Startpoint)
+            DrawTile(i,j,gmap.Grid[i][j].Tile_Type, gmap.Grid[i][j].Startpoint)
         }
     }
 }
 
-func saveMap(gmap Map){
+func SaveMap(gmap Map){
     map_json, err := json.MarshalIndent(gmap,"","   ")
 
-    check(err)
+    Check(err)
 
     data := []byte(string(map_json))
     err = os.WriteFile("./map.json", data, 0644)
 
-    check(err)
+    Check(err)
 }
 
-func printMap(gmap Map){
+func PrintMap(gmap Map){
     map_json, err := json.MarshalIndent(gmap,"","   ")
 
-    check(err)
+    Check(err)
     fmt.Printf(string(map_json))
 }
 
-func loadMap(path string) Map {
+func LoadMap(path string) Map {
     map_data, err := ioutil.ReadFile(path)
-    check(err)
+    Check(err)
     var result_map = &Map{}
     err = json.Unmarshal([]byte(string(map_data)), result_map)
-    check(err)
+    Check(err)
     return *result_map
 }

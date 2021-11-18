@@ -26,17 +26,17 @@ func logging(src string, message string) {
 
 func drawGrid(width int32, height int32) {
     for i := int32(0) ; i <= height ; i++ {
-        rl.DrawLine(0,tileSize*i, tileSize*width ,tileSize*i,rl.Red)
+        rl.DrawLine(0,TileSize *i, TileSize*width ,TileSize*i,rl.Red)
     }
     for i := int32(0) ; i <= width ; i++ {
-        rl.DrawLine(tileSize*i, 0, tileSize*i ,tileSize*height,rl.Red)
+        rl.DrawLine(TileSize*i, 0, TileSize*i ,TileSize*height,rl.Red)
     }
 }
 
 func get_mouse_grid_pos(camera rl.Camera2D, width , height int32) (rl.Vector2, bool) {
     mouse_screen_pos := rl.GetMousePosition()
     mouse_world_pos := rl.GetScreenToWorld2D(mouse_screen_pos, camera)
-    ret := rl.Vector2{ X : float32(math.Floor(float64(mouse_world_pos.X / float32(tileSize)))), Y : float32(math.Floor(float64(mouse_world_pos.Y / float32(tileSize)))) }
+    ret := rl.Vector2{ X : float32(math.Floor(float64(mouse_world_pos.X / float32(TileSize)))), Y : float32(math.Floor(float64(mouse_world_pos.Y / float32(TileSize)))) }
     //fmt.Printf("test : %d %d",int(),int())
     if ret.X < 0 || int32(ret.X) >= width || ret.Y < 0 || int32(ret.Y) >= height {
         return ret,true
@@ -56,28 +56,27 @@ func main() {
 
     if len(os.Args) == 3 {
         tmp1,e1 := strconv.Atoi(os.Args[1])
-        check(e1)
+        Check(e1)
         tmp2,e2 := strconv.Atoi(os.Args[2])
-        check(e2)
+        Check(e2)
         map_width = int32(tmp1)
         map_height = int32(tmp2)
-        game_map = makeMap(map_width, map_height)
+        game_map = MakeMap(map_width, map_height)
     }else if len(os.Args) == 2 {
         path := os.Args[1]
-        game_map = loadMap(path)
+        game_map = LoadMap(path)
         map_width = int32(game_map.Width)
         map_height = int32(game_map.Height)
-        printMap(game_map)
     }else {
         fmt.Printf("\n\nUSAGE : map_builder width height | map_builder path_to_map\n\n")
         os.Exit(-1)
     }
 
 
-    map_middle := rl.Vector2{X:float32(tileSize)*float32(map_width)/2.0,Y: float32(tileSize)*float32(map_height)/2.0 }
+    map_middle := rl.Vector2{X:float32(TileSize)*float32(map_width)/2.0,Y: float32(TileSize)*float32(map_height)/2.0 }
 
 
-    camera := rl.NewCamera2D(rl.Vector2{X:screenWidth/2.0,Y:screenHeight/2.0},rl.Vector2{X: float32(tileSize)*float32(map_width)/2.0, Y: float32(tileSize)*float32(map_height)/2.0},0,1.0)
+    camera := rl.NewCamera2D(rl.Vector2{X:screenWidth/2.0,Y:screenHeight/2.0},rl.Vector2{X: float32(TileSize)*float32(map_width)/2.0, Y: float32(TileSize)*float32(map_height)/2.0},0,1.0)
 
     rl.BeginMode2D(camera)
 
@@ -112,7 +111,7 @@ func main() {
             camera.Zoom /= zoomFactor
         }
         if (rl.IsKeyDown(rl.KeyS)){
-            saveMap(game_map)
+            SaveMap(game_map)
         }
         if (rl.IsKeyDown(rl.KeySpace)){
             camera.Zoom = 1.0
@@ -155,7 +154,7 @@ func main() {
             rl.ClearBackground(rl.Black);
             rl.BeginMode2D(camera);
 
-                drawMap(game_map)
+                DrawMap(game_map)
 
                 drawGrid(map_width,map_height)
 
