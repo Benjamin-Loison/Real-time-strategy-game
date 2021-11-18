@@ -2,20 +2,17 @@ package main
 import (
 	//"crypto/rand"
 	//"encoding/hex"
-	"fmt"
+	"math/rand"
 	"time"
 )
 
-/*
-func Bytes(n int) []byte {
-	b := make([]byte, n)
-	_, err := rand.Read(b)
-	if err != nil {
-		panic(err)
-	}
-	return b
+func RandomString(len int) string {
+      bytes := make([]byte, len)
+     for i := 0; i < len; i++ {
+          bytes[i] = byte(65 + rand.Intn(25))  //A=65 and Z = 65+25
+      }
+      return string(bytes)
 }
-*/
 
 func location_type_from_str(s string) location_type {
 	switch (s) {
@@ -32,9 +29,9 @@ func location_type_from_str(s string) location_type {
 	}
 }
 
-func random_id(id int) string {
-	t := time.Now().UnixMilli()	// get the time to the millisecond
-	s := fmt.Sprintf("%d%d", t, id)
-	return s
+func random_id(l int) string {
+	t := string(time.Now().UnixMilli())// get the time to the millisecond
+	s := RandomString(l - len(t))
+	return t + s
 }
 

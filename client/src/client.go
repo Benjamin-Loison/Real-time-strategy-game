@@ -18,19 +18,29 @@ func logging(src string, message string) {
 	fmt.Println(time.Now().Format(time.ANSIC) + "[" + src + "] " + message)
 }
 
-// Two global maps store the queries that are to be treated (either by us, or
-// by the server)
 var (
+	// server_queries (resp. client_queries) map[string] string store the active queries,
+	// i.e. queries which have not been set valid by the return of an "ok"
+	// status (resp. while no correcr answer has been sent).
 	server_queries map[string]string
 	client_queries map[string]string
+
+	// The random client ID
 	client_id string
+
+	// The ip address and port of the server
 	host string
 	port int
+
+	// The channel that interacts with the gui part of the code (not required at
+	// the moment)
 	gui_chan chan string
 )
 
+// This function reads from the server and sends back to the main function the
+// recieved messages
 func handle_server(c net.Conn, channel chan string) {
-	logging("server handler", "The server handler has started.")
+	logging("server handler", "Starting routing traffic.")
 	for {
 		netData, err := bufio.NewReader(c).ReadString('\n')
 		if (err != nil) {
@@ -40,15 +50,18 @@ func handle_server(c net.Conn, channel chan string) {
 		}
 		channel <- strings.TrimSpace(string(netData))
 	}
+	logging("server handler", "Stopping routing traffic.")
 }
 
 func handle_local(channel chan string) {
-	logging("stdin handler", "The stdin handler has started.")
+	logging("stdin", "Starting routing traffic.")
 	var reader = bufio.NewReader(os.Stdin)
 	for {
 		message, _ := reader.ReadString('\n')
+		logging("stdin", "⇐ " + message)
 		channel <- message
 	}
+	logging("stdin", "Stopping routing traffic.")
 }
 
 func startClient(gui_chan_ptr *chan string, config Configuration) {
@@ -92,7 +105,7 @@ func startClient(gui_chan_ptr *chan string, config Configuration) {
 	query_to_server(&conn, "info", "")// Warning: static parameters.
 	time.Sleep(time.Second)
 	query_to_server(&conn, "map", "0,0,100,100")// Warning: static parameters.
-	//#query_to_server(&conn, "location", "0,0,100,100")// Warning: static parameters.
+	//query_to_server(&conn, "location", "0,0,100,100")// Warning: static parameters.
 
 	logging("CLIENT", "Main loop is starting.")
 	for running {
