@@ -21,6 +21,8 @@ const (
 	cameraBorderThreshold = 100
 	zoomMin = 0.2
 	zoomMax = 5
+	textureWidth = 30
+	textureHeight = 30
 )
 
 var (
@@ -107,15 +109,17 @@ func update_map(init_x , init_y, w, h int, location_list []Location) {
 	onScreenMap.floor = make([]Entity, 0)
 
 	for i, l := range location_list {
+		x := i%w * textureWidth
+		y := i/w * textureHeight
 		switch(l.loc_type) {
 			case ElfBuilding:
-				onScreenMap.buildings = append(onScreenMap.buildings, createDummyEntity(i%w, i/w))
+				onScreenMap.buildings = append(onScreenMap.buildings, createDummyEntity(x, y))
 			case OrcBuilding:
-				onScreenMap.buildings = append(onScreenMap.buildings, createDummyEntity(i%w, i/w))
+				onScreenMap.buildings = append(onScreenMap.buildings, createDummyEntity(x, y))
 			case HumanBuilding:
-				onScreenMap.buildings = append(onScreenMap.buildings, createDummyEntity(i%w, i/w))
+				onScreenMap.buildings = append(onScreenMap.buildings, createDummyEntity(x, y))
 			case Floor:
-				onScreenMap.floor = append(onScreenMap.floor, createFloor(i%w, i/w))
+				onScreenMap.floor = append(onScreenMap.floor, createFloor(x, y))
 				logging("Update_map", "I have created a floor, are you pround enough or should I print it ?")
 			default:
 				continue
@@ -280,8 +284,10 @@ func intersectRectangleCircle(x_r, y_r, w, h, x_c, y_c, r float64) (bool){
 	dx := abs(x_c - x_r);
 	dy := abs(y_c - y_r);
 	// dx, dy between the centre of the circle and the centre of the rectangle
+	/*
 	dx = abs(x_c - (x_r+w/2))
 	dy = abs(y_c - (y_r+h/2))
+	*/
 
     if (dx > (w/2 + r)) { return false; }
     if (dy > (h/2 + r)) { return false; }
@@ -311,9 +317,9 @@ func selectUnits(x1, y1, x2, y2 float64) {
 		e.selected = false
 		op := e.getScreenTranslation()
 		e_x, e_y := op.GeoM.Apply(0, 0)
-		r := float64(e.r) * zoomFactor*e.sprite_base_scale
-		x_r := x1 + (x2 - x1)
-		y_r := y1 + (y2 - y1)
+		r := float64(e.r) * zoomFactor * e.sprite_base_scale
+		x_r := x1 + (x2 - x1) / 2
+		y_r := y1 + (y2 - y1) / 2
 		e.selected = intersectRectangleCircle(x_r, y_r, abs(x2-x1), abs(y2-y1), e_x, e_y, r) ||
 						pointInRectangle(e_x, e_y, x1, y1, (x2 - x1), (y2 - y1))
 	}
