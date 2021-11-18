@@ -2,6 +2,7 @@
 use std::path::Path;
 use std::fs::File;
 use serde::Deserialize;
+use serde::Serialize;
 
 // Require to run the server
 use std::net::SocketAddr;
@@ -13,6 +14,29 @@ use std::thread::spawn;
 
 // exit the program if required
 use std::process::exit;
+
+
+// Messages to the client
+type ServerMessageType = i32;
+type TileType = i64;
+type Owner = i64;
+struct Tile {
+    Tile_Type: TileType,
+    Startpoint: Owner
+}
+struct Map {
+	Width: i32,
+	Height: i32,
+	Grid: Vec<Vec<Tile>>
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+struct ServerMessage {
+	MessageType: ServerMessageType,
+	GameMap: Map
+}
+
 
 
 // Structure that stores the config server config
