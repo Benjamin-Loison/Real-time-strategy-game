@@ -103,7 +103,7 @@ func manage_server_answer(conn *net.Conn, answer_id string, answer_str string) {
 				}
 				
 				// Update the map
-				update_map(init_x, init_y, w, h, location_list)
+				map_chan <- ServerMap{init_x, init_y, w, h, location_list}
 				status_to_server(conn, answer_id, "ok")
 			default:
 				logging("Server → Client", "Unknown query type")
