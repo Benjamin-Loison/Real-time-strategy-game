@@ -1,0 +1,26 @@
+{
+   "Width": 2,
+   "Height": 2,
+   "Grid": [
+      [
+         {
+            "Tile_Type": 2,
+            "Startpoint": 0
+         },
+         {
+            "Tile_Type": 2,
+            "Startpoint": 0
+         }
+      ],
+      [
+         {
+            "Tile_Type": 0,
+            "Startpoint": 0
+         },
+         {
+            "Tile_Type": 1,
+            "Startpoint": 0
+         }
+      ]
+   ]
+}
