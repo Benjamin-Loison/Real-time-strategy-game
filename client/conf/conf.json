@@ -1,4 +1,12 @@
 {
-	"hostname": "127.0.0.1",
-	"port": 8888
+    "Server": {
+        "Hostname": "127.0.0.1",
+        "Port": 8888
+    },
+    "Keys": {
+        "Left": "L",
+        "Right": "R",
+        "Up": "U",
+        "Down": "D"
+    }
 }

@@ -12,7 +12,7 @@ import (
 
 // Main fucntion for the part of the client that chats both with the server and
 // the gui part.
-func run_client(gui_chan_ptr *chan string, map_chan *chan ServerMap, config Configuration) {
+func run_client(gui_chan_ptr *chan string, map_chan *chan ServerMap, config Configuration_t) {
 	// Initialisation of useful variables (descsribed at their declaration in
 	// main.go)
 	client_id = random_id(10)
@@ -30,10 +30,10 @@ func run_client(gui_chan_ptr *chan string, map_chan *chan ServerMap, config Conf
 	// Verbose
 	logging("CLIENT", "The client id is " + client_id)
 
-	conn, err := net.Dial("tcp", config.hostname + ":" + strconv.Itoa(config.port))
+	conn, err := net.Dial("tcp", config.Server.Hostname + ":" + strconv.Itoa(config.Server.Port))
 	if err != nil {
 		logging("Connection", fmt.Sprintf("Error durig TCP dial: %v", err))
-		logging("Connection", fmt.Sprintf("\tHostname: %s, port: %d", config.hostname, config.port))
+		logging("Connection", fmt.Sprintf("\tHostname: %s, port: %d", config.Server.Hostname, config.Server.Port))
 		return
 	}
 	defer conn.Close()

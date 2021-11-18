@@ -44,7 +44,7 @@ func main(){
 
 	// initializing the game
 	g := &Game{}
-	Init(g)
+	Init(g,config.Keys)
 	//initializing ebiten
 	ebiten.SetWindowSize(screenWidth,screenHeight)
 	ebiten.SetWindowResizable(true)

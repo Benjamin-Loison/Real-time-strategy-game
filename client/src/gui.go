@@ -76,7 +76,8 @@ type Map struct {
 
 
 type Game struct {
-	keys []ebiten.Key
+    keys []ebiten.Key
+	key_conf Keys_t
 	friendlyEntities []*Entity
 	envEntities []*Entity
 
@@ -136,7 +137,7 @@ func (g *Game) Update() error {
 			if x == "QUIT" {
 				panic(errors.New("Exiting"))
 			}
-		case x, _ := <- map_chan :
+		case x, _ := <-map_chan :
 			logging("Update", "map recieved.")
 			update_map(x.x_init, x.y_init, x.w, x.h, x.loc)
 		default :
@@ -149,13 +150,13 @@ func (g *Game) Update() error {
 	for _, p := range g.keys {
 		switch s := p.String(); s {
 		// character movement
-		case "S":
+		case g.key_conf.Down:
 			dino.y += 5
-		case "Z":
+		case g.key_conf.Up:
 			dino.y -= 5
-		case "Q":
+		case g.key_conf.Left:
 			dino.x -= 5
-		case "D":
+		case g.key_conf.Right:
 			dino.x += 5
 
 		// camera movement
@@ -331,7 +332,7 @@ func (e Entity) getScreenTransform() (*ebiten.DrawImageOptions) {
 
 	op := &ebiten.DrawImageOptions{}
 	iw,ih := e.sprite.Size()
-	
+
 	op.GeoM.Reset()
 	op.ColorM.Reset()
 
@@ -351,7 +352,7 @@ func (e Entity) getScreenTranslation() (*ebiten.DrawImageOptions) {
 
 	op := &ebiten.DrawImageOptions{}
 	iw,ih := e.sprite.Size()
-	
+
 	op.GeoM.Reset()
 	op.ColorM.Reset()
 
@@ -464,7 +465,8 @@ func createCircle(r int, c color.Color) (*ebiten.Image) {
 
 
 // Function to initialize the game
-func Init(g *Game) {
+func Init(g *Game, key_config Keys_t) {
+    g.key_conf = key_config
 	g.friendlyEntities = append(g.friendlyEntities, &dino)
 	g.envEntities = append(g.envEntities, &tree)
 

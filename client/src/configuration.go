@@ -7,13 +7,25 @@ import (
 	"os"
 	"flag"
 )
-type Configuration struct {
-	hostname string `json:"hostname"`
-	port     int `json:"port"`
+
+type Server_t struct {
+	Hostname string `json:"Hostname"`
+	Port     int `json:"Port"`
+}
+type Keys_t struct {
+    Left string `json:"Left"`
+    Right string `json:"Right"`
+    Up string `json:"Up"`
+    Down string `json:"Down"`
+}
+
+type Configuration_t struct {
+    Server Server_t `json:"Server"`
+    Keys Keys_t `json:Keys"`
 }
 var client_chan chan string
 
-func loadConfig(file_name string) Configuration {
+func loadConfig(file_name string) Configuration_t {
 	// Read the main configuration file
 	file, err := ioutil.ReadFile(file_name)
 	if err != nil {
@@ -22,28 +34,22 @@ func loadConfig(file_name string) Configuration {
 	}
 
 	// Convert the json content into a Configuration structure
-	var configuration Configuration
-	var conf map[string]interface{}
-	err = json.Unmarshal(file, &conf)
+	var configuration = &Configuration_t{}
+	err = json.Unmarshal(file, &configuration)
 	if err != nil {
 		logging("Configuration", fmt.Sprintf("Cannot parse the config file: %v", err))
 		os.Exit(1)
-	} else {
-		configuration = Configuration {
-			hostname: conf["hostname"].(string),
-			port: int(conf["port"].(float64))}
 	}
-
 	// Parse the command line and overwrite the configuration if needed
-	override_addr_parsed := flag.String("n", configuration.hostname, "Hostname of the server (ip address or name)")
-	override_port_parsed := flag.Int("p", configuration.port, "Port of the remote server")
+	override_addr_parsed := flag.String("n", configuration.Server.Hostname, "Hostname of the server (ip address or name)")
+	override_port_parsed := flag.Int("p", configuration.Server.Port, "Port of the remote server")
 	flag.Parse()
 	// Replace the configuration variables
-	configuration.hostname = *override_addr_parsed
-	configuration.port = *override_port_parsed
+	configuration.Server.Hostname = *override_addr_parsed
+	configuration.Server.Port = *override_port_parsed
 
 	logging("Configuration",
-		fmt.Sprintf("Hostname: %s, port: %d", configuration.hostname, configuration.port))
+		fmt.Sprintf("Hostname: %s, port: %d", configuration.Server.Hostname, configuration.Server.Port))
 
-	return configuration
+	return *configuration
 }
