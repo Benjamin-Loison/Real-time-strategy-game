@@ -116,17 +116,27 @@ func update_map(init_x , init_y, w, h int, location_list []Location) {
 				onScreenMap.buildings = append(onScreenMap.buildings, createDummyEntity(i%w, i/w))
 			case Floor:
 				onScreenMap.floor = append(onScreenMap.floor, createFloor(i%w, i/w))
+				logging("Update_map", "I have created a floor, are you pround enough or should I print it ?")
 			default:
 				continue
 		}
 	}
+	logging("Update", "Map updated.")
 }
 
 // Update handle all the operations that should be done at every tick
 // for example looking and handling keyboard inputs
 func (g *Game) Update() error {
-	if running == false {
-		return errors.New("End of the game.")
+	select {
+		case x, _ := <-gui_chan :
+			if x == "QUIT" {
+				panic(errors.New("Exiting"))
+			}
+		case x, _ := <- map_chan :
+			logging("Update", "map recieved.")
+			update_map(x.x_init, x.y_init, x.w, x.h, x.loc)
+		default :
+			// nop
 	}
 
 	//////////// Handling Keyboard events ////////////

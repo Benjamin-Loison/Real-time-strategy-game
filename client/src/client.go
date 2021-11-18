@@ -10,76 +10,22 @@ import (
 	"time"
 )
 
-
-var serverID string
-
-
-func logging(src string, message string) {
-	fmt.Println(time.Now().Format(time.ANSIC) + "[" + src + "] " + message)
-}
-
-var (
-	// Controls the main event loop
-	running bool
-
-	// server_queries (resp. client_queries) map[string] string store the active queries,
-	// i.e. queries which have not been set valid by the return of an "ok"
-	// status (resp. while no correcr answer has been sent).
-	server_queries map[string]string
-	client_queries map[string]string
-
-	// The random client ID
-	client_id string
-
-	// The ip address and port of the server
-	host string
-	port int
-
-	// The channel that interacts with the gui part of the code (not required at
-	// the moment)
-	gui_chan chan string
-)
-
-// This function reads from the server and sends back to the main function the
-// recieved messages
-func handle_server(c net.Conn, channel chan string) {
-	logging("server handler", "Starting routing traffic.")
-	for {
-		netData, err := bufio.NewReader(c).ReadString('\n')
-		if (err != nil) {
-			logging("Socket", fmt.Sprintf("error while reading from server: %v", err))
-			time.Sleep(1 * time.Second)
-			continue
-		}
-		channel <- strings.TrimSpace(string(netData))
-	}
-	logging("server handler", "Stopping routing traffic.")
-}
-
-func handle_local(channel chan string) {
-	logging("stdin", "Starting routing traffic.")
-	var reader = bufio.NewReader(os.Stdin)
-	for {
-		message, _ := reader.ReadString('\n')
-		logging("stdin", "⇐ " + message)
-		channel <- message
-	}
-	logging("stdin", "Stopping routing traffic.")
-}
-
-func run_client(gui_chan_ptr *chan string, config Configuration, running *bool) {
-	/* Useful variables:
-		running
-		*	controls the main loop
-		clientID
-			random ID for the client
-	*/
+// Main fucntion for the part of the client that chats both with the server and
+// the gui part.
+func run_client(gui_chan_ptr *chan string, map_chan *chan ServerMap, config Configuration) {
+	// Initialisation of useful variables (descsribed at their declaration in
+	// main.go)
 	client_id = random_id(10)
 	server_queries = make(map[string]string)
 	client_queries = make(map[string]string)
-	chan_stdin := make(chan string)
-	chan_server := make(chan string)
-	*gui_chan_ptr = make(chan string)
+
+	// Channel to speak with the gui part of the app
+	*gui_chan_ptr = make(chan string, 2)
+	*map_chan = make(chan ServerMap, 2)
+
+	// Channels to speak with the server and the terminal
+	chan_stdin := make(chan string, 2)
+	chan_server := make(chan string, 2)
 
 	// Verbose
 	logging("CLIENT", "The client id is " + client_id)
@@ -99,30 +45,36 @@ func run_client(gui_chan_ptr *chan string, config Configuration, running *bool) 
 	go handle_local(chan_stdin)
 
 	// Wait for the co-processes to dump their initial messages
-	time.Sleep(5 * time.Second)
+	time.Sleep(time.Second)
 
 	// Initiate the game: ask the server for its identification number
 	query_to_server(&conn, "info", "")// Warning: static parameters.
-	time.Sleep(time.Second)
 	query_to_server(&conn, "map", "0,0,100,100")// Warning: static parameters.
 	//query_to_server(&conn, "location", "0,0,100,100")// Warning: static parameters.
 
+
+	// TODO
+	testes := ServerMap { 0, 0, 1, 1, []Location{Location{Floor, 0, "a"}} }
+	*map_chan <- testes
+	// TODO
+
 	logging("CLIENT", "Main loop is starting.")
-	for *running {
+	for {
 		select {
 			case s1 := <-chan_stdin :
 				// Recieving s1 from the terminal
 				switch strings.Trim(s1, "\n") {
-					case "!!QUIT":
-						gui_chan <- "QUIT"
-						*running = false
+					case "QUIT":
+						chan_server <- "QUIT"
+						chan_stdin <- "QUIT"
+						*gui_chan_ptr <- "QUIT"
+						logging("CLIENT", "Ciao!")
 						return
 					case "!!STATUS":
 						fmt.Println("[CLIENT]: Status: ...")
 					default:
 						logging("CLIENT",
-							fmt.Sprintf("Command %s unknown, querying info", s1))
-						query_to_server(&conn, "info", "")
+							fmt.Sprintf("Command %s unknown. Ignoring", s1), 31)
 				}
 			case s2 := <-chan_server:
 				// Recieving s2 from the server
@@ -130,5 +82,62 @@ func run_client(gui_chan_ptr *chan string, config Configuration, running *bool) 
 		}
 	}
 
+}
+
+// This function reads from the server and sends back to the main function the
+// recieved messages
+func handle_server(c net.Conn, channel chan string) {
+	logging("server handler", "Starting routing traffic.")
+	for {
+		// Exit
+		select {
+			case x, _ := <-channel :
+				if x == "QUIT" {
+					return
+				}
+			default :
+				// nop
+		}
+		// Read
+		netData, err := bufio.NewReader(c).ReadString('\n')
+		if (err != nil) {
+			logging("Socket", fmt.Sprintf("error while reading from server: %v", err))
+			time.Sleep(1 * time.Second)
+			continue
+		}
+		channel <- strings.TrimSpace(string(netData))
+	}
+	logging("server handler", "Stopping routing traffic.")
+}
+
+// This function reads from the standart input (terminal) and sends back to the
+// main function the recieved messages
+func handle_local(channel chan string) {
+	logging("stdin", "Starting routing traffic.")
+	var reader = bufio.NewReader(os.Stdin)
+	for {
+		select {
+			case x, _ := <-channel :
+				if x == "QUIT" {
+					return
+				}
+			default :
+				// nop
+		}
+		message, _ := reader.ReadString('\n')
+		channel <- message
+	}
+	logging("stdin", "Stopping routing traffic.")
+}
+
+// Logging fucntion used instead of the "log" package
+func logging(src string, message string, color ...int) {
+	if len(color) > 0 {
+		//fmt.Printf("\033[%dm", color)
+	}
+	fmt.Println(time.Now().Format(time.ANSIC) + "[" + src + "] " + message)
+	if len(color) > 0 {
+		//fmt.Printf("\033[0m")
+	}
 }
 
