@@ -285,6 +285,7 @@ func intersectRectangleCircle(x_r, y_r, w, h, x_c, y_c, r float64) (bool){
 
 /* pointInRectangle returns true iff (x, y) lies in the rectangle
  * defined by a corner at (x_r, y_r) and the *signed* width and height w, h */
+ // TODO to fix : it is possible to select from the upper left without intersection
 func pointInRectangle(x, y, x_r, y_r, w, h float64) (bool) {
 	sign_x := getSign(w)
 	sign_y := getSign(h)
