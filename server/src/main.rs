@@ -26,7 +26,7 @@ fn parse_query(stream: &mut BufStream<TcpStream>, id: &str, command: &str, optio
 			answer_client(stream, id, "MyId"); // TODO
 		}
 		_ => {
-			logging("parse_query", "Unknown command.")
+			logging("parse_query", "Unknown command.");
 		}
 	}
 }

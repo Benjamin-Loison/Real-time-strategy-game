@@ -17,22 +17,26 @@ import (
 const (
 	screenWidth  = 1280
 	screenHeight = 720
-	ZOOM_STEP = 0.01
+	ZOOM_STEP = 1.015
+	cameraBorderThreshold = 100
+	zoomMin = 0.2
+	zoomMax = 5
 )
 
 var (
 	Red	   = color.RGBA{255, 0, 0, 255}
+	color_selected	 = color.RGBA{0, 0, 255, 255}
 	inSelection = false
 	startSelection = [2]int{0, 0}
 	endSelection = [2]int{0, 0}
-	sprite = loadImageFromFile("media/sprites/Dino_blue.png")
-	treeSprite = loadImageFromFile("media/sprites/baum.png")
-	floorSprite = loadImageFromFile("media/sprites/floor.png")
+	sprite = loadImageFromFile("Dino_blue.png")
+	treeSprite = loadImageFromFile("baum.png")
+	floorSprite = loadImageFromFile("floor.png")
 	dino = Entity{0, 0, 12, sprite.SubImage(image.Rect(0, 0, 24, 24)).(*ebiten.Image), 6, false}
 	tree = Entity{640, 360, 32, treeSprite, 1.0, false}
 	floor = Entity{640, 360, 32, floorSprite, 1.0, false}
 	camera = Entity{0, 0, 0,  nil , 1, false}	// TODO should be change to another more adapted type
-	onScreenMap = Map{0, 0, 0, 0, make([]Entity, 0), make([]Entity, 0), make([]Entity, 0)}
+	onScreenMap = Map{0, 0, 0, 0, make([]Entity, 0), make([]Entity, 0), make([]*Entity, 0)}
 	zoomFactor = 1.0
 )
 
@@ -65,7 +69,7 @@ type Map struct {
 	w, h int
 	buildings []Entity
 	floor []Entity
-	entities []Entity
+	entities []*Entity
 }
 
 
@@ -95,8 +99,8 @@ func createFloor(x, y int) (Entity) {
 // location_list contains all the points of interest in the provided area
 func update_map(init_x , init_y, w, h int, location_list []Location) {
 	
-	onScreenMap.origin_x = init_x + w/2 - screenWidth
-	onScreenMap.origin_y = init_y + h/2 - screenHeight
+	onScreenMap.origin_x = init_x - w/2 - screenWidth
+	onScreenMap.origin_y = init_y - h/2 - screenHeight
 	onScreenMap.w = w
 	onScreenMap.h = h
 	onScreenMap.buildings = make([]Entity, 0)
@@ -112,7 +116,6 @@ func update_map(init_x , init_y, w, h int, location_list []Location) {
 				onScreenMap.buildings = append(onScreenMap.buildings, createDummyEntity(i%w, i/w))
 			case Floor:
 				onScreenMap.floor = append(onScreenMap.floor, createFloor(i%w, i/w))
-				//continue
 			default:
 				continue
 		}
@@ -128,6 +131,7 @@ func (g *Game) Update() error {
 
 	//////////// Handling Keyboard events ////////////
 	g.keys = inpututil.AppendPressedKeys(g.keys[:0])
+	mov_size := 5 / zoomFactor
 	for _, p := range g.keys {
 		switch s := p.String(); s {
 		// character movement
@@ -142,26 +146,56 @@ func (g *Game) Update() error {
 
 		// camera movement
 		case "ArrowUp":
-			camera.y -= 5
+			camera.y -= mov_size
+			startSelection[1] += int(mov_size * zoomFactor)
 		case "ArrowDown":
-			camera.y += 5
+			camera.y += mov_size
+			startSelection[1] -= int(mov_size * zoomFactor)
 		case "ArrowLeft":
-			camera.x -= 5
+			camera.x -= mov_size
+			startSelection[0] += int(mov_size * zoomFactor)
 		case "ArrowRight":
-			camera.x += 5
+			camera.x += mov_size
+			startSelection[0] -= int(mov_size * zoomFactor)
 
 		// zoom changes
 		case "I":
-			zoomFactor += ZOOM_STEP
+			zoomFactor *= ZOOM_STEP
 		case "K":
-			zoomFactor -= ZOOM_STEP
+			zoomFactor /= ZOOM_STEP
 		}
 	}
 	////////////////////////////////////////////////
+	//////////// Handling camera mouse control /////////////
+	x, y := ebiten.CursorPosition()
+	if x <= cameraBorderThreshold && x >= 0 {
+		camera.x -= mov_size
+		startSelection[0] += int(mov_size * zoomFactor)
+	} else if x >= screenWidth - cameraBorderThreshold && x <= screenWidth {
+		camera.x += mov_size
+		startSelection[0] -= int(mov_size * zoomFactor)
+	}
+	if y <= cameraBorderThreshold && y >= 0 {
+		camera.y -= mov_size
+		startSelection[1] += int(mov_size * zoomFactor)
+	} else if y >= screenHeight - cameraBorderThreshold && y <= screenHeight {
+		camera.y += mov_size
+		startSelection[1] -= int(mov_size * zoomFactor)
+	}
+	////////////////////////////////////////////////
+	if zoomFactor < zoomMin {
+		zoomFactor = zoomMin
+	}
+	if zoomFactor > zoomMax {
+		zoomFactor = zoomMax
+	}
+	
+
 	return nil
 }
 
 func loadImageFromFile(path string) *ebiten.Image {
+	path = "media/sprites/" + path
 	f, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
@@ -198,8 +232,13 @@ func drawSelectionRect(screen *ebiten.Image) {
 			endSelection[0] -= startSelection[0]
 			endSelection[1] -= startSelection[1]
 		}
-	} else {
-	  inSelection = false
+	} else if inSelection {
+		inSelection = false
+		x  := float64(startSelection[0])
+		y  := float64(startSelection[1])
+		dx := float64(endSelection[0])
+		dy := float64(endSelection[1])
+		selectUnits(x, y, x+dx, y+dy)
 	}
 	if inSelection {
 		x  := float64(startSelection[0])
@@ -208,6 +247,64 @@ func drawSelectionRect(screen *ebiten.Image) {
 		dy := float64(endSelection[1])
 
 		drawWireRect(screen, x, y, dx, dy, Red)
+	}
+}
+
+func getSign(x float64) (float64) {
+	if x > 0 {
+		return 1
+	}
+	return -1
+}
+func abs(x float64) (float64) {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
+/* intersectRectangleCircle returns true iff there is an intersection
+ * between a rectangle whose centre is at (x_r, y_r) and of dimension w*h
+ * and a circle of radius r and of centre (x_c, y_c) */
+func intersectRectangleCircle(x_r, y_r, w, h, x_c, y_c, r float64) (bool){
+	dx := abs(x_c - x_r);
+	dy := abs(y_c - y_r);
+	// dx, dy between the centre of the circle and the centre of the rectangle
+	dx = abs(x_c - (x_r+w/2))
+	dy = abs(y_c - (y_r+h/2))
+
+    if (dx > (w/2 + r)) { return false; }
+    if (dy > (h/2 + r)) { return false; }
+
+    if (dx <= (w/2)) { return true; }
+    if (dy <= (h/2)) { return true; }
+
+	dx = dx - w/2
+	dy = dy - h/2
+
+	cornerDistance_sq := dx*dx + dy*dy;	// distance squared of the centre of the circle to the closest corner of the rectangle
+
+    return (cornerDistance_sq <= (r*r));
+}
+
+/* pointInRectangle returns true iff (x, y) lies in the rectangle
+ * defined by a corner at (x_r, y_r) and the *signed* width and height w, h */
+func pointInRectangle(x, y, x_r, y_r, w, h float64) (bool) {
+	sign_x := getSign(w)
+	sign_y := getSign(h)
+	return (sign_x*x_r <= sign_x*x && sign_x*x <= sign_x*(x_r+w) && sign_y*y_r <= sign_y*y && sign_y*y <= sign_y*(y_r+h))
+}
+
+func selectUnits(x1, y1, x2, y2 float64) {
+	for _, e := range onScreenMap.entities {
+		e.selected = false
+		op := e.getScreenTranslation()
+		e_x, e_y := op.GeoM.Apply(0, 0)
+		r := float64(e.r) * zoomFactor*e.sprite_base_scale
+		x_r := x1 + (x2 - x1)
+		y_r := y1 + (y2 - y1)
+		e.selected = intersectRectangleCircle(x_r, y_r, abs(x2-x1), abs(y2-y1), e_x, e_y, r) ||
+						pointInRectangle(e_x, e_y, x1, y1, (x2 - x1), (y2 - y1))
 	}
 }
 
@@ -254,13 +351,12 @@ func (e Entity) getScreenTranslation() (*ebiten.DrawImageOptions) {
 func (e Entity) drawHitbox(screen *ebiten.Image) {
 	op := e.getScreenTransform()
 	iw, ih := e.sprite.Size()
-	//x1, _ := op.GeoM.Apply(0, 0)
 	x2, y2 := op.GeoM.Apply(float64(iw)/2, float64(ih)/2)
-	//r1, _ := op.GeoM.Apply(float64(e.r), float64(e.r))
-	//drawWireRect(screen, x1, y1, x2-x1, y2-y1, Red)
-	//hitbox := createCircle(int(r1 - x1))
 	rr :=zoomFactor*e.sprite_base_scale*float64(e.r)
-	hitbox := createCircle(int(rr))
+	hitbox := createCircle(int(rr), Red)
+	if e.selected {
+		hitbox = createCircle(int(rr), color_selected)
+	}
 	op = &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(x2-rr, y2-rr)
 	screen.DrawImage(hitbox, op)
@@ -301,6 +397,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		e.drawEntity(g.entityLayer)
 		e.drawHitbox(g.debugLayer)
 	}
+	for _, e := range onScreenMap.entities {
+		e.drawEntity(g.entityLayer)
+		e.drawHitbox(g.debugLayer)
+	}
 
 	drawSelectionRect(g.guiLayer)
 	////////////
@@ -337,10 +437,10 @@ func (c *circle) At(x, y int) color.Color {
 }
 
 // createCircle returns an image containing a circle of radius r
-func createCircle(r int) (*ebiten.Image) {
+func createCircle(r int, c color.Color) (*ebiten.Image) {
 	dst := image.NewRGBA(image.Rect(0, 0, 2*r, 2*r))
 	redctangle := image.NewRGBA(image.Rect(0, 0, 2*r, 2*r))
-	draw.Draw(redctangle, redctangle.Bounds(), &image.Uniform{Red}, image.ZP, draw.Src)
+	draw.Draw(redctangle, redctangle.Bounds(), &image.Uniform{c}, image.ZP, draw.Src)
 	draw.DrawMask(dst, redctangle.Bounds(), redctangle, image.ZP, &circle{image.Point{r, r}, r}, image.ZP, draw.Over)
 	return ebiten.NewImageFromImage(dst)
 }
@@ -358,6 +458,7 @@ func Init(g *Game) {
 
 	onScreenMap.buildings = append(onScreenMap.buildings, tree)
 	onScreenMap.floor = append(onScreenMap.floor, floor)
+	onScreenMap.entities = append(onScreenMap.entities, &dino)
 }
 
 func get_player_location() (int, int) {
