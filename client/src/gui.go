@@ -21,8 +21,8 @@ const (
 	cameraBorderThreshold = 100
 	zoomMin = 0.2
 	zoomMax = 5
-	textureWidth = 30
-	textureHeight = 30
+	textureWidth = 200
+	textureHeight = 200
 )
 
 var (
@@ -109,8 +109,8 @@ func update_map(init_x , init_y, w, h int, location_list []Location) {
 	onScreenMap.floor = make([]Entity, 0)
 
 	for i, l := range location_list {
-		x := i%w * textureWidth
-		y := i/w * textureHeight
+		x := i/w * textureWidth
+		y := i%w * textureHeight
 		switch(l.loc_type) {
 			case ElfBuilding:
 				onScreenMap.buildings = append(onScreenMap.buildings, createDummyEntity(x, y))
