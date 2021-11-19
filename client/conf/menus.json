@@ -1,0 +1,48 @@
+{
+	"Menus":
+		[
+			{
+				"Ref": "Main",
+				"Title": "Main menu",
+				"Elements": [
+					{
+						"Name": "Build",
+						"Ref": "Build",
+						"Type": "Menu",
+						"Key": "0"
+					}
+				]
+			},
+			{
+				"Ref": "Build",
+				"Title": "Build menu",
+				"Elements": [
+					{
+						"Name": "A townhall",
+						"Ref": "TownHall",
+						"Type": "Action",
+						"Key": "0"
+					},
+					{
+						"Name": "A house",
+						"Ref": "House",
+						"Type": "Action",
+						"Key": "1"
+					}
+				]
+			}
+		],
+	"Actions":
+		[
+		{
+			"Type": "Building",
+			"Ref": "TownHall",
+			"Title": "A townhall for a village or town"
+		},
+		{
+			"Type": "Building",
+			"Ref": "House",
+			"Title": "A house for a small familly"
+		}
+		]
+}

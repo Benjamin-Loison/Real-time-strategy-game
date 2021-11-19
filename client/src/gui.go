@@ -77,6 +77,7 @@ func RunGui(gmap *Map, players *[]map[string]Unit, config Configuration_t, chan_
         if (rl.IsKeyDown(rl.KeyRight) || rl.IsKeyDown(config.Keys.Right)){
             //camera.Offset.X -= 2.0
             camera.Target.X += offsetThisFrame
+			rl.DrawText("Test", 0, 0, 80, rl.Red)
         }
         if (rl.IsKeyDown(rl.KeyLeft) || rl.IsKeyDown(config.Keys.Left)){
             //camera.Offset.X += 2.0

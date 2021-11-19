@@ -7,6 +7,7 @@ import (
 
 var (
     config Configuration_t
+    config_menus MenuConfiguration_tmp_t
 )
 
 type ServerMap Map
@@ -14,6 +15,7 @@ type ServerMap Map
 func main(){
 	// Load the configuration
 	config = loadConfig("conf/conf.json")
+	config_menus = loadTextMenus("conf/menus.json")
 
     game_map := Map{}
 

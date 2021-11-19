@@ -6,8 +6,21 @@ import (
 	"encoding/json"
 	"os"
 	"flag"
-	"strings"
 )
+
+// This file loads the configuration of the application. This configuration
+// contains two parts:
+// ~ The client configuration, with defaults server parameters, nickname,
+//   hotkeys, ...
+// ~ The game configuration (menus, actions, ...)
+
+
+
+/*
+********************************************************************************
+---------------------------SERVER~CONFIGURATION~BELOW---------------------------
+********************************************************************************
+*/
 
 type Server_t struct {
 	Hostname string `json:"Hostname"`
@@ -80,15 +93,96 @@ func loadConfig(file_name string) Configuration_t {
 	return *configuration
 }
 
-//Raylib represents keys as int32 values
-func keyOfString(s string)(int32) {
-	switch l := len(s); l {
-		case 0:
-			panic("An empty string cannot represent a key in the configuration file.")
-		case 1:
-			return int32([]rune(strings.ToUpper(s))[0])
-		default:
-			panic("Not implemented: recognition of non-ascii characters and description")
+
+
+/*
+********************************************************************************
+----------------------------MENUS~CONFIGURATION~BELOW---------------------------
+********************************************************************************
+*/
+
+type MenuElement_tmp_t struct {
+	Name string `json:"Name"`
+	Type string `json:"Type"`
+	Key string `json:"Key"`
+	Ref string `json:"Ref"`
+}
+type Menu_tmp_t struct {
+	Ref string `json:"Ref"`
+	Title string `json:"Title"`
+	Elements []MenuElement_tmp_t `json:"Elements"`
+}
+type Action_tmp_t struct {
+	Type string `json:"Type"`
+	Ref string `json:"Ref"`
+	Title string `json:"Title"`
+}
+type MenuConfiguration_tmp_t struct {
+	Menus []Menu_tmp_t `json:"Menus"`
+	Actions []Action_tmp_t `json:"Actions"`
+}
+
+type MenuElementType int32
+type ActionType int32
+const(
+	MenuElementAction = 0
+	MenuElementSubMenu = 1
+	ActionBuilding = 0
+	)
+type MenuElement_t struct {
+	Name string
+	Type MenuElementType
+	Key int32
+	Ref string
+}
+type Menu_t struct {
+	Ref string
+	Title string
+	Elements []MenuElement_t
+}
+type Action_t struct {
+	Type ActionType
+	Ref string
+	Title string
+}
+type MenuConfiguration_t struct {
+	Menus []Menu_t
+	Actions []Action_t
+}
+
+func loadTextMenus(file_name string) MenuConfiguration_tmp_t {
+	// Read the menus configuration file
+	file, err := ioutil.ReadFile(file_name)
+	if err != nil {
+		logging("Menu configuration", fmt.Sprintf("Cannot open the config file: %v", err))
+		os.Exit(-1)
 	}
+
+	// Convert the json content into a Configuration structure
+	var configuration_tmp = &MenuConfiguration_tmp_t{}
+	err = json.Unmarshal(file, &configuration_tmp)
+	if err != nil {
+		logging("Menu configuration", fmt.Sprintf("Cannot parse the config file: %v", err))
+		os.Exit(1)
+	}
+
+	// Verbose and build the wlean (well-typed) configuration
+	logging("Menus configuration", "Done:")
+	for i := 0; i < len(configuration_tmp.Menus); i++ {
+		logging("Menus configuration",
+			fmt.Sprintf("Menu `%s` (ref: `%s`)",
+				configuration_tmp.Menus[i].Title,
+				configuration_tmp.Menus[i].Ref))
+		for j := 0 ; j < len(configuration_tmp.Menus[i].Elements); j ++ {
+			logging("Menus configuration",
+				fmt.Sprintf("\t\tElement `%s` (ref: `%s`, type: `%s`, key: `%s`)",
+					configuration_tmp.Menus[i].Elements[j].Name,
+					configuration_tmp.Menus[i].Elements[j].Ref,
+					configuration_tmp.Menus[i].Elements[j].Type,
+					configuration_tmp.Menus[i].Elements[j].Key))
+		}
+	}
+
+	return *configuration_tmp
 }
 
