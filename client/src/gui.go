@@ -57,13 +57,15 @@ func RunGui(gmap *Map, players *[]map[string]Unit, config Configuration_t, chan_
 
 
 	for !rl.WindowShouldClose() {
-        // check that shouldn't quit
+        // check enered commands
         select {
         case x, _ := <-chan_client:
             if x == "QUIT" {
                 logging("gui","Forced to quit")
                 return
-            }
+            } else {
+				rl.DrawText(x, 10, 30, 20, rl.Red)
+			}
         default:
         }
 
@@ -72,19 +74,19 @@ func RunGui(gmap *Map, players *[]map[string]Unit, config Configuration_t, chan_
 
         offsetThisFrame := cameraSpeed*rl.GetFrameTime()
 
-        if (rl.IsKeyDown(rl.KeyRight)){
+        if (rl.IsKeyDown(rl.KeyRight) || rl.IsKeyDown(config.Keys.Right)){
             //camera.Offset.X -= 2.0
             camera.Target.X += offsetThisFrame
         }
-        if (rl.IsKeyDown(rl.KeyLeft)){
+        if (rl.IsKeyDown(rl.KeyLeft) || rl.IsKeyDown(config.Keys.Left)){
             //camera.Offset.X += 2.0
             camera.Target.X -= offsetThisFrame
         }
-        if (rl.IsKeyDown(rl.KeyUp)){
+        if (rl.IsKeyDown(rl.KeyUp) || rl.IsKeyDown(config.Keys.Up)){
             //camera.Offset.Y += 2.0
             camera.Target.Y -= offsetThisFrame
         }
-        if (rl.IsKeyDown(rl.KeyDown)){
+        if (rl.IsKeyDown(rl.KeyDown) || rl.IsKeyDown(config.Keys.Up)){
             //camera.Offset.Y -= 2.0
             camera.Target.Y += offsetThisFrame
         }
