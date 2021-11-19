@@ -3,6 +3,7 @@ package main
 import(
 	"net"
 	"encoding/json"
+    "fmt"
 	)
 
 
@@ -25,9 +26,9 @@ func client_handler(conn net.Conn, map_path string) {
 func main() {
 	// Load the config file
 	conf := loadConfig("conf/conf.json")
-	
+
 	// Listen
-	listener, err := net.Listen("tcp", conf.Hostname + ":" + string(conf.Port))
+    listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d",conf.Hostname, conf.Port))
 	Check(err)
 	defer listener.Close()
 
