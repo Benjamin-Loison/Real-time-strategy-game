@@ -41,6 +41,7 @@ func run_client(config Configuration_t, gmap *Map, chan_client chan string) {
 		select {
         case s1 := <-chan_client:
             if s1 == "QUIT" {
+                chan_server<-"QUIT"
                 os.Exit(0)
             }
         case s2 := <-chan_server:
