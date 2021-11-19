@@ -7,6 +7,10 @@ import(
 
 
 func client_handler(conn net.Conn, map_path string) {
+	// Close the connection if the handler is exited
+	defer conn.Close()
+
+	// Load the map and send it to the client
 	init_json := ServerMessage { MapInfo, LoadMap(map_path), nil }
     init_marshall, err := json.MarshalIndent(init_json,"","   ")
 	Check(err)
@@ -14,6 +18,7 @@ func client_handler(conn net.Conn, map_path string) {
 
 	conn.Write(init_message)
 
+	// Exit
 	return
 }
 
