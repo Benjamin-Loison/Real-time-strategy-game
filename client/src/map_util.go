@@ -6,6 +6,7 @@ import (
     "fmt"
     "os"
     "time"
+    "sync"
     "encoding/json"
 	"github.com/gen2brain/raylib-go/raylib"
 )
@@ -47,6 +48,7 @@ type Map struct {
     Width int32 `json:"Width"`
     Height int32 `json:"Height"`
     Grid [][]Tile `json:"Grid"`
+    mut *sync.Mutex
 }
 
 func Check(e error) {
@@ -64,7 +66,7 @@ func MakeMap(width, height int32) Map {
             m[i][j] = Tile{Tile_Type: None, Startpoint: NoOne}
         }
     }
-    return Map{width, height, m}
+    return Map{Width :width, Height: height, Grid: m, mut: &sync.Mutex{}}
 }
 
 func DrawTile(x,y int32,tileType TileType, startpoint Owner){
@@ -113,5 +115,7 @@ func LoadMap(path string) Map {
     var result_map = &Map{}
     err = json.Unmarshal([]byte(string(map_data)), result_map)
     Check(err)
+    //var m sync.Mutex
+    result_map.mut = &sync.Mutex{}
     return *result_map
 }

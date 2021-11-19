@@ -15,19 +15,27 @@ func main(){
 	// Load the configuration
 	config = loadConfig("conf/conf.json")
 
-    game_map := LoadMap("../maps/map.json")
+    game_map := Map{}
+
+    var players []map[string]Unit
 
     chan_client := make(chan string, 2)
 
 	// starting a co-process to deal with the server
-    go run_client(config,&game_map,chan_client)
+    go run_client(config,&players,&game_map,chan_client)
 
     //wait to have received all data before starting gui
+
+    ok := false
+
     for {
+        if ok {
+            break
+        }
         select {
         case x, _ := <-chan_client:
             if x == "OK" {
-                break
+                ok = true
             }else if x == "QUIT" {
                 logging("client","Error while retrieving map data")
                 os.Exit(-1)
@@ -37,7 +45,7 @@ func main(){
     }
 
     //running gui
-    RunGui(&game_map, config)
+    RunGui(&game_map, &players, config,chan_client)
 
     chan_client <- "QUIT"
 }

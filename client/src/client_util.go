@@ -15,8 +15,13 @@ type Unit struct {
     Id int32 `json:"Id"`
 }
 
+type Player struct {
+    Units []Unit `json:"Units"`
+}
+
 type ServerMessage struct {
     MessageType ServerMessageType `json:"MessageType"`
     GameMap Map `json:"GameMap"`
     Units []Unit `json:"Units"`
+    Id int `json:"Id"`
 }

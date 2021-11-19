@@ -8,12 +8,12 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
+    "encoding/json"
 )
 
 // Main fucntion for the part of the client that chats both with the server and
 // the gui part.
-func run_client(config Configuration_t, gmap *Map, chan_client chan string) {
+func run_client(config Configuration_t, players *[]map[string]Unit, gmap *Map, chan_client chan string) {
 	// Verbose
 	logging("CLIENT", "The client id is " + config.Pseudo)
 
@@ -30,11 +30,43 @@ func run_client(config Configuration_t, gmap *Map, chan_client chan string) {
 	logging("CLIENT",
 		fmt.Sprintf("Connection established with %s:%d", config.Server.Hostname, config.Server.Port))
 
-	// Listen the standart input and the server in co-processes
-	go handle_server(conn, chan_server)
-	//go handle_local(chan_stdin)
+    //GET MAP
 
-	logging("CLIENT", "Main loop is starting.")
+    netData, err := bufio.NewReader(conn).ReadString('\n')
+	if (err != nil) {
+        logging("Socket", fmt.Sprintf("error while reading MAP INFO from server: %v", err))
+        chan_client<-"QUIT"
+        return
+    }
+
+    map_info_data := strings.TrimSpace(string(netData))
+
+    var map_info = &ServerMessage{}
+    err = json.Unmarshal([]byte(string(map_info_data)), map_info)
+    Check(err)
+    //fmt.Printf(" wtf %b", gmap.mut == nil)
+    *gmap = map_info.GameMap
+
+
+    //GET UNITS
+    netData, err = bufio.NewReader(conn).ReadString('\n')
+	if (err != nil) {
+        logging("Socket", fmt.Sprintf("error while reading INIT UNITS from server: %v", err))
+        chan_client<-"QUIT"
+        return
+    }
+
+    players_data := strings.TrimSpace(string(netData))
+
+    var players_info = &ServerMessage{}
+    err = json.Unmarshal([]byte(string(players_data)), players_info)
+    Check(err)
+    //fmt.Printf(" wtf %b", gmap.mut == nil)
+    *gmap = map_info.GameMap
+
+
+    chan_client<-"OK"
+
 	for {
 		select {
         case s1 := <-chan_client:
@@ -48,33 +80,5 @@ func run_client(config Configuration_t, gmap *Map, chan_client chan string) {
             //Check(err)
         default:
 		}
-	}
-}
-
-// This function reads from the server and sends back to the main function the
-// recieved messages
-func handle_server(c net.Conn, channel chan string) {
-	time.Sleep(time.Second)
-	logging("server handler", "Starting routing traffic.")
-	for {
-		// Exit
-		select {
-			case x, _ := <-channel :
-				if x == "QUIT" {
-	                logging("server handler", "Stopping routing traffic.")
-					return
-				}
-			default :
-				// nop
-		}
-		// Read
-		netData, err := bufio.NewReader(c).ReadString('\n')
-		if (err != nil) {
-			logging("Socket", fmt.Sprintf("error while reading from server: %v", err))
-			time.Sleep(1 * time.Second)
-			continue
-		}
-        fmt.Print(strings.TrimSpace(string(netData)))
-		channel <- strings.TrimSpace(string(netData))
 	}
 }

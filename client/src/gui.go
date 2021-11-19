@@ -37,9 +37,11 @@ func get_mouse_grid_pos(camera rl.Camera2D, width , height int32) (rl.Vector2, b
     }
 }
 
-func RunGui(gmap *Map, config Configuration_t) {
+func RunGui(gmap *Map, players *[]map[string]Unit, config Configuration_t, chan_client chan string) {
     rl.SetTraceLog(rl.LogNone)
 	rl.InitWindow(screenWidth, screenHeight, "RTS")
+
+	defer rl.CloseWindow()
 
 	rl.SetTargetFPS(60)
 
@@ -55,6 +57,15 @@ func RunGui(gmap *Map, config Configuration_t) {
 
 
 	for !rl.WindowShouldClose() {
+        // check that shouldn't quit
+        select {
+        case x, _ := <-chan_client:
+            if x == "QUIT" {
+                logging("gui","Forced to quit")
+                return
+            }
+        default:
+        }
 
         // Update
         //----------------------------------------------------------------------------------
@@ -101,5 +112,4 @@ func RunGui(gmap *Map, config Configuration_t) {
 
     }
 
-	rl.CloseWindow()
 }
