@@ -4,6 +4,7 @@ import (
 	_ "image/png"
     "github.com/gen2brain/raylib-go/raylib"
     "math"
+	"time"
 )
 
 const (
@@ -14,6 +15,8 @@ const (
 )
 
 var (
+	currentMenu = ""
+	timeMenu = time.Now()
 )
 
 func drawGrid(width int32, height int32) {
@@ -37,7 +40,7 @@ func get_mouse_grid_pos(camera rl.Camera2D, width , height int32) (rl.Vector2, b
     }
 }
 
-func RunGui(gmap *Map, players *[]map[string]Unit, config Configuration_t, chan_client chan string) {
+func RunGui(gmap *Map, players *[]map[string]Unit, config Configuration_t, config_menus MenuConfiguration_t, chan_client chan string) {
     rl.SetTraceLog(rl.LogNone)
 	rl.InitWindow(screenWidth, screenHeight, "RTS")
 
@@ -57,27 +60,39 @@ func RunGui(gmap *Map, players *[]map[string]Unit, config Configuration_t, chan_
 
 
 	for !rl.WindowShouldClose() {
-        // check enered commands
+        // check that shouldn't quit
         select {
         case x, _ := <-chan_client:
             if x == "QUIT" {
                 logging("gui","Forced to quit")
                 return
-            } else {
-				rl.DrawText(x, 10, 30, 20, rl.Red)
-			}
+            }
         default:
         }
 
         // Update
         //----------------------------------------------------------------------------------
 
+		if len(currentMenu) > 0 {
+			// Print the current menu and its elements, and check for its hotkeys:
+			current_menu := FindMenuByRef(config_menus.Menus, currentMenu)
+			rl.DrawText(current_menu.Title, 0, 0, 40, rl.Red)
+			for i := 0 ; i < len(current_menu.Elements) ; i ++ {
+				rl.DrawText(current_menu.Elements[i].Name, 100, int32(40 + (20 * i)), 15, rl.Blue)
+				if(rl.IsKeyDown(current_menu.Elements[i].Key) && time.Since(timeMenu) > time.Second) {
+					if current_menu.Elements[i].Type == MenuElementSubMenu {
+						currentMenu = current_menu.Elements[i].Name
+					}
+					timeMenu = time.Now()
+				}
+			}
+		}
+
         offsetThisFrame := cameraSpeed*rl.GetFrameTime()
 
         if (rl.IsKeyDown(rl.KeyRight) || rl.IsKeyDown(config.Keys.Right)){
             //camera.Offset.X -= 2.0
             camera.Target.X += offsetThisFrame
-			rl.DrawText("Test", 0, 0, 80, rl.Red)
         }
         if (rl.IsKeyDown(rl.KeyLeft) || rl.IsKeyDown(config.Keys.Left)){
             //camera.Offset.X += 2.0
@@ -96,6 +111,15 @@ func RunGui(gmap *Map, players *[]map[string]Unit, config Configuration_t, chan_
         }
         if (rl.IsKeyDown(rl.KeyO)){
             camera.Zoom /= zoomFactor
+        }
+        if (rl.IsKeyDown(rl.KeyM)){
+			if (currentMenu == "" && time.Since(timeMenu) > time.Second) {
+				currentMenu = "Main"
+				timeMenu = time.Now()
+			} else if (time.Since(timeMenu) > time.Second) {
+				currentMenu = ""
+				timeMenu = time.Now()
+			}
         }
         if (rl.IsKeyDown(rl.KeySpace)){
             camera.Zoom = 1.0

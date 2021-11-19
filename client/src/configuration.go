@@ -150,7 +150,13 @@ type MenuConfiguration_t struct {
 	Actions []Action_t
 }
 
-func loadTextMenus(file_name string) MenuConfiguration_tmp_t {
+// TODO: Translate the references to sub-menus and actions into their index in
+// the final arrays
+// TODO bis: Check that there is no conflict between hotkeys (at least within
+// the menus configuration, or with the whole game interface(should be done
+// later, within the main function(that loads the different configuration
+// files))
+func loadTextMenus(file_name string) MenuConfiguration_t {
 	// Read the menus configuration file
 	file, err := ioutil.ReadFile(file_name)
 	if err != nil {
@@ -160,29 +166,48 @@ func loadTextMenus(file_name string) MenuConfiguration_tmp_t {
 
 	// Convert the json content into a Configuration structure
 	var configuration_tmp = &MenuConfiguration_tmp_t{}
+	var configuration = &MenuConfiguration_t{}
 	err = json.Unmarshal(file, &configuration_tmp)
 	if err != nil {
 		logging("Menu configuration", fmt.Sprintf("Cannot parse the config file: %v", err))
 		os.Exit(1)
 	}
 
-	// Verbose and build the wlean (well-typed) configuration
-	logging("Menus configuration", "Done:")
+	// Verbose and build the clean (well-typed) menus configuration
+	configuration.Menus = nil
+	configuration.Actions = nil
 	for i := 0; i < len(configuration_tmp.Menus); i++ {
-		logging("Menus configuration",
-			fmt.Sprintf("Menu `%s` (ref: `%s`)",
-				configuration_tmp.Menus[i].Title,
-				configuration_tmp.Menus[i].Ref))
-		for j := 0 ; j < len(configuration_tmp.Menus[i].Elements); j ++ {
-			logging("Menus configuration",
-				fmt.Sprintf("\t\tElement `%s` (ref: `%s`, type: `%s`, key: `%s`)",
-					configuration_tmp.Menus[i].Elements[j].Name,
-					configuration_tmp.Menus[i].Elements[j].Ref,
-					configuration_tmp.Menus[i].Elements[j].Type,
-					configuration_tmp.Menus[i].Elements[j].Key))
-		}
-	}
+		// Declaration of local variables to store the current menu to add
+		var active_menu Menu_t
+		var inner_elements = []MenuElement_t(nil)
 
-	return *configuration_tmp
+		active_menu.Title = configuration_tmp.Menus[i].Title
+		active_menu.Ref = configuration_tmp.Menus[i].Ref
+
+		for j := 0 ; j < len(configuration_tmp.Menus[i].Elements); j ++ {
+			inner_elements = append(inner_elements,
+				MenuElement_t {
+					configuration_tmp.Menus[i].Elements[j].Name,
+					MenuElementTypeIfString(
+						configuration_tmp.Menus[i].Elements[j].Type),
+					keyOfString(configuration_tmp.Menus[i].Elements[j].Key),
+					configuration_tmp.Menus[i].Elements[j].Ref })
+			active_menu.Elements= inner_elements
+		}
+		configuration.Menus = append(configuration.Menus, active_menu)
+	}
+	logging("Menus configuration", "Done.")
+
+	// Verbose and build the clean (well-typed) actions configuration
+	for i := 0 ; i < len(configuration_tmp.Actions); i ++ {
+		configuration.Actions = append(configuration.Actions,
+			Action_t {
+				ActionTypeOfString(configuration_tmp.Actions[i].Type),
+				configuration_tmp.Actions[i].Title,
+				configuration_tmp.Actions[i].Ref })
+	}
+	logging("Actions configuration", "Done.")
+
+	return *configuration
 }
 

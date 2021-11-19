@@ -7,7 +7,7 @@ import (
 
 var (
     config Configuration_t
-    config_menus MenuConfiguration_tmp_t
+    config_menus MenuConfiguration_t
 )
 
 type ServerMap Map
@@ -47,7 +47,7 @@ func main(){
     }
 
     //running gui
-    RunGui(&game_map, &players, config,chan_client)
+    RunGui(&game_map, &players, config, config_menus,chan_client)
 
     chan_client <- "QUIT"
 }
