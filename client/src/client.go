@@ -43,7 +43,6 @@ func run_client(config Configuration_t, gmap *Map, chan_client chan string) {
                 os.Exit(0)
             }
         case s2 := <-chan_server:
-            fmt.Print("test")
             fmt.Print(s2)
             //err = json.Unmarshal([]byte(string(s2)), gmap)
             //Check(err)
