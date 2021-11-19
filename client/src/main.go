@@ -28,7 +28,7 @@ func main(){
         case x, _ := <-chan_client:
             if x == "OK" {
                 break
-            }else if x == "PANIC" {
+            }else if x == "QUIT" {
                 logging("client","Error while retrieving map data")
                 os.Exit(-1)
             }
