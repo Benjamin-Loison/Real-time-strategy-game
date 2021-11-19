@@ -9,9 +9,9 @@ import(
 
 func client_handler(conn net.Conn, map_path string) {
 	init_json := ServerMessage { MapInfo, LoadMap(map_path), nil }
-    init_marshall, err := json.MarshalIndent(init_json,"","   ")
+    init_marshall, err := json.Marshal(init_json)
 	Check(err)
-	init_message := []byte(init_marshall)
+	init_message := []byte(string(init_marshall)+"\n")
 
 	conn.Write(init_message)
 

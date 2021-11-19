@@ -34,9 +34,6 @@ func run_client(config Configuration_t, gmap *Map, chan_client chan string) {
 	go handle_server(conn, chan_server)
 	//go handle_local(chan_stdin)
 
-	// Wait for the co-processes to dump their initial messages
-	time.Sleep(time.Second)
-
 	logging("CLIENT", "Main loop is starting.")
 	for {
 		select {
@@ -46,7 +43,8 @@ func run_client(config Configuration_t, gmap *Map, chan_client chan string) {
                 os.Exit(0)
             }
         case s2 := <-chan_server:
-            print(s2)
+            fmt.Print("test")
+            fmt.Print(s2)
             //err = json.Unmarshal([]byte(string(s2)), gmap)
             //Check(err)
         default:
@@ -57,6 +55,7 @@ func run_client(config Configuration_t, gmap *Map, chan_client chan string) {
 // This function reads from the server and sends back to the main function the
 // recieved messages
 func handle_server(c net.Conn, channel chan string) {
+	time.Sleep(time.Second)
 	logging("server handler", "Starting routing traffic.")
 	for {
 		// Exit
@@ -76,6 +75,7 @@ func handle_server(c net.Conn, channel chan string) {
 			time.Sleep(1 * time.Second)
 			continue
 		}
+        fmt.Print(strings.TrimSpace(string(netData)))
 		channel <- strings.TrimSpace(string(netData))
 	}
 }
