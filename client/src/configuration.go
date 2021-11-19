@@ -24,7 +24,6 @@ type Configuration_t struct {
     Keys Keys_t `json:Keys"`
     Pseudo string `json:Pseudo"`
 }
-var client_chan chan string
 
 func loadConfig(file_name string) Configuration_t {
 	// Read the main configuration file
