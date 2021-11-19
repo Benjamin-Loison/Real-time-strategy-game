@@ -15,7 +15,7 @@ const (
 )
 
 var (
-	currentMenu = ""
+	currentMenu = -1
 	timeMenu = time.Now()
 )
 
@@ -73,7 +73,7 @@ func RunGui(gmap *Map, players *[]map[string]Unit, config Configuration_t, confi
         // Update
         //----------------------------------------------------------------------------------
 
-		if len(currentMenu) > 0 {
+		if currentMenu >= 0 {
 			// Print the current menu and its elements, and check for its hotkeys:
 			current_menu := FindMenuByRef(config_menus.Menus, currentMenu)
 			rl.DrawText(current_menu.Title, 0, 0, 40, rl.Red)
@@ -81,7 +81,7 @@ func RunGui(gmap *Map, players *[]map[string]Unit, config Configuration_t, confi
 				rl.DrawText(current_menu.Elements[i].Name, 100, int32(40 + (20 * i)), 15, rl.Blue)
 				if(rl.IsKeyDown(current_menu.Elements[i].Key) && time.Since(timeMenu) > time.Second) {
 					if current_menu.Elements[i].Type == MenuElementSubMenu {
-						currentMenu = current_menu.Elements[i].Name
+						currentMenu = current_menu.Elements[i].Ref
 					}
 					timeMenu = time.Now()
 				}
@@ -113,11 +113,11 @@ func RunGui(gmap *Map, players *[]map[string]Unit, config Configuration_t, confi
             camera.Zoom /= zoomFactor
         }
         if (rl.IsKeyDown(rl.KeyM)){
-			if (currentMenu == "" && time.Since(timeMenu) > time.Second) {
-				currentMenu = "Main"
+			if (currentMenu == -1 && time.Since(timeMenu) > time.Second) {
+				currentMenu = 0
 				timeMenu = time.Now()
 			} else if (time.Since(timeMenu) > time.Second) {
-				currentMenu = ""
+				currentMenu = -1
 				timeMenu = time.Now()
 			}
         }

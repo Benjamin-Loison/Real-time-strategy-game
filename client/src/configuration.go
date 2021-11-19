@@ -133,16 +133,16 @@ type MenuElement_t struct {
 	Name string
 	Type MenuElementType
 	Key int32
-	Ref string
+	Ref int
 }
 type Menu_t struct {
-	Ref string
+	Ref int
 	Title string
 	Elements []MenuElement_t
 }
 type Action_t struct {
 	Type ActionType
-	Ref string
+	Ref int
 	Title string
 }
 type MenuConfiguration_t struct {
@@ -150,12 +150,6 @@ type MenuConfiguration_t struct {
 	Actions []Action_t
 }
 
-// TODO: Translate the references to sub-menus and actions into their index in
-// the final arrays
-// TODO bis: Check that there is no conflict between hotkeys (at least within
-// the menus configuration, or with the whole game interface(should be done
-// later, within the main function(that loads the different configuration
-// files))
 func loadTextMenus(file_name string) MenuConfiguration_t {
 	// Read the menus configuration file
 	file, err := ioutil.ReadFile(file_name)
@@ -173,6 +167,22 @@ func loadTextMenus(file_name string) MenuConfiguration_t {
 		os.Exit(1)
 	}
 
+	// List the different references of the menus and actions (dirty-typed)
+	// in order to build the mapping "dirty_ref" ->~n_{"dirty ref"}.
+	var menus_ref_mapping = make(map[string]int)
+	for i:= 0 ; i < len(configuration_tmp.Menus); i ++ {
+		// The index 0 is reserved for the Main menu
+		if configuration_tmp.Menus[i].Ref == "Main" {
+			menus_ref_mapping[configuration_tmp.Menus[i].Ref] = 0
+		} else {
+			menus_ref_mapping[configuration_tmp.Menus[i].Ref] = i + 1
+		}
+	}
+	var actions_ref_mapping = make(map[string]int)
+	for i:= 0 ; i < len(configuration_tmp.Actions); i ++ {
+		actions_ref_mapping[configuration_tmp.Actions[i].Ref] = i + 1
+	}
+
 	// Verbose and build the clean (well-typed) menus configuration
 	configuration.Menus = nil
 	configuration.Actions = nil
@@ -182,18 +192,29 @@ func loadTextMenus(file_name string) MenuConfiguration_t {
 		var inner_elements = []MenuElement_t(nil)
 
 		active_menu.Title = configuration_tmp.Menus[i].Title
-		active_menu.Ref = configuration_tmp.Menus[i].Ref
+		active_menu.Ref = menus_ref_mapping[configuration_tmp.Menus[i].Ref]
 
 		for j := 0 ; j < len(configuration_tmp.Menus[i].Elements); j ++ {
+			loc_type :=  MenuElementTypeIfString(configuration_tmp.Menus[i].Elements[j].Type)
+			var idx int
+
+			switch (loc_type) {
+				case MenuElementAction:
+				idx = actions_ref_mapping[configuration_tmp.Menus[i].Elements[j].Ref]
+				case MenuElementSubMenu:
+				idx = menus_ref_mapping[configuration_tmp.Menus[i].Elements[j].Ref]
+			}
+
 			inner_elements = append(inner_elements,
 				MenuElement_t {
 					configuration_tmp.Menus[i].Elements[j].Name,
 					MenuElementTypeIfString(
 						configuration_tmp.Menus[i].Elements[j].Type),
 					keyOfString(configuration_tmp.Menus[i].Elements[j].Key),
-					configuration_tmp.Menus[i].Elements[j].Ref })
-			active_menu.Elements= inner_elements
+					idx })
 		}
+
+		active_menu.Elements= inner_elements
 		configuration.Menus = append(configuration.Menus, active_menu)
 	}
 	logging("Menus configuration", "Done.")
@@ -202,9 +223,9 @@ func loadTextMenus(file_name string) MenuConfiguration_t {
 	for i := 0 ; i < len(configuration_tmp.Actions); i ++ {
 		configuration.Actions = append(configuration.Actions,
 			Action_t {
-				ActionTypeOfString(configuration_tmp.Actions[i].Type),
-				configuration_tmp.Actions[i].Title,
-				configuration_tmp.Actions[i].Ref })
+				Type: ActionTypeOfString(configuration_tmp.Actions[i].Type),
+				Title: configuration_tmp.Actions[i].Title,
+				Ref: actions_ref_mapping[configuration_tmp.Actions[i].Ref] })
 	}
 	logging("Actions configuration", "Done.")
 

@@ -16,6 +16,7 @@ func main(){
 	// Load the configuration
 	config = loadConfig("conf/conf.json")
 	config_menus = loadTextMenus("conf/menus.json")
+	//TODO: check theat there is no conflict between the two configuration files
 
     game_map := Map{}
 

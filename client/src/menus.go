@@ -1,6 +1,6 @@
 package main
 
-func FindMenuByRef(menus []Menu_t, ref string) Menu_t {
+func FindMenuByRef(menus []Menu_t, ref int) Menu_t {
 	for i := 0 ; i < len(menus); i ++ {
 		if menus[i].Ref == ref {
 			return menus[i]
