@@ -1,17 +1,19 @@
 package main
 
 import (
-    "net"
-    "fmt"
-    "strconv"
-    "bufio"
-    "time"
-    "strings"
+	"bufio"
+	//"encoding/json"
+	"fmt"
+	"net"
+	"os"
+	"strconv"
+	"strings"
+	"time"
 )
 
 // Main fucntion for the part of the client that chats both with the server and
 // the gui part.
-func run_client(config Configuration_t) {
+func run_client(config Configuration_t, gmap *Map, chan_client chan string) {
 	// Verbose
 	logging("CLIENT", "The client id is " + config.Pseudo)
 
@@ -34,21 +36,20 @@ func run_client(config Configuration_t) {
 	// Wait for the co-processes to dump their initial messages
 	time.Sleep(time.Second)
 
-	// Initiate the game: ask the server for its identification number
-	//query_to_server(&conn, "info", "")// Warning: static parameters.
-	//query_to_server(&conn, "map", "0,0,100,100")// Warning: static parameters.
-	//query_to_server(&conn, "location", "0,0,100,100")// Warning: static parameters.
-
 	logging("CLIENT", "Main loop is starting.")
 	for {
 		select {
-			case s2 := <-chan_server:
-				// Recieving s2 from the server
-                print(s2)
-            default:
+        case s1 := <-chan_client:
+            if s1 == "QUIT" {
+                os.Exit(0)
+            }
+        case s2 := <-chan_server:
+            print(s2)
+            //err = json.Unmarshal([]byte(string(s2)), gmap)
+            //Check(err)
+        default:
 		}
 	}
-
 }
 
 // This function reads from the server and sends back to the main function the
