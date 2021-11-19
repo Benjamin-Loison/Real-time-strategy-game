@@ -11,6 +11,7 @@ import (
 type Configuration_t struct {
 	Hostname string `json:"Hostname"`
 	Port     int `json:"Port"`
+	MapPath  string `json:"MapPath"`
 }
 
 func loadConfig(file_name string) Configuration_t {
