@@ -23,6 +23,7 @@ func run_client(config Configuration_t, gmap *Map, chan_client chan string) {
 	if err != nil {
 		logging("Connection", fmt.Sprintf("Error durig TCP dial: %v", err))
 		logging("Connection", fmt.Sprintf("\tHostname: %s, port: %d", config.Server.Hostname, config.Server.Port))
+        chan_client<-"QUIT"
 		return
 	}
 	defer conn.Close()
@@ -41,6 +42,7 @@ func run_client(config Configuration_t, gmap *Map, chan_client chan string) {
 		select {
         case s1 := <-chan_client:
             if s1 == "QUIT" {
+                chan_server<-"QUIT"
                 os.Exit(0)
             }
         case s2 := <-chan_server:
