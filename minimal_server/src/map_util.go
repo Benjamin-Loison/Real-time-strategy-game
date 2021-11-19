@@ -122,3 +122,13 @@ func LoadMap(path string) Map {
     Check(err)
     return *result_map
 }
+
+func initializePlayer(gmap *Map, own Owner, units *[]Unit,id *int){
+    for i := int32(0) ; i < gmap.Width ; i++ {
+        for j := int32(0) ; j < gmap.Width ; j++ {
+            if gmap.Grid[i][j].Startpoint == own {
+                *units = append(*units, Unit{TileSize*i+TileSize/2.0,TileSize*j+TileSize/2.0,"P",int32(getId(id))})
+            }
+        }
+    }
+}
