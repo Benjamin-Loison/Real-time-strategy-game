@@ -13,15 +13,17 @@ type Unit struct {
     Y int32 `json:"Y"`
     Name string `json:"Name"`
     Id int32 `json:"Id"`
+    OwnerPlayer Owner `json:"OwnerPlayer"`
 }
 
 type Player struct {
-    Units []Unit `json:"Units"`
+    Units map[string]Unit `json:"Units"`
+    Seed int `json:"Seed"`
 }
 
 type ServerMessage struct {
     MessageType ServerMessageType `json:"MessageType"`
     GameMap Map `json:"GameMap"`
-    PlayersUnits []Player `json:"PlayersUnits"`
+    Players []Player `json:"Players"`
     Id int `json:"Id"`
 }

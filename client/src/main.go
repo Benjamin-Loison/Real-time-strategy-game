@@ -8,6 +8,8 @@ import (
 var (
     config Configuration_t
     config_menus MenuConfiguration_t
+    players []Player
+    client_id int
 )
 
 type ServerMap Map
@@ -20,7 +22,6 @@ func main(){
 
     game_map := Map{}
 
-    var players []map[string]Unit
 
     chan_client := make(chan string, 2)
 

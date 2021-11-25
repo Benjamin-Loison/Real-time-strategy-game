@@ -13,7 +13,7 @@ import (
 
 // Main fucntion for the part of the client that chats both with the server and
 // the gui part.
-func run_client(config Configuration_t, players *[]map[string]Unit, gmap *Map, chan_client chan string) {
+func run_client(config Configuration_t, players *[]Player, gmap *Map, chan_client chan string) {
 	// Verbose
 	logging("CLIENT", "The client id is " + config.Pseudo)
 
@@ -46,6 +46,7 @@ func run_client(config Configuration_t, players *[]map[string]Unit, gmap *Map, c
     Check(err)
     //fmt.Printf(" wtf %b", gmap.mut == nil)
     *gmap = map_info.GameMap
+    client_id = map_info.Id
 
 
     //GET UNITS
@@ -58,12 +59,13 @@ func run_client(config Configuration_t, players *[]map[string]Unit, gmap *Map, c
 
     players_data := strings.TrimSpace(string(netData))
 
+    print(players_data)
+
     var players_info = &ServerMessage{}
     err = json.Unmarshal([]byte(string(players_data)), players_info)
     Check(err)
-    //fmt.Printf(" wtf %b", gmap.mut == nil)
-    *gmap = map_info.GameMap
 
+    *players = players_info.Players
 
     chan_client<-"OK"
 
