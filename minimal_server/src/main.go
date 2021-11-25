@@ -8,7 +8,6 @@ import(
 
 var (
     Players []Player
-    IdSeeds []int
     main_chan = make(chan string,2)
     gmap Map
 )
@@ -49,13 +48,11 @@ func main() {
     gmap = LoadMap(conf.MapPath)
 
     // initializing
-    Players = append(Players, Player{} )
-    IdSeeds = append(IdSeeds, 0)
-    Players = append(Players, Player{} )
-    IdSeeds = append(IdSeeds, 0)
+    Players = append(Players, Player{Units: map[string]Unit{},Seed: 0} )
+    Players = append(Players, Player{Units: map[string]Unit{},Seed: 0} )
 
-    initializePlayer(&gmap, Player1,&Players[0].Units,&IdSeeds[0])
-    initializePlayer(&gmap, Player2,&Players[1].Units,&IdSeeds[1])
+    initializePlayer(&gmap, Player1,&Players[0].Units, &Players[0].Seed)
+    initializePlayer(&gmap, Player2,&Players[1].Units, &Players[1].Seed)
 
 	// Listen
     listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d",conf.Hostname, conf.Port))

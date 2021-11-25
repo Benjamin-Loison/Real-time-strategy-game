@@ -1,13 +1,15 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"image/color"
-    "io/ioutil"
-    "fmt"
-    "os"
-    "encoding/json"
-	"github.com/gen2brain/raylib-go/raylib"
+	"io/ioutil"
+	"os"
+	"strconv"
 	"time"
+
+	"github.com/gen2brain/raylib-go/raylib"
 )
 
 func logging(src string, msg string) {
@@ -123,11 +125,12 @@ func LoadMap(path string) Map {
     return *result_map
 }
 
-func initializePlayer(gmap *Map, own Owner, units *[]Unit,id *int){
+func initializePlayer(gmap *Map, own Owner, units *map[string]Unit,id *int){
     for i := int32(0) ; i < gmap.Width ; i++ {
         for j := int32(0) ; j < gmap.Width ; j++ {
             if gmap.Grid[i][j].Startpoint == own {
-                *units = append(*units, Unit{TileSize*i+TileSize/2.0,TileSize*j+TileSize/2.0,"P",int32(getId(id))})
+                id_unit := getId(id)
+                (*units)[strconv.Itoa(id_unit)] = Unit{TileSize*i+TileSize/2.0,TileSize*j+TileSize/2.0,"P",int32(id_unit),own}
             }
         }
     }
