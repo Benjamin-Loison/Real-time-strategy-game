@@ -40,7 +40,7 @@ func get_mouse_grid_pos(camera rl.Camera2D, width , height int32) (rl.Vector2, b
     }
 }
 
-func RunGui(gmap *Map, players *[]map[string]Unit, config Configuration_t, config_menus MenuConfiguration_t, chan_client chan string) {
+func RunGui(gmap *Map, players *[]Player, config Configuration_t, config_menus MenuConfiguration_t, chan_client chan string) {
     rl.SetTraceLog(rl.LogNone)
 	rl.InitWindow(screenWidth, screenHeight, "RTS")
 
@@ -131,8 +131,14 @@ func RunGui(gmap *Map, players *[]map[string]Unit, config Configuration_t, confi
         rl.BeginDrawing();
             rl.ClearBackground(rl.Black);
             rl.BeginMode2D(camera);
-
+                // DRAW MAP
                 DrawMap(*gmap)
+                // DRAW UNITS
+                for i, player := range *players {
+                    for _, player_unit := range player.Units {
+                        DrawUnit(player_unit, i== client_id)
+                    }
+                }
 
             rl.EndMode2D();
         rl.EndDrawing();

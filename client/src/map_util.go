@@ -32,7 +32,8 @@ const (
     NoOne         = 0
 
     TileSize  int32 = 32
-    fontSize int32 = 20
+    fontSize int32 = TileSize/4
+    unit_size float32 = 0.4+float32(fontSize)
 )
 
 func logging(src string, message string) {
@@ -50,6 +51,7 @@ type Map struct {
     Grid [][]Tile `json:"Grid"`
     mut *sync.Mutex
 }
+
 
 func Check(e error) {
     if e != nil {
@@ -79,6 +81,15 @@ func DrawTile(x,y int32,tileType TileType, startpoint Owner){
         rl.DrawCircle(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.Green)
     default:
     }
+}
+
+func DrawUnit(u Unit, owned bool){
+    if owned {
+        rl.DrawCircle(u.X,u.Y,unit_size,rl.Blue)
+    }else{
+        rl.DrawCircle(u.X,u.Y,unit_size,rl.Red)
+    }
+    rl.DrawText(u.Name,u.X-fontSize/2,u.Y-fontSize/2,fontSize,rl.White)
 }
 
 func DrawMap(gmap Map) {
