@@ -137,7 +137,7 @@ func RunGui(gmap *Map, players *[]Player, config Configuration_t, config_menus M
 			//camera.Offset.Y += 2.0
 			camera.Target.Y -= offsetThisFrame
 		}
-		if (rl.IsKeyDown(config.Keys.Up)){
+		if (rl.IsKeyDown(config.Keys.Down)){
 			//camera.Offset.Y -= 2.0
 			camera.Target.Y += offsetThisFrame
 		}
@@ -162,7 +162,8 @@ func RunGui(gmap *Map, players *[]Player, config Configuration_t, config_menus M
 			camera.Zoom = 1.0
 			camera.Target.X = map_middle.X
 			camera.Target.Y = map_middle.Y
-		}
+        }
+
 		// Draw to screenTexture
 		//----------------------------------------------------------------------------------
 		rl.BeginDrawing();

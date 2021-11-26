@@ -4,14 +4,14 @@
 		"Port": 8888
 	},
 	"Keys": {
-		"Left": "l",
-		"Right": "R",
-		"Up": "U",
-		"Down": "D",
-		"ZoomIn": "P",
-		"ZoomOut": "O",
-		"Menu": "M",
-		"ResetCamera": "SPACE"
+		"Left": 65,
+		"Right": 68,
+		"Up": 87,
+		"Down": 83,
+		"ZoomIn": 74,
+		"ZoomOut": 75,
+		"Menu": 59,
+		"ResetCamera": 76
 	},
 	"Pseudo": "JoueurTest"
 }

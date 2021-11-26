@@ -26,34 +26,17 @@ type Server_t struct {
 	Hostname string `json:"Hostname"`
 	Port	 int `json:"Port"`
 }
-type Keys_t struct {
-	Left int32
-	Right int32
-	Up int32
-	Down int32
-	ZoomIn int32
-	ZoomOut int32
-	Menu int32
-	ResetCamera int32
-}
 // Keys are represented by strings in the configuration file. This will allows
 // us to use words representing non-ascii keys.
-type Keys_tmp_t struct {
-	Left string `json:"Left"`
-	Right string `json:"Right"`
-	Up string `json:"Up"`
-	Down string `json:"Down"`
-	ZoomIn string `json:"ZoomIn"`
-	ZoomOut string `json:"ZoomOut"`
-	Menu string `json:"Menu"`
-	ResetCamera string `json:"ResetCamera"`
-}
-
-// Represents json structure
-type Configuration_tmp_t struct {
-	Server Server_t `json:"Server"`
-	Keys Keys_tmp_t `json:Keys"`
-	Pseudo string `json:Pseudo"`
+type Keys_t struct {
+	Left int32 `json:"Left"`
+	Right int32 `json:"Right"`
+	Up int32 `json:"Up"`
+	Down int32 `json:"Down"`
+	ZoomIn int32 `json:"ZoomIn"`
+	ZoomOut int32 `json:"ZoomOut"`
+	Menu int32 `json:"Menu"`
+	ResetCamera int32 `json:"ResetCamera"`
 }
 
 // The actual config file: the keys are replaced by their raylib values
@@ -73,23 +56,11 @@ func loadConfig(file_name string) Configuration_t {
 
 	// Convert the json content into a Configuration structure
 	var configuration = &Configuration_t{}
-	var configuration_tmp = &Configuration_tmp_t{}
-	err = json.Unmarshal(file, &configuration_tmp)
+	err = json.Unmarshal(file, &configuration)
 	if err != nil {
 		logging("Configuration", fmt.Sprintf("Cannot parse the config file: %v", err))
 		os.Exit(1)
 	}
-	// Fills the Configration structure usinf the temp structure
-	configuration.Server = configuration_tmp.Server
-	configuration.Keys.Left = keyOfString(configuration_tmp.Keys.Left)
-	configuration.Keys.Right = keyOfString(configuration_tmp.Keys.Right)
-	configuration.Keys.Up = keyOfString(configuration_tmp.Keys.Up)
-	configuration.Keys.Down = keyOfString(configuration_tmp.Keys.Down)
-	configuration.Keys.ZoomIn = keyOfString(configuration_tmp.Keys.ZoomIn)
-	configuration.Keys.ZoomOut = keyOfString(configuration_tmp.Keys.ZoomOut)
-	configuration.Keys.Menu = keyOfString(configuration_tmp.Keys.Menu)
-	configuration.Keys.ResetCamera = keyOfString(configuration_tmp.Keys.ResetCamera)
-	configuration.Pseudo = configuration_tmp.Pseudo
 
 	// Parse the command line and overwrite the configuration if needed
 	override_addr_parsed := flag.String("n", configuration.Server.Hostname, "Hostname of the server (ip address or name)")
