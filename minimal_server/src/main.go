@@ -111,7 +111,7 @@ func main() {
 
 	broadcast(channels, "START")
 	//
-	broadcast(channels, "QUIT")
+	//broadcast(channels, "QUIT")
 
 	//start game
 	for {
