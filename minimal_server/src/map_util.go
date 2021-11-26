@@ -127,7 +127,7 @@ func LoadMap(path string) Map {
 
 func initializePlayer(gmap *Map, own Owner, units *map[string]Unit,id *int){
     for i := int32(0) ; i < gmap.Width ; i++ {
-        for j := int32(0) ; j < gmap.Width ; j++ {
+        for j := int32(0) ; j < gmap.Height ; j++ {
             if gmap.Grid[i][j].Startpoint == own {
                 id_unit := getId(id)
                 (*units)[strconv.Itoa(id_unit)] = Unit{TileSize*i+TileSize/2.0,TileSize*j+TileSize/2.0,"P",int32(id_unit),own}
