@@ -25,12 +25,13 @@ const (
 var (
 	currentState = StateNone
 	currentMenu = -1
+	currentAction = -1
 	timeMenu = time.Now()
 )
 
 func drawGrid(width int32, height int32) {
 	for i := int32(0) ; i <= height ; i++ {
-		rl.DrawLine(0,TileSize *i, TileSize*width ,TileSize*i,rl.Red)
+		rl.DrawLine(0, TileSize *i, TileSize*width ,TileSize*i,rl.Red)
 	}
 	for i := int32(0) ; i <= width ; i++ {
 		rl.DrawLine(TileSize*i, 0, TileSize*i ,TileSize*height,rl.Red)
@@ -84,17 +85,35 @@ func RunGui(gmap *Map, players *[]Player, config Configuration_t, config_menus M
 
 		switch currentState {
 			case StateMenu:
+				menu_options := make(map[int32]MenuElement_t)
 				if currentMenu >= 0 {
 					// Print the current menu and its elements, and check for its hotkeys:
 					current_menu := FindMenuByRef(config_menus.Menus, currentMenu)
+					// Menu title
 					rl.DrawText(current_menu.Title, 0, 0, 40, rl.Red)
+					// Menu options and keys
 					for i := 0 ; i < len(current_menu.Elements) ; i ++ {
-						rl.DrawText(current_menu.Elements[i].Name, 100, int32(40 + (20 * i)), 15, rl.Blue)
-						if(rl.IsKeyDown(current_menu.Elements[i].Key) && time.Since(timeMenu) > time.Second) {
-							if current_menu.Elements[i].Type == MenuElementSubMenu {
-								currentMenu = current_menu.Elements[i].Ref
+						rl.DrawText(current_menu.Elements[i].Name,
+							100,
+							int32(40 + (20 * i)),
+							15,
+							rl.Blue)
+
+						// Adding the menu option to the [menu_options] mapping
+						menu_options[current_menu.Elements[i].Key] = current_menu.Elements[i]
+					}
+				}
+				//~Check the delay since last interaction
+				if(time.Since(timeMenu) > time.Second) {
+					for key, val := range menu_options {
+						if(rl.IsKeyDown(key)) {
+							switch val.Type {
+								case MenuElementSubMenu:
+									currentMenu = val.Ref
+									timeMenu = time.Now()
+								default:
+									///
 							}
-							timeMenu = time.Now()
 						}
 					}
 				}
@@ -130,9 +149,11 @@ func RunGui(gmap *Map, players *[]Player, config Configuration_t, config_menus M
 		}
 		if (rl.IsKeyDown(config.Keys.Menu)){
 			if (currentMenu == -1 && time.Since(timeMenu) > time.Second) {
+				currentState = StateMenu
 				currentMenu = 0
 				timeMenu = time.Now()
 			} else if (time.Since(timeMenu) > time.Second) {
+				currentState = StateNone
 				currentMenu = -1
 				timeMenu = time.Now()
 			}
