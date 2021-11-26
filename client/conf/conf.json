@@ -1,13 +1,17 @@
 {
-    "Server": {
-        "Hostname": "127.0.0.1",
-        "Port": 8888
-    },
-    "Keys": {
-        "Left": "l",
-        "Right": "R",
-        "Up": "U",
-        "Down": "D"
-    },
-    "Pseudo": "JoueurTest"
+	"Server": {
+		"Hostname": "127.0.0.1",
+		"Port": 8888
+	},
+	"Keys": {
+		"Left": "l",
+		"Right": "R",
+		"Up": "U",
+		"Down": "D",
+		"ZoomIn": "P",
+		"ZoomOut": "O",
+		"Menu": "M",
+		"ResetCamera": "SPACE"
+	},
+	"Pseudo": "JoueurTest"
 }

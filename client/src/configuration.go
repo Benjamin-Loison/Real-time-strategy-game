@@ -24,35 +24,43 @@ import (
 
 type Server_t struct {
 	Hostname string `json:"Hostname"`
-	Port     int `json:"Port"`
+	Port	 int `json:"Port"`
 }
 type Keys_t struct {
-    Left int32
-    Right int32
-    Up int32
-    Down int32
+	Left int32
+	Right int32
+	Up int32
+	Down int32
+	ZoomIn int32
+	ZoomOut int32
+	Menu int32
+	ResetCamera int32
 }
 // Keys are represented by strings in the configuration file. This will allows
 // us to use words representing non-ascii keys.
 type Keys_tmp_t struct {
-    Left string `json:"Left"`
-    Right string `json:"Right"`
-    Up string `json:"Up"`
-    Down string `json:"Down"`
+	Left string `json:"Left"`
+	Right string `json:"Right"`
+	Up string `json:"Up"`
+	Down string `json:"Down"`
+	ZoomIn string `json:"ZoomIn"`
+	ZoomOut string `json:"ZoomOut"`
+	Menu string `json:"Menu"`
+	ResetCamera string `json:"ResetCamera"`
 }
 
 // Represents json structure
 type Configuration_tmp_t struct {
-    Server Server_t `json:"Server"`
-    Keys Keys_tmp_t `json:Keys"`
-    Pseudo string `json:Pseudo"`
+	Server Server_t `json:"Server"`
+	Keys Keys_tmp_t `json:Keys"`
+	Pseudo string `json:Pseudo"`
 }
 
 // The actual config file: the keys are replaced by their raylib values
 type Configuration_t struct {
-    Server Server_t `json:"Server"`
-    Keys Keys_t `json:Keys"`
-    Pseudo string `json:Pseudo"`
+	Server Server_t `json:"Server"`
+	Keys Keys_t `json:Keys"`
+	Pseudo string `json:Pseudo"`
 }
 
 func loadConfig(file_name string) Configuration_t {
@@ -77,6 +85,10 @@ func loadConfig(file_name string) Configuration_t {
 	configuration.Keys.Right = keyOfString(configuration_tmp.Keys.Right)
 	configuration.Keys.Up = keyOfString(configuration_tmp.Keys.Up)
 	configuration.Keys.Down = keyOfString(configuration_tmp.Keys.Down)
+	configuration.Keys.ZoomIn = keyOfString(configuration_tmp.Keys.ZoomIn)
+	configuration.Keys.ZoomOut = keyOfString(configuration_tmp.Keys.ZoomOut)
+	configuration.Keys.Menu = keyOfString(configuration_tmp.Keys.Menu)
+	configuration.Keys.ResetCamera = keyOfString(configuration_tmp.Keys.ResetCamera)
 	configuration.Pseudo = configuration_tmp.Pseudo
 
 	// Parse the command line and overwrite the configuration if needed
