@@ -1,6 +1,7 @@
 package main
 
 import(
+	"bufio"
 	"net"
 	"encoding/json"
 	"fmt"
@@ -35,14 +36,19 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 	Check(err)
 	init_message := []byte(string(init_marshall)+"\n")
 
-	conn.Write(init_message)
+	buffer := bufio.NewWriter(conn)
+	_, err = buffer.Write(init_message)
+	Check(err)
+	buffer.Flush()
 
 	units_json := ServerMessage { MapInfo,Map{}, Players, id}
 	units_marshall, err := json.Marshal(units_json)
 	Check(err)
 	units_message := []byte(string(units_marshall)+"\n")
 
-	conn.Write(units_message)
+	_, err = buffer.Write(units_message)
+	Check(err)
+	buffer.Flush()
 
 	// Wait for the other player
 	logging("CLIENT_HANDLER", fmt.Sprintf("Waiting for other player (%d)", id))

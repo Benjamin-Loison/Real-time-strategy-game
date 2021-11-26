@@ -1,0 +1,976 @@
+Interface: wlp1s0, type: EN10MB, MAC: 70:66:55:b4:79:9d, IPv4: 138.231.145.154
+Starting arp-scan 1.9.7 with 4096 hosts (https://github.com/royhills/arp-scan)
+138.231.144.1	00:90:fa:96:50:4c	Emulex Corporation
+138.231.144.2	00:90:fa:a5:66:14	Emulex Corporation
+138.231.144.3	00:90:fa:96:50:4c	Emulex Corporation
+138.231.144.4	7a:d8:27:5e:f3:0e	(Unknown: locally administered)
+138.231.144.11	00:45:e2:03:6e:c1	CyberTAN Technology Inc.
+138.231.144.36	aa:57:a2:bd:17:ed	(Unknown: locally administered)
+138.231.144.67	3a:99:af:8f:fb:f9	(Unknown: locally administered)
+138.231.144.26	3a:e5:d8:08:f8:dc	(Unknown: locally administered)
+138.231.144.50	00:26:5a:09:de:d9	D-Link Corporation
+138.231.144.84	f8:ff:c2:03:79:a5	Apple, Inc.
+138.231.144.42	20:34:fb:a9:5b:1e	Xiaomi Communications Co Ltd
+138.231.144.100	d4:63:c6:2f:b2:02	Motorola Mobility LLC, a Lenovo Company
+138.231.144.87	3c:22:fb:99:ad:50	Apple, Inc.
+138.231.144.18	fc:44:82:7d:8d:59	(Unknown)
+138.231.144.63	d6:54:2b:4a:0a:79	(Unknown: locally administered)
+138.231.144.91	26:04:cb:dd:e8:a1	(Unknown: locally administered)
+138.231.144.124	d0:c5:d3:e8:61:bd	AzureWave Technology Inc.
+138.231.144.125	dc:85:de:e3:9a:3f	AzureWave Technology Inc.
+138.231.144.8	be:10:92:04:c0:04	(Unknown: locally administered)
+138.231.144.116	fc:19:99:94:c8:d6	(Unknown)
+138.231.144.144	84:c5:a6:08:b4:f2	Intel Corporate
+138.231.144.91	26:04:cb:dd:e8:a1	(Unknown: locally administered) (DUP: 2)
+138.231.144.21	16:ed:92:4f:b6:bc	(Unknown: locally administered)
+138.231.144.105	20:47:da:43:a7:59	Xiaomi Communications Co Ltd
+138.231.144.104	04:ed:33:2f:e6:67	Intel Corporate
+138.231.144.146	e8:2a:ea:e4:6b:46	Intel Corporate
+138.231.144.136	14:7d:da:95:3c:89	(Unknown)
+138.231.144.167	b4:69:21:f0:ee:e8	Intel Corporate
+138.231.144.86	70:3e:ac:70:68:ea	Apple, Inc.
+138.231.144.199	84:c5:a6:8d:e3:ac	Intel Corporate
+138.231.144.153	2e:97:d8:4e:81:2b	(Unknown: locally administered)
+138.231.144.212	2c:db:07:6f:29:67	(Unknown)
+138.231.144.64	a4:4b:d5:22:a8:88	Xiaomi Communications Co Ltd
+138.231.144.216	50:5b:c2:65:71:91	Liteon Technology Corporation
+138.231.144.194	6e:9a:0a:3d:47:26	(Unknown: locally administered)
+138.231.144.127	26:f0:53:42:2f:62	(Unknown: locally administered)
+138.231.144.205	94:e7:0b:7c:19:bf	(Unknown)
+138.231.144.231	32:6d:90:a7:d4:ae	(Unknown: locally administered)
+138.231.144.209	46:f4:3e:16:6f:12	(Unknown: locally administered)
+138.231.144.213	34:29:12:df:75:c1	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.144.177	e6:98:1f:93:21:15	(Unknown: locally administered)
+138.231.144.214	82:66:4c:ca:fd:02	(Unknown: locally administered)
+138.231.144.82	fe:bf:c8:ee:de:af	(Unknown: locally administered)
+138.231.144.159	18:1d:ea:5a:53:e3	Intel Corporate
+138.231.144.189	90:94:97:b1:3c:c5	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.144.195	b0:be:83:1b:d1:3f	(Unknown)
+138.231.145.2	18:1d:ea:4b:71:8e	Intel Corporate
+138.231.144.162	9c:2e:a1:3b:86:53	Xiaomi Communications Co Ltd
+138.231.145.6	f0:43:47:06:e3:a3	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.145.9	e4:a4:71:9c:1b:d4	Intel Corporate
+138.231.144.242	f0:18:98:51:65:23	Apple, Inc.
+138.231.145.17	4c:1d:96:49:ab:97	Intel Corporate
+138.231.145.16	6c:c7:ec:f3:b3:a3	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.145.16	6c:c7:ec:f3:b3:a3	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.144.178	a6:b8:57:76:ca:94	(Unknown: locally administered)
+138.231.144.221	7c:2a:db:5a:81:01	(Unknown)
+138.231.144.32	dc:2b:61:3b:0c:4f	Apple, Inc.
+138.231.144.56	88:83:22:da:92:0a	Samsung Electronics Co.,Ltd
+138.231.145.11	f8:94:c2:05:1e:19	Intel Corporate
+138.231.145.32	bc:a8:a6:b5:ed:b6	Intel Corporate
+138.231.145.30	a8:9c:ed:f6:1d:7c	Xiaomi Communications Co Ltd
+138.231.144.206	72:25:09:12:ba:5b	(Unknown: locally administered)
+138.231.145.61	00:42:38:c4:b4:36	(Unknown)
+138.231.145.59	ac:67:5d:a9:48:0e	(Unknown)
+138.231.144.56	88:83:22:da:92:0a	Samsung Electronics Co.,Ltd (DUP: 2)
+138.231.144.90	e6:0f:15:20:48:6e	(Unknown: locally administered)
+138.231.145.22	c2:59:d5:53:12:1c	(Unknown: locally administered)
+138.231.144.218	6e:33:92:0a:d2:9e	(Unknown: locally administered)
+138.231.145.43	5a:f4:85:0a:8b:b4	(Unknown: locally administered)
+138.231.145.98	30:07:4d:f7:20:34	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.145.98	30:07:4d:f7:20:34	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.145.111	5c:c3:07:46:c5:09	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.145.77	00:e1:8c:97:cd:ae	Intel Corporate
+138.231.145.58	da:ac:8e:d5:2d:66	(Unknown: locally administered)
+138.231.144.188	0a:ec:9d:4c:36:7f	(Unknown: locally administered)
+138.231.145.107	86:71:74:35:bc:c4	(Unknown: locally administered)
+138.231.145.100	e6:a2:5c:30:24:31	(Unknown: locally administered)
+138.231.145.90	e0:b5:2d:0a:11:c0	Apple, Inc.
+138.231.144.244	62:1c:d2:9e:07:ee	(Unknown: locally administered)
+138.231.145.121	74:eb:80:6c:8e:98	Samsung Electronics Co.,Ltd
+138.231.145.121	74:eb:80:6c:8e:98	Samsung Electronics Co.,Ltd (DUP: 2)
+138.231.145.136	ac:67:5d:ab:97:ad	(Unknown)
+138.231.145.150	64:80:99:ac:d9:1a	Intel Corporate
+138.231.145.12	58:b1:0f:96:81:cc	Samsung Electronics Co.,Ltd
+138.231.145.125	20:f4:78:25:2a:a4	Xiaomi Communications Co Ltd
+138.231.145.128	10:8e:e0:1b:eb:de	Samsung Electronics Co.,Ltd
+138.231.144.17	8a:a2:78:3f:06:9a	(Unknown: locally administered)
+138.231.145.120	06:99:3e:ab:d9:f8	(Unknown: locally administered)
+138.231.144.187	e0:cc:f8:65:99:bc	Xiaomi Communications Co Ltd
+138.231.145.93	0c:70:4a:77:f9:13	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.145.123	c8:69:cd:aa:56:98	Apple, Inc.
+138.231.145.135	74:59:09:58:5b:b0	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.144.248	a8:5c:2c:c3:e2:ec	Apple, Inc.
+138.231.145.20	da:5e:ee:69:a6:e6	(Unknown: locally administered)
+138.231.145.140	f8:e4:e3:ca:56:e3	Intel Corporate
+138.231.145.130	7e:4d:f7:4e:ea:df	(Unknown: locally administered)
+138.231.144.150	0e:90:0d:90:8c:f6	(Unknown: locally administered)
+138.231.145.139	c2:f8:cf:36:62:d7	(Unknown: locally administered)
+138.231.144.171	34:2d:0d:8d:2d:64	Samsung Electronics Co.,Ltd
+138.231.144.31	32:a2:29:13:a6:aa	(Unknown: locally administered)
+138.231.145.62	ee:a6:c7:84:2b:24	(Unknown: locally administered)
+138.231.145.182	2c:d0:66:87:58:93	(Unknown)
+138.231.145.205	f8:e4:e3:ca:72:fe	Intel Corporate
+138.231.145.193	42:03:74:c9:60:04	(Unknown: locally administered)
+138.231.145.167	da:ee:18:90:3b:27	(Unknown: locally administered)
+138.231.145.178	6e:f8:7a:d0:f7:7e	(Unknown: locally administered)
+138.231.145.127	e0:dc:ff:f0:cd:5d	Xiaomi Communications Co Ltd
+138.231.144.46	be:0a:7c:3d:79:7b	(Unknown: locally administered)
+138.231.145.169	5e:bf:6c:fd:40:aa	(Unknown: locally administered)
+138.231.145.131	6a:7b:b9:cb:de:62	(Unknown: locally administered)
+138.231.145.224	a4:4b:d5:30:0b:0e	Xiaomi Communications Co Ltd
+138.231.145.148	54:25:ea:31:73:a6	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.145.244	88:44:77:43:f9:b6	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.145.246	b0:7d:64:75:05:76	(Unknown)
+138.231.145.248	08:71:90:b0:89:61	Intel Corporate
+138.231.145.249	5c:80:b6:a8:df:7c	Intel Corporate
+138.231.145.209	d4:4f:d7:9a:9e:65	(Unknown)
+138.231.145.227	62:84:60:11:69:1d	(Unknown: locally administered)
+138.231.145.206	ee:8a:34:83:4c:7a	(Unknown: locally administered)
+138.231.145.198	64:a2:f9:66:d2:39	OnePlus Technology (Shenzhen) Co., Ltd
+138.231.145.228	9a:37:92:5a:07:1e	(Unknown: locally administered)
+138.231.145.255	a4:83:e7:58:78:a9	Apple, Inc.
+138.231.146.16	cc:d9:ac:bd:ec:87	(Unknown)
+138.231.145.222	9c:bc:f0:25:17:fc	(Unknown)
+138.231.145.242	48:2c:a0:fd:c1:1e	Xiaomi Communications Co Ltd
+138.231.146.22	ee:fa:6d:2f:35:ed	(Unknown: locally administered)
+138.231.146.28	90:9c:4a:c7:ce:07	(Unknown)
+138.231.146.27	90:63:3b:87:96:f3	Samsung Electronics Co.,Ltd
+138.231.146.21	d8:3b:bf:08:06:bf	Intel Corporate
+138.231.146.38	e0:d4:64:27:b5:fa	(Unknown)
+138.231.146.47	6c:40:08:89:68:88	Apple, Inc.
+138.231.146.3	00:21:6b:de:2c:95	Intel Corporate
+138.231.145.247	ea:84:d0:9b:70:00	(Unknown: locally administered)
+138.231.145.250	56:20:32:62:47:3b	(Unknown: locally administered)
+138.231.145.219	22:63:65:9a:5c:e2	(Unknown: locally administered)
+138.231.146.55	70:c9:4e:97:a0:f1	Liteon Technology Corporation
+138.231.146.58	f8:e4:e3:ca:73:30	Intel Corporate
+138.231.146.41	9a:2b:64:1c:68:86	(Unknown: locally administered)
+138.231.146.10	70:3a:51:95:d7:70	Xiaomi Communications Co Ltd
+138.231.146.19	e4:0e:ee:71:e8:ba	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.145.225	10:c7:53:b1:f5:b6	Qingdao Intelligent&Precise Electronics Co.,Ltd.
+138.231.145.164	78:85:f4:08:51:9e	(Unknown)
+138.231.146.81	34:2e:b7:50:6e:50	(Unknown)
+138.231.146.87	8c:7a:aa:e8:88:70	(Unknown)
+138.231.144.225	3a:f5:a8:45:03:cf	(Unknown: locally administered)
+138.231.146.61	be:f7:fa:d3:8b:7b	(Unknown: locally administered)
+138.231.145.106	c2:c8:00:6e:62:3b	(Unknown: locally administered)
+138.231.146.53	aa:0c:e6:44:a0:c9	(Unknown: locally administered)
+138.231.146.72	d8:ce:3a:8a:36:dc	Xiaomi Communications Co Ltd
+138.231.145.238	a8:9f:ba:ca:cc:14	Samsung Electronics Co.,Ltd
+138.231.146.43	64:dd:e9:99:7c:39	(Unknown)
+138.231.145.215	3a:14:a0:4a:9f:a3	(Unknown: locally administered)
+138.231.144.245	3e:f1:2f:d5:df:9e	(Unknown: locally administered)
+138.231.146.88	a4:55:90:7d:03:b0	(Unknown)
+138.231.146.54	48:3c:0c:69:c5:31	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.145.234	e6:22:02:37:9a:5b	(Unknown: locally administered)
+138.231.146.111	46:ae:30:55:f5:e5	(Unknown: locally administered)
+138.231.146.126	14:7d:da:ab:dd:7d	(Unknown)
+138.231.146.98	ee:17:d5:d8:5c:9f	(Unknown: locally administered)
+138.231.146.117	b6:a6:d0:a4:40:0b	(Unknown: locally administered)
+138.231.145.21	aa:79:61:2a:d1:e6	(Unknown: locally administered)
+138.231.146.113	10:32:7e:f8:ea:21	Huawei Device Co., Ltd.
+138.231.144.47	42:c6:f3:d8:13:93	(Unknown: locally administered)
+138.231.146.37	46:d2:18:4b:2b:fd	(Unknown: locally administered)
+138.231.146.136	3c:cd:5d:74:77:24	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.146.42	a2:47:a7:ed:df:3b	(Unknown: locally administered)
+138.231.146.109	a0:d7:95:1d:aa:a0	Apple, Inc.
+138.231.146.122	e0:cc:f8:eb:96:3c	Xiaomi Communications Co Ltd
+138.231.146.157	f8:e4:e3:c9:03:56	Intel Corporate
+138.231.144.224	1a:bb:9d:0a:78:70	(Unknown: locally administered)
+138.231.146.166	a4:c3:f0:6c:c2:53	Intel Corporate
+138.231.146.141	ec:8c:9a:d5:e5:3f	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.146.177	86:25:ce:9e:5c:bf	(Unknown: locally administered)
+138.231.146.179	c4:9d:ed:a0:16:22	Microsoft Corporation
+138.231.145.197	36:0b:ab:01:5a:68	(Unknown: locally administered)
+138.231.145.199	14:20:5e:a0:34:61	Apple, Inc.
+138.231.146.156	cc:9f:7a:a4:1b:10	Chiun Mai Communication Systems, Inc
+138.231.146.146	04:33:c2:2b:bc:6d	Intel Corporate
+138.231.146.206	ac:67:5d:a9:86:02	(Unknown)
+138.231.146.80	3a:81:c8:12:8a:ba	(Unknown: locally administered)
+138.231.146.212	4a:14:68:60:f3:e3	(Unknown: locally administered)
+138.231.145.196	42:34:ed:53:b4:6e	(Unknown: locally administered)
+138.231.146.175	68:3e:26:07:ee:00	(Unknown)
+138.231.146.220	4c:eb:bd:19:da:9d	CHONGQING FUGUI ELECTRONICS CO.,LTD.
+138.231.146.222	a8:6d:aa:09:f2:68	Intel Corporate
+138.231.146.224	be:09:0a:c7:70:03	(Unknown: locally administered)
+138.231.146.207	6e:34:47:ae:9a:db	(Unknown: locally administered)
+138.231.146.227	b8:76:3f:e7:48:df	Hon Hai Precision Ind. Co.,Ltd.
+138.231.146.232	60:f6:77:5d:f4:c6	Intel Corporate
+138.231.145.137	ac:5f:3e:f3:77:df	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.146.77	de:42:f3:f5:97:f2	(Unknown: locally administered)
+138.231.146.178	0c:8f:ff:42:b5:f0	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.146.245	a4:9b:4f:64:fc:b6	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.146.185	e6:a0:cd:05:1e:67	(Unknown: locally administered)
+138.231.146.245	a4:9b:4f:64:fc:b6	HUAWEI TECHNOLOGIES CO.,LTD (DUP: 2)
+138.231.146.245	a4:9b:4f:64:fc:b6	HUAWEI TECHNOLOGIES CO.,LTD (DUP: 3)
+138.231.146.245	a4:9b:4f:64:fc:b6	HUAWEI TECHNOLOGIES CO.,LTD (DUP: 4)
+138.231.146.178	0c:8f:ff:42:b5:f0	HUAWEI TECHNOLOGIES CO.,LTD (DUP: 2)
+138.231.146.223	6a:3c:8a:f0:d0:72	(Unknown: locally administered)
+138.231.146.186	8e:65:76:26:74:22	(Unknown: locally administered)
+138.231.146.202	18:65:90:d4:5f:c5	Apple, Inc.
+138.231.146.246	e2:8d:28:be:fe:20	(Unknown: locally administered)
+138.231.145.87	2c:0e:3d:37:c5:9e	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.146.218	a4:50:46:d5:87:ab	Xiaomi Communications Co Ltd
+138.231.147.23	a4:5e:60:e5:92:8d	Apple, Inc.
+138.231.146.205	04:d6:aa:49:7d:8d	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.146.190	0c:2c:54:07:e2:ea	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.147.0	e2:2f:f1:dc:80:0a	(Unknown: locally administered)
+138.231.146.254	94:e7:0b:7a:e0:bd	(Unknown)
+138.231.145.195	36:09:91:8f:9c:ea	(Unknown: locally administered)
+138.231.145.204	1e:7a:63:72:b9:29	(Unknown: locally administered)
+138.231.146.205	04:d6:aa:49:7d:8d	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.146.251	4e:62:ed:01:8b:e1	(Unknown: locally administered)
+138.231.147.2	38:f9:d3:43:a7:c3	Apple, Inc.
+138.231.147.42	14:7d:da:6d:f9:b5	(Unknown)
+138.231.145.195	36:09:91:8f:9c:ea	(Unknown: locally administered) (DUP: 2)
+138.231.147.80	58:20:59:90:d7:be	Xiaomi Communications Co Ltd
+138.231.147.82	fe:88:8d:c3:da:10	(Unknown: locally administered)
+138.231.145.137	ac:5f:3e:f3:77:df	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.146.228	48:79:4d:32:ee:a1	Samsung Electronics Co.,Ltd
+138.231.145.87	2c:0e:3d:37:c5:9e	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.146.140	de:03:be:dd:92:72	(Unknown: locally administered)
+138.231.147.92	38:71:de:f1:c2:18	Apple, Inc.
+138.231.147.51	38:f9:d3:aa:42:40	Apple, Inc.
+138.231.146.20	f6:0c:fb:cf:b9:f8	(Unknown: locally administered)
+138.231.147.112	88:66:5a:1e:cc:5c	(Unknown)
+138.231.147.27	88:46:04:f1:87:c6	(Unknown)
+138.231.146.44	c2:d1:b3:83:8d:db	(Unknown: locally administered)
+138.231.147.50	9c:bc:f0:d4:64:5a	(Unknown)
+138.231.147.122	1c:91:80:cd:53:46	(Unknown)
+138.231.147.99	24:2e:02:2c:7a:74	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.147.64	4c:63:71:e0:c9:c0	(Unknown)
+138.231.147.74	de:ae:56:f8:4a:e5	(Unknown: locally administered)
+138.231.147.126	7c:76:68:14:10:91	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.147.98	f0:8a:76:f1:87:bc	Samsung Electronics Co.,Ltd
+138.231.147.134	ac:bc:32:cb:50:b9	Apple, Inc.
+138.231.147.131	80:30:49:7a:d1:f1	(Unknown)
+138.231.147.138	20:1e:88:d2:3a:61	(Unknown)
+138.231.147.81	38:f9:d3:c6:1d:d2	Apple, Inc.
+138.231.147.90	ec:10:7b:82:2b:32	Samsung Electronics Co.,Ltd
+138.231.147.132	06:e0:b9:08:76:46	(Unknown: locally administered)
+138.231.147.146	94:e7:0b:df:52:96	(Unknown)
+138.231.147.113	6c:b7:49:08:18:69	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.147.113	6c:b7:49:08:18:69	HUAWEI TECHNOLOGIES CO.,LTD (DUP: 2)
+138.231.146.52	34:1c:f0:f8:ae:8e	(Unknown)
+138.231.147.151	92:21:ab:40:96:ff	(Unknown: locally administered)
+138.231.147.97	4e:3c:03:b6:5d:74	(Unknown: locally administered)
+138.231.146.59	14:9f:3c:8a:b3:19	Samsung Electronics Co.,Ltd
+138.231.147.159	0c:b5:27:e3:6f:eb	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.147.79	3a:ad:b3:cb:c0:52	(Unknown: locally administered)
+138.231.147.3	be:c2:80:48:16:d9	(Unknown: locally administered)
+138.231.146.247	44:55:c4:0f:97:49	Huawei Device Co., Ltd.
+138.231.147.127	3c:cd:36:0e:91:a0	Apple, Inc.
+138.231.146.59	14:9f:3c:8a:b3:19	Samsung Electronics Co.,Ltd (DUP: 2)
+138.231.147.173	f8:ff:c2:58:58:89	Apple, Inc.
+138.231.147.187	9c:b6:d0:c2:d2:6b	Rivet Networks
+138.231.146.252	78:c5:f8:a5:b3:47	(Unknown)
+138.231.147.195	84:cf:bf:8f:8e:95	Fairphone
+138.231.146.90	fa:c8:4a:41:f5:2b	(Unknown: locally administered)
+138.231.147.197	bc:83:85:d9:f1:43	Microsoft Corporation
+138.231.147.154	6e:de:ef:d1:d8:4c	(Unknown: locally administered)
+138.231.147.208	ac:67:5d:ab:19:22	(Unknown)
+138.231.147.188	dc:1b:a1:f1:70:1b	(Unknown)
+138.231.147.198	3c:a6:f6:10:c9:b5	(Unknown)
+138.231.147.209	f8:59:71:72:c6:cb	Intel Corporate
+138.231.147.189	fa:32:32:f0:e0:24	(Unknown: locally administered)
+138.231.145.208	ee:2f:7f:94:55:f7	(Unknown: locally administered)
+138.231.147.201	06:a2:d3:78:b2:5e	(Unknown: locally administered)
+138.231.147.172	46:8c:87:30:d7:9a	(Unknown: locally administered)
+138.231.146.127	ce:32:4a:52:26:fb	(Unknown: locally administered)
+138.231.147.226	14:7d:da:9d:9e:a5	(Unknown)
+138.231.147.191	d0:81:7a:c0:08:78	Apple, Inc.
+138.231.145.240	92:b9:c2:15:06:7d	(Unknown: locally administered)
+138.231.147.67	74:0a:e1:36:22:e7	Huawei Device Co., Ltd.
+138.231.147.203	68:3e:26:10:a7:70	(Unknown)
+138.231.147.229	22:e9:1b:11:75:91	(Unknown: locally administered)
+138.231.146.203	52:e2:fe:84:de:64	(Unknown: locally administered)
+138.231.146.100	4a:1b:9d:f9:f0:c3	(Unknown: locally administered)
+138.231.147.251	04:ed:33:c5:6f:70	Intel Corporate
+138.231.147.174	e4:34:93:af:5f:f3	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.147.247	74:12:b3:6c:3e:2f	(Unknown)
+138.231.148.2	90:61:ae:90:b8:b1	Intel Corporate
+138.231.147.233	d0:c6:37:9e:64:48	Intel Corporate
+138.231.147.199	e6:7f:c9:87:38:c9	(Unknown: locally administered)
+138.231.147.150	30:07:4d:aa:94:94	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.147.121	b6:a8:79:be:28:a5	(Unknown: locally administered)
+138.231.147.104	a0:78:17:6f:56:ca	(Unknown)
+138.231.147.224	be:ee:68:e1:a9:fe	(Unknown: locally administered)
+138.231.147.221	64:a2:f9:62:6f:c4	OnePlus Technology (Shenzhen) Co., Ltd
+138.231.144.203	12:cd:20:ed:d3:32	(Unknown: locally administered)
+138.231.148.21	8c:85:90:87:3b:6f	Apple, Inc.
+138.231.148.25	dc:41:a9:b2:04:df	(Unknown)
+138.231.147.222	2c:d0:66:52:08:7b	(Unknown)
+138.231.147.236	58:c5:cb:48:3d:77	Samsung Electronics Co.,Ltd
+138.231.148.37	e0:dc:ff:10:e7:9b	Xiaomi Communications Co Ltd
+138.231.147.60	40:9c:28:d4:71:ad	Apple, Inc.
+138.231.146.229	34:a8:eb:d8:1c:cb	Apple, Inc.
+138.231.147.117	f6:39:13:dc:aa:10	(Unknown: locally administered)
+138.231.148.42	e2:21:7c:39:25:97	(Unknown: locally administered)
+138.231.147.150	30:07:4d:aa:94:94	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.144.223	be:1b:69:f1:a3:47	(Unknown: locally administered)
+138.231.144.41	2a:a8:c8:a9:64:75	(Unknown: locally administered)
+138.231.147.177	90:06:28:6c:42:0f	Samsung Electronics Co.,Ltd
+138.231.147.118	8a:6e:7d:94:bf:1e	(Unknown: locally administered)
+138.231.147.16	da:76:25:9f:66:21	(Unknown: locally administered)
+138.231.147.180	fe:a0:6b:e5:a1:52	(Unknown: locally administered)
+138.231.147.219	c6:2d:4a:b1:85:6f	(Unknown: locally administered)
+138.231.147.234	fc:d9:08:0f:02:3e	(Unknown)
+138.231.147.157	0e:4b:72:d6:b4:a8	(Unknown: locally administered)
+138.231.148.7	60:ab:67:d6:69:f4	Xiaomi Communications Co Ltd
+138.231.148.53	dc:66:72:bd:9c:af	Samsung Electronics Co.,Ltd
+138.231.148.105	f8:ff:c2:28:34:ae	Apple, Inc.
+138.231.148.31	04:b1:67:ae:1a:39	Xiaomi Communications Co Ltd
+138.231.148.53	dc:66:72:bd:9c:af	Samsung Electronics Co.,Ltd (DUP: 2)
+138.231.147.57	2e:99:4e:5e:10:23	(Unknown: locally administered)
+138.231.144.201	76:18:9f:0d:66:46	(Unknown: locally administered)
+138.231.148.73	34:36:3b:c8:ef:86	Apple, Inc.
+138.231.147.125	38:f9:d3:22:f9:3c	Apple, Inc.
+138.231.148.80	62:ee:38:e5:f7:eb	(Unknown: locally administered)
+138.231.148.106	ba:7f:2c:05:1d:ec	(Unknown: locally administered)
+138.231.146.167	be:05:4d:d4:be:ae	(Unknown: locally administered)
+138.231.148.68	a8:66:7f:0e:cf:6c	Apple, Inc.
+138.231.148.115	2a:41:96:0c:5d:59	(Unknown: locally administered)
+138.231.148.127	de:a6:a1:58:50:57	(Unknown: locally administered)
+138.231.146.196	86:19:17:b8:b7:27	(Unknown: locally administered)
+138.231.147.248	96:4b:d0:1b:72:5d	(Unknown: locally administered)
+138.231.148.100	f6:be:68:b3:cf:3e	(Unknown: locally administered)
+138.231.148.140	98:46:0a:8c:76:dc	Apple, Inc.
+138.231.148.101	6c:40:08:89:82:4a	Apple, Inc.
+138.231.148.119	d4:61:da:74:ca:85	Apple, Inc.
+138.231.148.109	b4:ae:2b:cc:cf:68	Microsoft
+138.231.147.109	2c:d0:66:9e:91:fc	(Unknown)
+138.231.147.36	46:87:06:8d:39:c7	(Unknown: locally administered)
+138.231.147.9	76:db:62:87:93:23	(Unknown: locally administered)
+138.231.148.108	14:7d:da:ab:85:bd	(Unknown)
+138.231.148.29	4a:2b:68:05:6e:03	(Unknown: locally administered)
+138.231.148.144	b4:d5:bd:cf:74:a7	Intel Corporate
+138.231.147.157	0e:4b:72:d6:b4:a8	(Unknown: locally administered) (DUP: 2)
+138.231.146.225	ae:5c:a8:fb:2e:26	(Unknown: locally administered)
+138.231.148.135	dc:a9:04:7e:1b:be	Apple, Inc.
+138.231.148.174	64:bc:58:25:a7:97	(Unknown)
+138.231.147.73	8a:d5:66:30:0a:cf	(Unknown: locally administered)
+138.231.148.18	06:7e:07:57:40:3a	(Unknown: locally administered)
+138.231.148.32	62:8c:11:e3:3c:7c	(Unknown: locally administered)
+138.231.148.163	aa:b5:09:a2:63:d1	(Unknown: locally administered)
+138.231.148.158	12:a6:72:73:3a:7e	(Unknown: locally administered)
+138.231.147.78	de:f0:46:80:70:09	(Unknown: locally administered)
+138.231.147.63	96:43:a8:99:63:73	(Unknown: locally administered)
+138.231.147.211	0c:2f:b0:b2:fa:de	Samsung Electronics Co.,Ltd
+138.231.148.191	24:ee:9a:93:e3:6f	Intel Corporate
+138.231.147.85	d4:90:9c:6b:8c:59	Apple, Inc.
+138.231.148.103	14:7d:da:9c:47:a3	(Unknown)
+138.231.148.213	ce:3f:e8:1a:49:93	(Unknown: locally administered)
+138.231.148.6	2e:5a:62:4d:19:ce	(Unknown: locally administered)
+138.231.148.249	70:5f:a3:0f:6e:fa	(Unknown)
+138.231.148.167	50:9e:a7:55:bd:07	Samsung Electronics Co.,Ltd
+138.231.148.167	50:9e:a7:55:bd:07	Samsung Electronics Co.,Ltd (DUP: 2)
+138.231.147.101	ee:86:1a:49:c7:9b	(Unknown: locally administered)
+138.231.148.128	7c:03:ab:e4:f5:1a	Xiaomi Communications Co Ltd
+138.231.145.108	b2:86:dd:78:5e:61	(Unknown: locally administered)
+138.231.148.111	ea:91:f7:3a:fc:39	(Unknown: locally administered)
+138.231.149.20	c0:38:96:8c:98:45	Hon Hai Precision Ind. Co.,Ltd.
+138.231.148.160	a0:c9:a0:c8:6c:de	Murata Manufacturing Co., Ltd.
+138.231.145.254	d2:98:74:3f:44:35	(Unknown: locally administered)
+138.231.149.43	c4:b3:01:d6:3a:fb	Apple, Inc.
+138.231.149.28	da:0a:fe:68:be:d8	(Unknown: locally administered)
+138.231.148.225	b2:8a:d7:a8:50:bf	(Unknown: locally administered)
+138.231.149.41	94:87:e0:7e:22:a7	Xiaomi Communications Co Ltd
+138.231.145.156	6a:fc:7d:42:77:dc	(Unknown: locally administered)
+138.231.149.70	ca:d7:38:0f:6b:28	(Unknown: locally administered)
+138.231.148.194	76:41:7e:8b:2d:73	(Unknown: locally administered)
+138.231.145.173	d0:25:98:28:23:2c	Apple, Inc.
+138.231.149.61	e0:cc:f8:21:7d:81	Xiaomi Communications Co Ltd
+138.231.149.60	d2:f7:d3:b0:d1:3c	(Unknown: locally administered)
+138.231.149.58	92:95:a1:cc:d2:2a	(Unknown: locally administered)
+138.231.149.87	2e:18:a4:27:33:8f	(Unknown: locally administered)
+138.231.148.78	c8:09:a8:3d:3d:85	Intel Corporate
+138.231.148.160	a0:c9:a0:c8:6c:de	Murata Manufacturing Co., Ltd. (DUP: 2)
+138.231.148.47	5e:cd:c8:d9:3b:a3	(Unknown: locally administered)
+138.231.149.112	60:f2:62:99:f0:89	Intel Corporate
+138.231.149.95	22:d8:17:fe:cb:9c	(Unknown: locally administered)
+138.231.149.119	f0:c8:50:59:5a:ed	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.148.245	3e:a0:17:f2:ac:73	(Unknown: locally administered)
+138.231.149.141	0c:96:e6:4e:dd:a5	Cloud Network Technology (Samoa) Limited
+138.231.148.250	a2:88:1d:c1:e7:78	(Unknown: locally administered)
+138.231.149.82	02:21:2e:79:5f:ab	(Unknown: locally administered)
+138.231.149.160	54:8c:a0:1d:17:84	Liteon Technology Corporation
+138.231.148.221	12:8f:cc:ac:2c:20	(Unknown: locally administered)
+138.231.147.61	e6:70:c9:1d:3f:ee	(Unknown: locally administered)
+138.231.146.24	06:4b:50:07:14:1b	(Unknown: locally administered)
+138.231.149.192	78:31:c1:c5:bb:8c	Apple, Inc.
+138.231.149.151	a0:99:9b:05:e6:7d	Apple, Inc.
+138.231.149.187	e8:5a:8b:de:27:f3	Xiaomi Communications Co Ltd
+138.231.149.210	d2:9e:93:5d:ef:9a	(Unknown: locally administered)
+138.231.149.101	50:3d:c6:13:ec:18	(Unknown)
+138.231.149.98	06:47:e7:0d:29:f8	(Unknown: locally administered)
+138.231.148.182	1a:5f:c9:ac:91:10	(Unknown: locally administered)
+138.231.148.241	8e:28:40:00:e6:71	(Unknown: locally administered)
+138.231.149.189	12:ec:07:4d:b7:47	(Unknown: locally administered)
+138.231.149.203	a4:83:e7:80:2f:da	Apple, Inc.
+138.231.150.23	a4:4b:d5:22:6f:e2	Xiaomi Communications Co Ltd
+138.231.150.28	a0:51:0b:65:8b:c3	Intel Corporate
+138.231.150.30	a2:6a:ef:74:88:1c	(Unknown: locally administered)
+138.231.150.36	1c:1b:b5:f7:93:47	Intel Corporate
+138.231.150.19	b6:20:ad:a6:99:a7	(Unknown: locally administered)
+138.231.150.16	ea:b0:e0:bd:38:cb	(Unknown: locally administered)
+138.231.150.38	fa:6f:4d:03:1a:7d	(Unknown: locally administered)
+138.231.150.65	78:4f:43:92:07:7d	Apple, Inc.
+138.231.150.64	5c:e0:c5:2f:f0:e9	Intel Corporate
+138.231.150.72	a0:51:0b:0a:ab:ae	Intel Corporate
+138.231.149.69	ae:3e:97:a3:c0:ac	(Unknown: locally administered)
+138.231.149.167	0c:b5:27:80:63:cf	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.147.93	9c:fc:01:64:65:0a	Apple, Inc.
+138.231.150.66	08:78:08:7c:8d:58	Samsung Electronics Co.,Ltd
+138.231.150.90	60:ab:67:bb:e5:57	Xiaomi Communications Co Ltd
+138.231.150.71	48:a4:72:8f:fd:09	Intel Corporate
+138.231.149.155	92:55:01:8b:8a:4c	(Unknown: locally administered)
+138.231.150.125	a0:88:b4:c1:c7:8c	Intel Corporate
+138.231.149.232	52:fd:af:e6:59:74	(Unknown: locally administered)
+138.231.150.105	48:2c:a0:f2:9c:45	Xiaomi Communications Co Ltd
+138.231.149.239	48:45:20:a7:10:52	Intel Corporate
+138.231.149.177	96:3e:e2:6b:ca:ed	(Unknown: locally administered)
+138.231.150.144	a4:45:19:6a:9f:ea	Xiaomi Communications Co Ltd
+138.231.149.116	88:83:22:b2:6d:88	Samsung Electronics Co.,Ltd
+138.231.150.157	f8:e4:e3:c9:03:3d	Intel Corporate
+138.231.150.40	fe:71:cd:67:2f:25	(Unknown: locally administered)
+138.231.150.135	e8:50:8b:45:ed:c8	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.149.116	88:83:22:b2:6d:88	Samsung Electronics Co.,Ltd (DUP: 2)
+138.231.150.81	b0:a4:60:53:12:68	(Unknown)
+138.231.150.59	88:e9:fe:e1:40:3b	Apple, Inc.
+138.231.149.146	ea:2b:e9:a5:10:c2	(Unknown: locally administered)
+138.231.150.135	e8:50:8b:45:ed:c8	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.150.58	9a:40:d2:b7:9f:6d	(Unknown: locally administered)
+138.231.150.156	10:5b:ad:3e:ec:b7	Mega Well Limited
+138.231.150.163	7e:7a:85:4d:66:d8	(Unknown: locally administered)
+138.231.150.142	98:9c:57:8f:91:2d	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.150.222	a8:86:dd:8f:34:7c	Apple, Inc.
+138.231.150.227	7c:b2:7d:82:8b:7e	Intel Corporate
+138.231.150.121	c2:e4:11:67:99:c1	(Unknown: locally administered)
+138.231.150.56	16:1c:3e:c3:0c:8c	(Unknown: locally administered)
+138.231.150.53	aa:0e:93:3b:1e:73	(Unknown: locally administered)
+138.231.150.226	fe:e4:9c:0e:cd:c6	(Unknown: locally administered)
+138.231.150.142	98:9c:57:8f:91:2d	HUAWEI TECHNOLOGIES CO.,LTD (DUP: 2)
+138.231.150.153	b8:3b:cc:50:ad:9d	(Unknown)
+138.231.150.213	74:12:b3:71:82:9b	(Unknown)
+138.231.151.4	a4:83:e7:4e:9f:10	Apple, Inc.
+138.231.151.16	f0:18:98:a8:09:ee	Apple, Inc.
+138.231.151.22	b0:60:88:26:fc:50	(Unknown)
+138.231.149.251	14:7d:da:e1:57:31	(Unknown)
+138.231.151.31	88:e9:fe:52:9a:41	Apple, Inc.
+138.231.151.53	b0:72:bf:52:17:3a	Murata Manufacturing Co., Ltd.
+138.231.151.53	b0:72:bf:52:17:3a	Murata Manufacturing Co., Ltd. (DUP: 2)
+138.231.151.42	8a:ae:3e:a3:78:a1	(Unknown: locally administered)
+138.231.150.132	20:1e:88:6b:13:f4	(Unknown)
+138.231.150.146	6e:5c:b6:78:ef:9d	(Unknown: locally administered)
+138.231.151.0	42:dd:c7:bb:cc:7f	(Unknown: locally administered)
+138.231.151.54	30:3a:64:f5:ad:3e	Intel Corporate
+138.231.151.45	ac:af:b9:28:af:6c	Samsung Electronics Co.,Ltd
+138.231.151.49	4e:ed:db:73:b4:c0	(Unknown: locally administered)
+138.231.151.41	82:3e:af:4d:ad:df	(Unknown: locally administered)
+138.231.151.95	ac:67:5d:ab:0d:ab	(Unknown)
+138.231.150.155	b6:41:e9:8b:76:c8	(Unknown: locally administered)
+138.231.151.50	48:2c:a0:9b:e1:75	Xiaomi Communications Co Ltd
+138.231.151.112	e4:0e:ee:b6:5a:cc	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.151.122	00:5a:13:0a:31:c5	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.151.70	96:cd:a9:50:54:70	(Unknown: locally administered)
+138.231.151.104	d8:3b:bf:1e:6d:8d	Intel Corporate
+138.231.151.130	b4:0e:de:2d:62:ca	(Unknown)
+138.231.150.253	6e:43:2b:4a:a4:7f	(Unknown: locally administered)
+138.231.151.146	56:32:d5:f0:8e:67	(Unknown: locally administered)
+138.231.150.203	72:69:2b:ee:43:56	(Unknown: locally administered)
+138.231.151.123	74:d8:3e:c6:60:a1	(Unknown)
+138.231.151.108	26:61:cc:3f:d9:41	(Unknown: locally administered)
+138.231.151.163	fa:37:51:82:e2:77	(Unknown: locally administered)
+138.231.151.134	b4:c4:fc:40:de:64	Xiaomi Communications Co Ltd
+138.231.151.135	d2:f5:3e:3d:8a:01	(Unknown: locally administered)
+138.231.151.91	64:a2:00:4c:87:78	(Unknown)
+138.231.151.161	30:35:ad:a5:ea:b2	Apple, Inc.
+138.231.151.57	46:83:f9:05:8d:45	(Unknown: locally administered)
+138.231.151.180	dc:53:60:d1:b7:c6	Intel Corporate
+138.231.150.107	04:d6:aa:9d:8e:ec	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.151.189	4c:d1:a1:35:b2:63	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.151.194	7e:96:eb:f6:cd:fc	(Unknown: locally administered)
+138.231.150.107	04:d6:aa:9d:8e:ec	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.151.193	28:b2:bd:a8:ad:8b	Intel Corporate
+138.231.151.183	8e:01:19:78:39:56	(Unknown: locally administered)
+138.231.151.168	8e:cf:a7:97:a5:e8	(Unknown: locally administered)
+138.231.151.211	a4:83:e7:88:54:53	Apple, Inc.
+138.231.151.170	4c:dd:31:05:22:bf	Samsung Electronics Co.,Ltd
+138.231.151.217	a2:ae:af:50:74:92	(Unknown: locally administered)
+138.231.151.219	94:65:9c:ff:2a:58	Intel Corporate
+138.231.151.200	88:e9:fe:53:3d:f1	Apple, Inc.
+138.231.151.231	a4:34:d9:f3:4a:c6	Intel Corporate
+138.231.151.239	04:b4:29:9b:41:23	Samsung Electronics Co.,Ltd
+138.231.150.79	ce:f7:d5:f6:6b:5d	(Unknown: locally administered)
+138.231.150.108	9e:bf:bf:4f:67:94	(Unknown: locally administered)
+138.231.151.162	70:4d:7b:ad:de:e8	ASUSTek COMPUTER INC.
+138.231.151.216	5e:cc:9d:aa:59:e2	(Unknown: locally administered)
+138.231.150.21	66:bf:1c:6e:37:d3	(Unknown: locally administered)
+138.231.151.141	12:51:1f:5d:b6:a0	(Unknown: locally administered)
+138.231.151.210	14:7d:da:ab:10:f1	(Unknown)
+138.231.151.38	fa:a0:43:49:01:6a	(Unknown: locally administered)
+138.231.152.14	c4:85:08:aa:32:0a	Intel Corporate
+138.231.151.229	94:0e:6b:05:7b:5a	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.151.233	5c:87:9c:fe:22:d4	Intel Corporate
+138.231.151.253	30:07:4d:bd:b2:a3	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.152.9	ec:5c:68:c3:46:6d	CHONGQING FUGUI ELECTRONICS CO.,LTD.
+138.231.152.28	98:9c:57:f5:bd:5b	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.152.32	14:7d:da:8b:c6:28	(Unknown)
+138.231.152.27	80:a5:89:6f:ce:5b	AzureWave Technology Inc.
+138.231.152.35	28:16:ad:a8:ca:00	Intel Corporate
+138.231.150.162	ee:65:b9:21:fa:87	(Unknown: locally administered)
+138.231.149.68	d2:2e:1f:28:58:bf	(Unknown: locally administered)
+138.231.152.31	d2:18:25:bd:79:ea	(Unknown: locally administered)
+138.231.151.6	be:ab:35:d4:d1:4a	(Unknown: locally administered)
+138.231.151.105	3e:da:92:2e:8c:1b	(Unknown: locally administered)
+138.231.152.13	18:4f:32:91:4f:b7	Hon Hai Precision Ind. Co.,Ltd.
+138.231.152.39	78:4f:43:a1:6a:66	Apple, Inc.
+138.231.151.225	3e:76:c8:0c:ce:dd	(Unknown: locally administered)
+138.231.151.253	30:07:4d:bd:b2:a3	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.151.165	88:40:3b:51:0d:73	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.151.190	2c:0e:3d:7c:28:26	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.151.229	94:0e:6b:05:7b:5a	HUAWEI TECHNOLOGIES CO.,LTD (DUP: 2)
+138.231.151.150	92:0c:28:23:3b:d5	(Unknown: locally administered)
+138.231.152.74	fc:44:82:7d:aa:8c	(Unknown)
+138.231.152.97	94:e6:f7:ce:89:7f	Intel Corporate
+138.231.147.168	48:27:ea:08:b0:b7	Samsung Electronics Co.,Ltd
+138.231.147.168	48:27:ea:08:b0:b7	Samsung Electronics Co.,Ltd (DUP: 2)
+138.231.152.38	fc:77:74:22:2c:b1	Intel Corporate
+138.231.152.115	64:bc:58:25:1d:45	(Unknown)
+138.231.152.142	18:1d:ea:54:6e:e7	Intel Corporate
+138.231.151.214	fe:28:5d:65:d0:31	(Unknown: locally administered)
+138.231.152.140	da:2a:a3:59:e2:6f	(Unknown: locally administered)
+138.231.152.120	d4:67:d3:0f:bf:f7	GUANGDONG OPPO MOBILE TELECOMMUNICATIONS CORP.,LTD
+138.231.148.146	8c:f5:a3:f0:f1:9e	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.149.54	6e:59:51:df:93:87	(Unknown: locally administered)
+138.231.152.165	3c:95:09:4c:2d:83	Liteon Technology Corporation
+138.231.152.19	88:46:04:a6:28:98	(Unknown)
+138.231.151.223	76:fd:ee:0b:e6:4a	(Unknown: locally administered)
+138.231.152.114	1e:7b:17:87:0b:fb	(Unknown: locally administered)
+138.231.152.83	ce:f8:7a:89:be:b2	(Unknown: locally administered)
+138.231.150.193	ce:bd:f8:00:d7:ab	(Unknown: locally administered)
+138.231.152.168	fc:44:82:7b:ea:a3	(Unknown)
+138.231.152.198	a4:83:e7:a0:65:df	Apple, Inc.
+138.231.152.127	58:9e:c6:06:4e:63	Gigaset Communications GmbH
+138.231.151.220	96:8a:4c:aa:04:87	(Unknown: locally administered)
+138.231.152.221	9c:b6:d0:96:96:d5	Rivet Networks
+138.231.151.190	2c:0e:3d:7c:28:26	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.151.247	56:e1:b7:2f:2e:0e	(Unknown: locally administered)
+138.231.151.154	0a:fe:cf:7f:6e:22	(Unknown: locally administered)
+138.231.152.164	8a:92:21:28:87:48	(Unknown: locally administered)
+138.231.148.146	8c:f5:a3:f0:f1:9e	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.151.148	28:02:d8:95:5d:b0	Samsung Electronics Co.,Ltd
+138.231.152.239	58:b1:0f:f2:6f:54	Samsung Electronics Co.,Ltd
+138.231.152.162	c4:9f:4c:66:69:98	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.152.108	40:b0:76:1a:c3:83	ASUSTek COMPUTER INC.
+138.231.152.128	e0:dc:ff:f9:49:df	Xiaomi Communications Co Ltd
+138.231.152.197	dc:41:a9:6f:08:d8	(Unknown)
+138.231.153.41	e8:6f:38:71:d4:d3	CHONGQING FUGUI ELECTRONICS CO.,LTD.
+138.231.152.236	6c:ab:31:5d:65:fc	Apple, Inc.
+138.231.152.237	d2:e4:8a:7c:ca:32	(Unknown: locally administered)
+138.231.153.25	38:f9:d3:30:0c:07	Apple, Inc.
+138.231.151.154	0a:fe:cf:7f:6e:22	(Unknown: locally administered) (DUP: 2)
+138.231.152.162	c4:9f:4c:66:69:98	HUAWEI TECHNOLOGIES CO.,LTD (DUP: 2)
+138.231.153.14	70:c9:4e:78:8f:25	Liteon Technology Corporation
+138.231.153.28	7e:45:36:8e:cb:9d	(Unknown: locally administered)
+138.231.151.222	1e:6d:7a:87:75:67	(Unknown: locally administered)
+138.231.152.179	e0:cc:f8:b7:ef:03	Xiaomi Communications Co Ltd
+138.231.153.46	66:36:6b:6a:9b:9a	(Unknown: locally administered)
+138.231.153.97	a4:c3:f0:7d:80:f2	Intel Corporate
+138.231.153.108	88:83:22:f6:22:a8	Samsung Electronics Co.,Ltd
+138.231.153.117	32:1b:b6:6d:ed:17	(Unknown: locally administered)
+138.231.153.90	b2:fb:53:b4:fa:15	(Unknown: locally administered)
+138.231.150.42	16:6b:ef:41:0c:a7	(Unknown: locally administered)
+138.231.153.129	d8:fc:93:58:92:fb	Intel Corporate
+138.231.153.108	88:83:22:f6:22:a8	Samsung Electronics Co.,Ltd (DUP: 2)
+138.231.153.131	74:40:bb:89:c2:bf	Hon Hai Precision Ind. Co.,Ltd.
+138.231.153.80	3c:22:fb:a8:fd:10	Apple, Inc.
+138.231.153.101	dc:41:a9:79:c5:a2	(Unknown)
+138.231.153.142	38:fc:98:a3:cf:28	(Unknown)
+138.231.153.150	ac:67:5d:aa:c2:b5	(Unknown)
+138.231.153.123	3e:41:64:6e:b0:3c	(Unknown: locally administered)
+138.231.153.116	04:ba:8d:93:84:cb	Samsung Electronics Co.,Ltd
+138.231.152.216	b6:14:91:5c:56:ca	(Unknown: locally administered)
+138.231.153.184	38:f9:d3:90:b3:8f	Apple, Inc.
+138.231.153.135	18:65:90:df:44:f9	Apple, Inc.
+138.231.153.153	34:41:5d:3a:c7:b7	Intel Corporate
+138.231.153.159	2a:a0:11:e6:19:e8	(Unknown: locally administered)
+138.231.153.171	28:b2:bd:93:6c:2d	Intel Corporate
+138.231.153.202	9c:fc:e8:f1:ff:4a	(Unknown)
+138.231.153.61	08:5b:d6:48:e0:40	(Unknown)
+138.231.153.64	a6:d1:a1:54:cd:fa	(Unknown: locally administered)
+138.231.153.151	34:2d:0d:77:9a:6e	Samsung Electronics Co.,Ltd
+138.231.153.192	58:b1:0f:bf:f2:ce	Samsung Electronics Co.,Ltd
+138.231.153.192	58:b1:0f:bf:f2:ce	Samsung Electronics Co.,Ltd (DUP: 2)
+138.231.152.227	12:f2:50:82:b6:64	(Unknown: locally administered)
+138.231.152.87	b8:f1:2a:86:85:cf	Apple, Inc.
+138.231.150.202	3a:95:07:18:f6:07	(Unknown: locally administered)
+138.231.153.209	48:f1:7f:2c:fd:2b	Intel Corporate
+138.231.152.93	84:38:38:01:09:59	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.152.251	14:7d:da:df:20:40	(Unknown)
+138.231.152.93	84:38:38:01:09:59	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.153.193	68:5a:cf:25:4c:6e	Samsung Electronics Co.,Ltd
+138.231.153.229	f2:f8:8e:59:e4:7b	(Unknown: locally administered)
+138.231.152.216	b6:14:91:5c:56:ca	(Unknown: locally administered) (DUP: 2)
+138.231.153.239	92:ff:ce:61:38:51	(Unknown: locally administered)
+138.231.153.227	10:51:07:31:e3:63	(Unknown)
+138.231.153.255	d8:c0:a6:c5:d9:bb	(Unknown)
+138.231.153.244	52:87:a4:f1:84:c5	(Unknown: locally administered)
+138.231.153.213	6c:b7:49:38:d1:d3	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.153.120	52:95:79:3b:4b:2b	(Unknown: locally administered)
+138.231.153.243	f0:18:98:0d:35:9e	Apple, Inc.
+138.231.153.220	28:27:bf:6a:8e:2b	Samsung Electronics Co.,Ltd
+138.231.154.15	d2:44:07:80:3c:87	(Unknown: locally administered)
+138.231.154.29	06:02:0a:47:ec:7d	(Unknown: locally administered)
+138.231.153.248	64:a2:f9:33:43:dd	OnePlus Technology (Shenzhen) Co., Ltd
+138.231.154.32	d4:6a:6a:c1:bc:07	Hon Hai Precision Ind. Co.,Ltd.
+138.231.154.16	f0:18:98:2a:01:e2	Apple, Inc.
+138.231.154.14	38:f9:d3:7c:ca:5b	Apple, Inc.
+138.231.150.191	56:9f:09:bb:ff:77	(Unknown: locally administered)
+138.231.153.176	bc:54:51:84:c4:ec	Samsung Electronics Co.,Ltd
+138.231.153.220	28:27:bf:6a:8e:2b	Samsung Electronics Co.,Ltd (DUP: 2)
+138.231.154.53	f8:59:71:6b:5b:93	Intel Corporate
+138.231.154.6	0c:f3:46:bf:b0:5d	Xiaomi Communications Co Ltd
+138.231.154.25	3c:a6:f6:0c:69:23	(Unknown)
+138.231.154.55	b8:c3:85:a0:90:61	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.154.50	c0:b5:d7:13:9a:cb	CHONGQING FUGUI ELECTRONICS CO.,LTD.
+138.231.153.183	bc:7f:a4:39:86:19	Xiaomi Communications Co Ltd
+138.231.154.71	4e:ba:a6:b4:e3:ba	(Unknown: locally administered)
+138.231.154.69	30:24:32:b4:24:45	Intel Corporate
+138.231.154.60	90:9c:4a:c8:8b:13	(Unknown)
+138.231.154.87	88:e9:fe:70:6d:64	Apple, Inc.
+138.231.153.148	8a:df:95:4a:63:b1	(Unknown: locally administered)
+138.231.154.47	0e:f9:23:9e:1a:2f	(Unknown: locally administered)
+138.231.154.48	00:87:01:4e:bb:12	Samsung Electronics Co.,Ltd
+138.231.153.233	12:eb:bb:26:1e:56	(Unknown: locally administered)
+138.231.154.78	a8:5c:2c:d6:0a:c7	Apple, Inc.
+138.231.152.225	5e:7c:d0:85:61:06	(Unknown: locally administered)
+138.231.151.109	1e:dc:08:ce:50:43	(Unknown: locally administered)
+138.231.152.207	b8:d7:af:68:f2:ed	Murata Manufacturing Co., Ltd.
+138.231.154.44	f6:1d:ef:f9:37:af	(Unknown: locally administered)
+138.231.154.61	9e:cf:a1:e7:36:ce	(Unknown: locally administered)
+138.231.153.175	36:d8:40:6a:19:0a	(Unknown: locally administered)
+138.231.154.107	0a:01:1f:76:f2:b0	(Unknown: locally administered)
+138.231.153.155	7e:0f:db:b7:d7:0a	(Unknown: locally administered)
+138.231.154.124	94:e7:0b:7d:11:a3	(Unknown)
+138.231.154.130	6c:6a:77:73:55:6e	(Unknown)
+138.231.154.80	52:a3:60:ee:95:75	(Unknown: locally administered)
+138.231.154.143	c2:47:97:4e:f9:b5	(Unknown: locally administered)
+138.231.154.125	38:fc:98:6c:e0:08	(Unknown)
+138.231.154.169	d2:d5:3e:64:4c:0d	(Unknown: locally administered)
+138.231.154.172	ca:61:34:42:03:0b	(Unknown: locally administered)
+138.231.154.156	a8:0c:63:34:21:8f	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.154.191	bc:83:85:d6:c1:d5	Microsoft Corporation
+138.231.154.196	b0:be:83:14:d6:88	(Unknown)
+138.231.154.205	64:6e:e0:b8:cb:85	(Unknown)
+138.231.152.207	b8:d7:af:68:f2:ed	Murata Manufacturing Co., Ltd. (DUP: 2)
+138.231.154.204	a2:b4:c5:03:39:88	(Unknown: locally administered)
+138.231.154.94	98:f6:21:8e:39:39	(Unknown)
+138.231.154.188	a4:45:19:4f:28:5a	Xiaomi Communications Co Ltd
+138.231.154.223	5c:80:b6:dd:35:e2	Intel Corporate
+138.231.154.227	00:6d:52:3c:94:f1	Apple, Inc.
+138.231.154.189	d0:7f:a0:1c:27:cb	Samsung Electronics Co.,Ltd
+138.231.154.99	de:6d:c0:fa:ef:83	(Unknown: locally administered)
+138.231.154.238	24:41:8c:c3:92:7c	Intel Corporate
+138.231.154.239	1c:cc:d6:41:e8:cd	Xiaomi Communications Co Ltd
+138.231.154.250	2e:03:fd:fc:03:2f	(Unknown: locally administered)
+138.231.154.251	40:74:e0:23:42:1d	Intel Corporate
+138.231.154.198	96:5f:95:53:21:8e	(Unknown: locally administered)
+138.231.154.221	72:31:7a:12:2d:8d	(Unknown: locally administered)
+138.231.154.212	f8:59:71:c6:cd:43	Intel Corporate
+138.231.151.242	ca:fe:07:35:a4:8e	(Unknown: locally administered)
+138.231.155.10	38:f9:d3:90:44:c9	Apple, Inc.
+138.231.153.200	b2:1f:ba:68:f0:c1	(Unknown: locally administered)
+138.231.155.23	3c:a6:f6:0c:09:01	(Unknown)
+138.231.153.56	26:55:6b:7c:82:55	(Unknown: locally administered)
+138.231.154.66	c6:c7:d5:f4:60:64	(Unknown: locally administered)
+138.231.154.66	c6:c7:d5:f4:60:64	(Unknown: locally administered) (DUP: 2)
+138.231.155.41	ac:67:5d:ab:0e:00	(Unknown)
+138.231.155.39	c0:ee:fb:e6:2f:44	OnePlus Tech (Shenzhen) Ltd
+138.231.154.13	ca:6b:a9:82:7b:81	(Unknown: locally administered)
+138.231.155.49	3a:42:07:78:ef:61	(Unknown: locally administered)
+138.231.155.40	86:8d:b2:5a:be:2d	(Unknown: locally administered)
+138.231.154.231	02:84:8c:99:ad:e8	(Unknown: locally administered)
+138.231.155.80	4a:9f:f9:d3:eb:c7	(Unknown: locally administered)
+138.231.155.7	d4:6d:6d:29:88:c1	Intel Corporate
+138.231.155.86	b0:52:16:33:d8:9d	Hon Hai Precision Ind. Co.,Ltd.
+138.231.154.83	20:2d:07:2f:63:72	Samsung Electronics Co.,Ltd
+138.231.154.83	20:2d:07:2f:63:72	Samsung Electronics Co.,Ltd (DUP: 2)
+138.231.155.106	48:89:e7:7a:86:b8	Intel Corporate
+138.231.155.36	a8:9c:ed:87:68:e8	Xiaomi Communications Co Ltd
+138.231.155.83	9a:12:92:81:98:04	(Unknown: locally administered)
+138.231.155.65	5e:75:55:13:9a:19	(Unknown: locally administered)
+138.231.155.12	c2:2d:cf:68:49:43	(Unknown: locally administered)
+138.231.155.89	44:59:e3:d7:ac:0d	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.155.124	e4:a4:71:42:8c:ef	Intel Corporate
+138.231.155.74	5c:87:9c:ef:f4:8e	Intel Corporate
+138.231.153.238	de:a6:01:e5:78:74	(Unknown: locally administered)
+138.231.155.127	a8:7e:ea:41:30:2f	(Unknown)
+138.231.155.103	50:de:06:13:8c:e1	Apple, Inc.
+138.231.155.96	66:21:02:16:79:d9	(Unknown: locally administered)
+138.231.155.138	68:3e:26:e2:2e:2b	(Unknown)
+138.231.155.53	0c:ec:84:5c:81:6e	Shenzhen TINNO Mobile Technology Corp.
+138.231.155.153	b0:6e:bf:d6:88:f9	ASUSTek COMPUTER INC.
+138.231.155.131	dc:fb:48:67:fd:e5	Intel Corporate
+138.231.155.150	5e:60:75:54:17:52	(Unknown: locally administered)
+138.231.155.177	d0:c5:d3:29:89:f1	AzureWave Technology Inc.
+138.231.155.159	4e:fa:e9:bb:11:0c	(Unknown: locally administered)
+138.231.155.182	6c:6a:77:72:be:6a	(Unknown)
+138.231.155.61	da:b7:6a:f9:ce:30	(Unknown: locally administered)
+138.231.155.195	e0:b5:5f:ef:40:70	Apple, Inc.
+138.231.155.200	e6:aa:d1:f1:2d:d7	(Unknown: locally administered)
+138.231.155.151	56:39:a0:18:81:4f	(Unknown: locally administered)
+138.231.155.149	bc:98:df:61:17:c8	Motorola Mobility LLC, a Lenovo Company
+138.231.155.228	18:56:80:db:e3:c2	Intel Corporate
+138.231.155.229	a4:5e:60:cf:a5:35	Apple, Inc.
+138.231.155.85	88:46:04:21:1b:d2	(Unknown)
+138.231.155.238	f8:94:c2:e6:0e:f1	Intel Corporate
+138.231.155.203	0c:dd:24:b2:02:5a	Intel Corporate
+138.231.156.2	b4:6b:fc:cd:8c:1e	Intel Corporate
+138.231.156.4	94:53:30:56:92:99	Hon Hai Precision Ind. Co.,Ltd.
+138.231.156.10	20:16:b9:b7:05:de	Intel Corporate
+138.231.155.250	66:aa:fe:3c:2d:1e	(Unknown: locally administered)
+138.231.155.220	44:c3:46:4e:6a:2f	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.156.6	c6:dc:98:d2:3e:e4	(Unknown: locally administered)
+138.231.156.41	7c:b2:7d:dd:e3:3e	Intel Corporate
+138.231.156.12	48:5f:99:58:f8:7f	Cloud Network Technology (Samoa) Limited
+138.231.156.58	f4:f1:5a:15:7e:fc	Apple, Inc.
+138.231.156.44	f8:59:71:c6:cd:43	Intel Corporate
+138.231.156.35	96:ee:f2:c9:93:28	(Unknown: locally administered)
+138.231.155.232	48:e7:da:8e:f1:c9	(Unknown)
+138.231.156.21	70:c9:4e:90:ba:27	Liteon Technology Corporation
+138.231.156.79	ba:f6:b5:ed:a0:15	(Unknown: locally administered)
+138.231.156.70	8c:85:90:a9:f9:e6	Apple, Inc.
+138.231.156.93	ea:d5:76:ab:d8:ce	(Unknown: locally administered)
+138.231.156.45	6e:73:7f:e4:ea:d6	(Unknown: locally administered)
+138.231.156.107	b2:c9:c8:e3:81:4f	(Unknown: locally administered)
+138.231.156.52	94:65:2d:9f:04:f1	OnePlus Technology (Shenzhen) Co., Ltd
+138.231.156.122	a4:42:3b:24:d0:ce	(Unknown)
+138.231.156.89	8e:c3:13:8d:45:99	(Unknown: locally administered)
+138.231.156.100	64:dd:e9:78:38:50	(Unknown)
+138.231.156.3	4e:dc:8d:8b:f7:3d	(Unknown: locally administered)
+138.231.153.76	a2:66:cf:d8:57:e9	(Unknown: locally administered)
+138.231.154.163	68:5a:cf:bd:7f:71	Samsung Electronics Co.,Ltd
+138.231.156.128	a0:d7:95:24:5d:c0	Apple, Inc.
+138.231.156.75	04:b4:29:9b:3e:37	Samsung Electronics Co.,Ltd
+138.231.156.165	06:9d:e0:0e:91:be	(Unknown: locally administered)
+138.231.155.87	a4:83:e7:10:b4:9b	Apple, Inc.
+138.231.153.251	02:25:83:cf:13:f6	(Unknown: locally administered)
+138.231.153.194	3c:dc:bc:31:f1:e6	Samsung Electronics Co.,Ltd
+138.231.156.176	7e:13:0c:79:02:1d	(Unknown: locally administered)
+138.231.156.5	7a:c9:31:75:27:eb	(Unknown: locally administered)
+138.231.155.130	be:8d:fd:b5:4f:c3	(Unknown: locally administered)
+138.231.156.194	40:e2:30:ae:01:9f	AzureWave Technology Inc.
+138.231.156.153	bc:7f:a4:2e:bd:71	Xiaomi Communications Co Ltd
+138.231.156.64	42:a5:e2:37:b5:e3	(Unknown: locally administered)
+138.231.156.214	e8:48:b8:8f:89:ed	(Unknown)
+138.231.156.200	bc:7f:a4:15:38:dd	Xiaomi Communications Co Ltd
+138.231.155.215	30:07:4d:a5:90:b1	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.155.220	44:c3:46:4e:6a:2f	HUAWEI TECHNOLOGIES CO.,LTD (DUP: 2)
+138.231.156.219	dc:e9:94:1d:9e:51	(Unknown)
+138.231.155.227	72:b5:e6:87:cf:8c	(Unknown: locally administered)
+138.231.156.169	70:3a:51:9a:b3:e2	Xiaomi Communications Co Ltd
+138.231.156.192	6a:b8:c9:79:c3:0f	(Unknown: locally administered)
+138.231.156.190	2c:d0:66:e3:09:6c	(Unknown)
+138.231.155.130	be:8d:fd:b5:4f:c3	(Unknown: locally administered) (DUP: 2)
+138.231.155.223	ba:c3:c2:7b:ff:d8	(Unknown: locally administered)
+138.231.156.250	98:01:a7:b6:35:7f	Apple, Inc.
+138.231.156.108	4c:f2:02:9c:fd:22	(Unknown)
+138.231.157.1	d6:01:5a:74:a5:23	(Unknown: locally administered)
+138.231.157.23	ac:67:5d:a9:d7:33	(Unknown)
+138.231.155.215	30:07:4d:a5:90:b1	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.157.24	60:6e:e8:be:25:58	(Unknown)
+138.231.157.27	80:35:c1:34:93:03	Xiaomi Communications Co Ltd
+138.231.157.8	c8:3c:85:8a:5f:53	Apple, Inc.
+138.231.157.71	04:ed:33:c1:1d:0d	Intel Corporate
+138.231.156.205	ee:4a:df:e9:77:1b	(Unknown: locally administered)
+138.231.157.46	e8:5a:8b:0a:b5:e7	Xiaomi Communications Co Ltd
+138.231.157.56	48:a4:72:65:b3:a5	Intel Corporate
+138.231.156.171	b2:8f:2f:1a:82:62	(Unknown: locally administered)
+138.231.157.90	3e:a8:36:47:33:47	(Unknown: locally administered)
+138.231.157.99	48:88:ca:c2:10:62	Motorola (Wuhan) Mobility Technologies Communication Co., Ltd.
+138.231.157.50	2c:db:07:4e:e8:ff	(Unknown)
+138.231.155.192	b6:79:bb:cf:74:09	(Unknown: locally administered)
+138.231.157.114	10:63:c8:fb:75:29	Liteon Technology Corporation
+138.231.157.22	3a:8b:db:3e:d9:5e	(Unknown: locally administered)
+138.231.157.123	08:6d:41:ca:a6:a6	Apple, Inc.
+138.231.157.108	ae:11:79:3e:28:e4	(Unknown: locally administered)
+138.231.157.53	8a:c8:68:2f:c6:10	(Unknown: locally administered)
+138.231.157.140	e4:aa:ea:c6:4c:97	Liteon Technology Corporation
+138.231.157.73	20:f4:78:5e:cd:1e	Xiaomi Communications Co Ltd
+138.231.157.94	3a:40:6c:84:80:a8	(Unknown: locally administered)
+138.231.157.104	9c:5a:81:ac:ee:44	(Unknown)
+138.231.157.151	50:1a:c5:f0:27:cb	Microsoft
+138.231.157.157	00:25:4b:90:ba:b8	Apple, Inc.
+138.231.156.105	06:dc:5c:54:d0:2a	(Unknown: locally administered)
+138.231.156.99	36:62:17:5c:e8:b2	(Unknown: locally administered)
+138.231.157.147	06:e0:98:02:2e:c3	(Unknown: locally administered)
+138.231.156.111	be:95:9c:ae:81:b6	(Unknown: locally administered)
+138.231.157.180	a2:c6:f1:90:4b:9c	(Unknown: locally administered)
+138.231.157.185	58:a0:23:f3:71:31	Intel Corporate
+138.231.157.138	86:db:af:01:ac:b4	(Unknown: locally administered)
+138.231.156.154	86:7b:b3:a3:f2:ea	(Unknown: locally administered)
+138.231.157.194	74:40:bb:d0:ee:05	Hon Hai Precision Ind. Co.,Ltd.
+138.231.157.37	28:02:d8:bd:d1:34	Samsung Electronics Co.,Ltd
+138.231.157.167	84:cf:bf:8e:b5:40	Fairphone
+138.231.157.182	60:b7:6e:37:24:54	(Unknown)
+138.231.157.205	02:b1:d5:e4:c3:30	(Unknown: locally administered)
+138.231.157.203	48:51:c5:65:6b:66	(Unknown)
+138.231.157.214	ac:67:5d:a9:e7:eb	(Unknown)
+138.231.157.161	86:2a:c6:9f:f2:24	(Unknown: locally administered)
+138.231.157.209	42:68:85:2d:97:be	(Unknown: locally administered)
+138.231.157.209	42:68:85:2d:97:be	(Unknown: locally administered) (DUP: 2)
+138.231.157.202	80:35:c1:3d:d9:7e	Xiaomi Communications Co Ltd
+138.231.157.231	40:49:0f:20:0b:8f	Hon Hai Precision Ind. Co.,Ltd.
+138.231.154.137	20:a2:e4:40:ae:65	Apple, Inc.
+138.231.157.240	8e:bd:56:cc:43:5f	(Unknown: locally administered)
+138.231.157.241	d6:14:e7:87:14:82	(Unknown: locally administered)
+138.231.157.229	96:7d:94:9a:3d:2d	(Unknown: locally administered)
+138.231.157.248	14:7d:da:56:92:05	(Unknown)
+138.231.154.11	f6:55:e7:e4:dc:7e	(Unknown: locally administered)
+138.231.157.103	c2:16:fb:1c:94:6b	(Unknown: locally administered)
+138.231.157.217	9c:fc:e8:fc:2a:f1	(Unknown)
+138.231.156.88	a6:0c:88:6e:1b:b5	(Unknown: locally administered)
+138.231.156.109	3a:fd:32:67:ad:2e	(Unknown: locally administered)
+138.231.157.250	d0:81:7a:c8:90:be	Apple, Inc.
+138.231.158.14	c0:e4:34:51:06:f7	AzureWave Technology Inc.
+138.231.157.222	c4:9d:ed:8b:b7:b9	Microsoft Corporation
+138.231.157.247	8c:85:90:9b:4d:5a	Apple, Inc.
+138.231.158.42	cc:d9:ac:6a:63:46	(Unknown)
+138.231.156.132	46:06:cc:f1:bc:d8	(Unknown: locally administered)
+138.231.158.34	6c:00:6b:c6:3f:b7	Samsung Electronics Co.,Ltd
+138.231.156.168	ba:30:46:85:a4:3e	(Unknown: locally administered)
+138.231.158.58	ac:67:5d:a9:da:30	(Unknown)
+138.231.158.7	c4:91:0c:ad:79:58	(Unknown)
+138.231.157.158	8c:be:be:02:22:70	Xiaomi Communications Co Ltd
+138.231.157.131	8c:7a:aa:eb:e1:67	(Unknown)
+138.231.158.11	ee:c7:61:77:79:1b	(Unknown: locally administered)
+138.231.156.66	62:df:4c:c6:3c:a3	(Unknown: locally administered)
+138.231.158.71	48:a4:72:47:71:65	Intel Corporate
+138.231.157.242	88:54:1f:2b:34:ff	(Unknown)
+138.231.158.77	cc:b0:da:a7:e4:91	Liteon Technology Corporation
+138.231.158.108	28:c6:3f:fe:8a:d5	Intel Corporate
+138.231.156.168	ba:30:46:85:a4:3e	(Unknown: locally administered) (DUP: 2)
+138.231.158.38	f4:bf:80:87:12:9a	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.158.119	b0:c0:90:bd:7b:9d	Chicony Electronics Co., Ltd.
+138.231.157.119	f4:7b:09:10:c5:a2	(Unknown)
+138.231.158.82	4c:02:20:85:ba:c7	(Unknown)
+138.231.158.143	12:ea:22:04:25:60	(Unknown: locally administered)
+138.231.156.81	2e:1f:c5:1b:c6:20	(Unknown: locally administered)
+138.231.158.114	b8:e8:56:10:24:66	Apple, Inc.
+138.231.158.163	1c:99:57:7c:73:47	(Unknown)
+138.231.158.194	5c:e0:c5:89:6f:a7	Intel Corporate
+138.231.158.125	a8:9c:ed:a4:96:d6	Xiaomi Communications Co Ltd
+138.231.158.212	9e:7f:f4:20:fc:bb	(Unknown: locally administered)
+138.231.158.164	4c:1d:96:d9:40:2c	Intel Corporate
+138.231.158.79	d8:55:75:fb:dc:fe	Samsung Electronics Co.,Ltd
+138.231.157.126	6c:c7:ec:55:fd:cf	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.157.200	2a:50:26:33:52:e7	(Unknown: locally administered)
+138.231.158.95	64:a2:f9:e3:c5:7a	OnePlus Technology (Shenzhen) Co., Ltd
+138.231.158.203	00:90:4c:2c:fa:c4	Epigram, Inc.
+138.231.158.203	00:90:4c:2c:fa:c4	Epigram, Inc. (DUP: 2)
+138.231.157.70	6e:cc:c6:27:50:28	(Unknown: locally administered)
+138.231.159.3	40:5b:d8:13:fb:c7	CHONGQING FUGUI ELECTRONICS CO.,LTD.
+138.231.159.10	10:51:07:35:c9:06	(Unknown)
+138.231.159.13	c6:d1:82:94:52:25	(Unknown: locally administered)
+138.231.159.13	c6:d1:82:94:52:25	(Unknown: locally administered) (DUP: 2)
+138.231.158.199	28:33:34:2c:f2:57	Huawei Device Co., Ltd.
+138.231.158.207	fe:d1:23:f1:cb:b2	(Unknown: locally administered)
+138.231.159.39	dc:1b:a1:81:31:6b	(Unknown)
+138.231.158.215	0c:2c:54:99:bf:c4	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.159.31	7a:1a:3c:7a:57:7e	(Unknown: locally administered)
+138.231.157.126	6c:c7:ec:55:fd:cf	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.159.41	28:16:ad:d6:53:ad	Intel Corporate
+138.231.158.167	88:b1:11:5a:04:1a	Intel Corporate
+138.231.159.5	b8:c3:85:14:14:17	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.159.53	a2:67:05:0e:0b:cd	(Unknown: locally administered)
+138.231.159.49	76:18:48:6e:38:bb	(Unknown: locally administered)
+138.231.159.58	a4:50:46:40:83:7d	Xiaomi Communications Co Ltd
+138.231.159.54	e6:9e:bb:ec:60:36	(Unknown: locally administered)
+138.231.159.47	66:fd:77:67:b1:9e	(Unknown: locally administered)
+138.231.159.95	34:c9:3d:55:66:c6	(Unknown)
+138.231.158.240	1a:2a:2b:46:89:ce	(Unknown: locally administered)
+138.231.158.8	0a:d0:50:a5:78:f8	(Unknown: locally administered)
+138.231.159.82	48:b8:a3:c2:42:0e	(Unknown)
+138.231.159.6	5e:57:02:a2:d3:5e	(Unknown: locally administered)
+138.231.159.90	0c:ec:84:11:22:c3	Shenzhen TINNO Mobile Technology Corp.
+138.231.159.87	98:2c:bc:40:bc:da	Intel Corporate
+138.231.159.117	10:63:c8:d7:93:8d	Liteon Technology Corporation
+138.231.159.92	c0:e4:34:f6:6b:91	AzureWave Technology Inc.
+138.231.158.236	6c:c7:ec:f7:32:8d	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.159.120	e0:ac:cb:91:db:92	Apple, Inc.
+138.231.158.236	6c:c7:ec:f7:32:8d	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.159.105	f8:1a:2b:3c:9a:68	(Unknown)
+138.231.159.161	34:f3:9a:52:d4:ab	Intel Corporate
+138.231.159.122	d2:05:07:d3:31:c3	(Unknown: locally administered)
+138.231.158.170	2a:73:c5:62:d2:2b	(Unknown: locally administered)
+138.231.159.186	1a:70:72:4e:ec:4e	(Unknown: locally administered)
+138.231.159.154	04:4a:6c:d3:50:7b	HUAWEI TECHNOLOGIES CO.,LTD
+138.231.159.199	f0:77:c3:82:67:6b	(Unknown)
+138.231.159.164	88:6b:6e:e8:90:c2	Apple, Inc.
+138.231.159.218	50:5b:c2:94:3a:87	Liteon Technology Corporation
+138.231.159.122	d2:05:07:d3:31:c3	(Unknown: locally administered) (DUP: 2)
+138.231.159.201	86:09:c0:3e:60:cf	(Unknown: locally administered)
+138.231.159.241	a4:c3:f0:ac:46:c6	Intel Corporate
+138.231.159.242	f4:46:37:5b:93:0c	(Unknown)
+138.231.159.250	4c:1d:96:3b:2b:d5	Intel Corporate
+138.231.159.226	f6:ef:21:f9:86:8b	(Unknown: locally administered)
+138.231.159.203	60:f2:62:ff:c3:a0	Intel Corporate
+138.231.159.59	aa:f9:23:48:0b:fd	(Unknown: locally administered)
+138.231.159.124	f6:c0:b2:39:76:e9	(Unknown: locally administered)
+138.231.159.233	ae:c4:87:4a:58:5b	(Unknown: locally administered)
+138.231.159.238	b6:10:1d:2d:29:fe	(Unknown: locally administered)
+138.231.159.195	2e:72:30:c3:32:14	(Unknown: locally administered)
+138.231.159.148	4c:63:71:1b:fd:03	(Unknown)
+138.231.158.178	fe:f9:91:5b:e6:91	(Unknown: locally administered)
+138.231.159.158	74:15:75:e6:dd:2f	(Unknown)
+138.231.159.119	ca:7d:fe:27:83:5f	(Unknown: locally administered)
+138.231.158.188	ce:98:38:96:7a:f3	(Unknown: locally administered)
+138.231.159.167	a0:41:47:22:ef:00	Huawei Device Co., Ltd.
+138.231.159.79	8a:5a:59:a5:2a:61	(Unknown: locally administered)
+138.231.158.178	fe:f9:91:5b:e6:91	(Unknown: locally administered) (DUP: 2)
+138.231.159.196	b6:d8:d3:b7:f4:14	(Unknown: locally administered)
+138.231.159.130	42:70:7a:51:9f:40	(Unknown: locally administered)
+138.231.159.224	52:fd:56:d9:b2:a1	(Unknown: locally administered)
+138.231.159.246	e8:3a:12:ec:f1:74	Samsung Electronics Co.,Ltd
+138.231.159.111	2c:0e:3d:bc:2e:04	SAMSUNG ELECTRO-MECHANICS(THAILAND)
+138.231.159.107	12:71:de:6f:21:82	(Unknown: locally administered)
+138.231.159.8	a6:3c:09:44:fe:62	(Unknown: locally administered)
+138.231.157.135	f6:49:f2:b3:fb:df	(Unknown: locally administered)
+138.231.157.88	4a:0b:3f:e4:9d:2e	(Unknown: locally administered)
+138.231.159.22	c6:c8:d5:2a:35:e8	(Unknown: locally administered)
+138.231.159.228	74:c1:7d:7e:bd:06	Infinix mobility limited
+138.231.159.244	9e:b1:ad:5d:49:7a	(Unknown: locally administered)
+138.231.159.111	2c:0e:3d:bc:2e:04	SAMSUNG ELECTRO-MECHANICS(THAILAND) (DUP: 2)
+138.231.159.204	f6:04:9f:a9:e0:26	(Unknown: locally administered)
+138.231.159.191	82:a5:96:c8:1b:bb	(Unknown: locally administered)
+138.231.145.119	f4:0f:24:1b:18:3f	Apple, Inc.
+138.231.159.229	7a:1a:27:80:c5:f8	(Unknown: locally administered)
+138.231.158.232	8a:57:c2:e8:21:36	(Unknown: locally administered)
+138.231.159.213	7e:6f:94:dd:6e:92	(Unknown: locally administered)
+138.231.159.191	82:a5:96:c8:1b:bb	(Unknown: locally administered) (DUP: 2)
+138.231.159.213	7e:6f:94:dd:6e:92	(Unknown: locally administered) (DUP: 2)
+138.231.145.211	8c:85:90:bd:7a:88	Apple, Inc.
+138.231.146.73	f4:5c:89:a5:cf:8d	Apple, Inc.
+138.231.158.86	6e:c5:32:57:4f:cd	(Unknown: locally administered)
+138.231.146.149	6c:96:cf:de:ac:89	Apple, Inc.
+138.231.148.58	8c:85:90:56:fc:2c	Apple, Inc.
+138.231.159.216	4a:ec:cd:6e:3d:e5	(Unknown: locally administered)
+138.231.148.203	38:78:62:3c:68:5f	Sony Mobile Communications Inc
+138.231.149.30	34:1c:f0:f7:a1:18	(Unknown)
+138.231.150.104	dc:a9:04:84:c1:d4	Apple, Inc.
+138.231.150.230	78:4f:43:94:90:ce	Apple, Inc.
+138.231.152.15	ac:bc:32:9b:76:e7	Apple, Inc.
+138.231.147.8	6e:05:cc:e3:06:4c	(Unknown: locally administered)
+138.231.154.9	8c:85:90:7d:ce:09	Apple, Inc.
+138.231.157.224	dc:41:a9:14:d6:92	(Unknown)
+138.231.157.224	dc:41:a9:14:d6:92	(Unknown) (DUP: 2)
+138.231.157.224	dc:41:a9:14:d6:92	(Unknown) (DUP: 3)
+138.231.157.224	dc:41:a9:14:d6:92	(Unknown) (DUP: 4)
+138.231.157.224	dc:41:a9:14:d6:92	(Unknown) (DUP: 5)
+138.231.157.224	dc:41:a9:14:d6:92	(Unknown) (DUP: 6)
+138.231.157.224	dc:41:a9:14:d6:92	(Unknown) (DUP: 7)
+138.231.157.224	dc:41:a9:14:d6:92	(Unknown) (DUP: 8)
+138.231.157.224	dc:41:a9:14:d6:92	(Unknown) (DUP: 9)
+138.231.157.224	dc:41:a9:14:d6:92	(Unknown) (DUP: 10)
+138.231.159.64	c4:b3:01:d2:59:01	Apple, Inc.
+138.231.159.138	ac:bc:32:a3:26:0d	Apple, Inc.
+138.231.158.163	1c:99:57:7c:73:47	(Unknown) (DUP: 2)
+138.231.158.180	5c:f9:38:8c:76:e4	Apple, Inc.
+138.231.159.137	88:6b:6e:e6:57:ac	Apple, Inc.
+
+981 packets received by filter, 0 packets dropped by kernel
+Ending arp-scan 1.9.7: 4096 hosts scanned in 15.817 seconds (258.96 hosts/sec). 971 responded
