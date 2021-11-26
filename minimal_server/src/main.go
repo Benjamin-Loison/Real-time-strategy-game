@@ -3,19 +3,26 @@ package main
 import(
 	"net"
 	"encoding/json"
-    "fmt"
+	"fmt"
 )
 
 var (
-    Players []Player
-    main_chan = make(chan string,2)
-    gmap Map
+	Players []Player
+	main_chan = make(chan string,2)
+	gmap Map
 )
 
 func getId(seed *int) int {
-    ret := *seed
-    (*seed) ++
-    return ret
+	ret := *seed
+	(*seed) ++
+	return ret
+}
+
+
+func broadcast(channels map[int]chan string, msg string) {
+	for _, val := range channels {
+		val <- msg
+	}
 }
 
 func client_handler(conn net.Conn, map_path string, main_chan chan string, id int) {
@@ -24,66 +31,102 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 
 	// Load the map and send it to the client
 	init_json := ServerMessage { MapInfo, gmap, nil , id}
-    init_marshall, err := json.Marshal(init_json)
+	init_marshall, err := json.Marshal(init_json)
 	Check(err)
 	init_message := []byte(string(init_marshall)+"\n")
 
 	conn.Write(init_message)
 
 	units_json := ServerMessage { MapInfo,Map{}, Players, id}
-    units_marshall, err := json.Marshal(units_json)
+	units_marshall, err := json.Marshal(units_json)
 	Check(err)
 	units_message := []byte(string(units_marshall)+"\n")
 
 	conn.Write(units_message)
+
+	// Wait for the other player
+	logging("CLIENT_HANDLER", fmt.Sprintf("Waiting for other player (%d)", id))
+	keepGoing := true
+	for keepGoing {
+		select {
+			case x, _ :=<- main_chan :
+				if x == "START" {
+					keepGoing = false
+				}
+		}
+	}
+
+	logging("CLIENT_HANDLER", fmt.Sprintf("Entering the main event loop (%d)", id))
+	// Main Event loop
+	keepGoing = true
+	for keepGoing {
+		select {
+			case x, _ :=<- main_chan :
+				if x == "QUIT" {
+					conn.Write([]byte("QUIT\n"))
+					keepGoing = false
+				}
+		}
+	}
+
 	// Exit
-    main_chan<-"FINISHED"
+	main_chan<-"FINISHED"
+	logging("CLIENT_HANDLER", fmt.Sprintf("%d quits.", id))
 	return
 }
-
 
 func main() {
 	// Load the config file
 	conf := loadConfig("conf/conf.json")
-    gmap = LoadMap(conf.MapPath)
+	gmap = LoadMap(conf.MapPath)
 
-    // initializing
-    Players = append(Players, Player{Units: map[string]Unit{},Seed: 0} )
-    Players = append(Players, Player{Units: map[string]Unit{},Seed: 0} )
+	// initializing
+	Players = append(Players, Player{Units: map[string]Unit{},Seed: 0} )
+	Players = append(Players, Player{Units: map[string]Unit{},Seed: 0} )
 
-    initializePlayer(&gmap, Player1,&Players[0].Units, &Players[0].Seed)
-    initializePlayer(&gmap, Player2,&Players[1].Units, &Players[1].Seed)
+	channels := make(map[int]chan string)
+
+	initializePlayer(&gmap, Player1,&Players[0].Units, &Players[0].Seed)
+	initializePlayer(&gmap, Player2,&Players[1].Units, &Players[1].Seed)
 
 	// Listen
-    listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d",conf.Hostname, conf.Port))
+	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d",conf.Hostname, conf.Port))
 	Check(err)
 	defer listener.Close()
 
-    ok := 0
+	ok := 0
 
 	for {
 		// Wait for a new connection
-        if ok == 2 {
-            break
-        }
+		if ok == 2 {
+			break
+		}
 		conn, err := listener.Accept()
 
-        Check(err)
-		go client_handler(conn, conf.MapPath,main_chan, ok)
+		Check(err)
+		channels[ok] = make(chan string)
+		go client_handler(conn, conf.MapPath,channels[ok], ok)
 		ok += 1
 	}
-    //start game
-    for {
-        if ok == 0 {
-            break
-        }
-        select {
-        case s := <-main_chan :
-            if s == "FINISHED" {
-                ok--
-            }
-        default:
-        }
-    }
+
+	broadcast(channels, "START")
+	//
+	broadcast(channels, "QUIT")
+
+	//start game
+	for {
+		if ok == 0 {
+			break
+		}
+		for _, c := range channels {
+			select {
+			case s := <-c :
+				if s == "FINISHED" {
+					ok--
+				}
+			default:
+			}
+		}
+	}
 }
 

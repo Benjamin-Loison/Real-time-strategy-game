@@ -11,6 +11,18 @@ import (
 	"encoding/json"
 )
 
+func listenServer(conn net.Conn, channel chan string) {
+	for {
+		netData, err := bufio.NewReader(conn).ReadString('\n')
+		if err == nil {
+			channel <- netData
+		} else {
+			channel <- "QUIT"
+			return
+		}
+	}
+}
+
 // Main fucntion for the part of the client that chats both with the server and
 // the gui part.
 func run_client(config Configuration_t, players *[]Player, gmap *Map, chan_client chan string) {
@@ -69,6 +81,7 @@ func run_client(config Configuration_t, players *[]Player, gmap *Map, chan_clien
 
 	chan_client<-"OK"
 
+	go listenServer(conn, chan_server)
 	for {
 		select {
 		case s1 := <-chan_client:
@@ -77,7 +90,9 @@ func run_client(config Configuration_t, players *[]Player, gmap *Map, chan_clien
 				os.Exit(0)
 			}
 		case s2 := <-chan_server:
-			fmt.Print(s2)
+			if s2 == "QUIT" {
+				os.Exit(0)
+			}
 			//err = json.Unmarshal([]byte(string(s2)), gmap)
 			//Check(err)
 		default:
