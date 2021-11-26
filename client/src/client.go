@@ -43,8 +43,11 @@ func run_client(config Configuration_t, players *[]Player, gmap *Map, chan_clien
 		fmt.Sprintf("Connection established with %s:%d", config.Server.Hostname, config.Server.Port))
 
 	//GET MAP
+	buffer := bufio.NewReader(conn)
 
-	netData, err := bufio.NewReader(conn).ReadString('\n')
+	logging("client", "requesting map")
+	netData, err := buffer.ReadString('\n')
+	logging("client", "obtained map")
 	if (err != nil) {
 		logging("Socket", fmt.Sprintf("error while reading MAP INFO from server: %v", err))
 		chan_client<-"QUIT"
@@ -62,7 +65,9 @@ func run_client(config Configuration_t, players *[]Player, gmap *Map, chan_clien
 
 
 	//GET UNITS
-	netData, err = bufio.NewReader(conn).ReadString('\n')
+	logging("client", "requesting units")
+	netData, err = buffer.ReadString('\n')
+	logging("client", "obtained units")
 	if (err != nil) {
 		logging("Socket", fmt.Sprintf("error while reading INIT UNITS from server: %v", err))
 		chan_client<-"QUIT"
