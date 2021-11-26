@@ -1,12 +1,18 @@
 package main
 
-func FindMenuByRef(menus []Menu_t, ref string) Menu_t {
+func FindMenuByRef(menus []Menu_t, ref int) Menu_t {
+	/*
 	for i := 0 ; i < len(menus); i ++ {
 		if menus[i].Ref == ref {
 			return menus[i]
 		}
+	}*/
+	// The new menu labelling allows us to use the ref as array index.
+	if ref < len(menus) {
+		return menus[ref]
+	} else {
+		panic("Could not find the required menu")
 	}
-	panic("Could not find the required menu")
 }
 
 func ActionTypeOfString(s string) ActionType {
