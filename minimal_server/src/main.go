@@ -1,15 +1,20 @@
 package main
 
-import(
+import (
 	"bufio"
-	"net"
 	"encoding/json"
 	"fmt"
+	"net"
+    "os"
+	"strings"
+
+	"rts/events"
 )
 
 var (
 	Players []Player
-	main_chan = make(chan string,2)
+	channels = make(map[int]chan string)
+    updater_chan = make(chan events.Event)
 	gmap Map
 )
 
@@ -55,23 +60,48 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 	keepGoing := true
 	for keepGoing {
 		select {
-			case x, _ :=<- main_chan :
+			case x, _ :=<-main_chan :
 				if x == "START" {
 					keepGoing = false
 				}
 		}
 	}
+    /////////////////// Starting so sending go to the client
+    _,err = buffer.Write([]byte("GO\n"))
+    Check(err)
+    buffer.Flush()
 
 	logging("CLIENT_HANDLER", fmt.Sprintf("Entering the main event loop (%d)", id))
 	// Main Event loop
+    // starting the client listener
+    listener_chan := make(chan string)
+    go listenClient(conn,listener_chan )
+
 	keepGoing = true
 	for keepGoing {
 		select {
-			case x, _ :=<- main_chan :
+			case x, _ :=<-main_chan :
 				if x == "QUIT" {
 					conn.Write([]byte("QUIT\n"))
 					keepGoing = false
 				}
+            case x, _ :=<-listener_chan:
+                logging("CLIENT_HANDLER","Received info from listener")
+                if x == "QUIT" {
+                    logging("CLIENT_HANDLER", "Error when listening to the client")
+                    main_chan<-"CLIENT_ERROR"
+                    keepGoing = false
+                }else {
+                    var client_event = &events.Event{}
+                    err = json.Unmarshal([]byte(x), client_event)
+                    if err != nil {
+                        logging("CLIENT_HANDLER", fmt.Sprintf("Error when receiving event from client (%d)", id))
+                    }
+                    // should now send to the updater
+                    logging("CLIENT_HANDLER","Sending info to updater")
+                    updater_chan<-*client_event
+                    logging("CLIENT_HANDLER","info for updater sent")
+                }
 		}
 	}
 
@@ -79,6 +109,46 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 	main_chan<-"FINISHED"
 	logging("CLIENT_HANDLER", fmt.Sprintf("%d quits.", id))
 	return
+}
+
+func listenClient(conn net.Conn, channel chan string) {
+    // ajouter soi même dans la liste des channels pour bien être fermé
+    // -> to do so, créer une fonction register.
+    reader := bufio.NewReader(conn)
+    for {
+        logging("Listener","listening to client")
+        netData, err := reader.ReadString('\n')
+        logging("Listener","received from client")
+        netData = strings.TrimSpace(string(netData))
+        if err == nil {
+            channel <- netData
+        } else {
+            channel <- "QUIT"
+            return
+        }
+    }
+}
+
+func register(id int) chan string {
+    channels[id] = make(chan string)
+    return channels[id]
+}
+
+func updater(stopper_chan chan string){
+    for{
+        select{
+        case e := <-updater_chan:
+            switch e {
+                default:
+                    logging("Updater", "Received an event")
+            }
+        case s := <-stopper_chan:
+            if s == "QUIT" {
+                logging("Updater", "Quitting")
+                os.Exit(0)
+            }
+        }
+    }
 }
 
 func main() {
@@ -90,10 +160,10 @@ func main() {
 	Players = append(Players, Player{Units: map[string]Unit{},Seed: 0} )
 	Players = append(Players, Player{Units: map[string]Unit{},Seed: 0} )
 
-	channels := make(map[int]chan string)
-
 	initializePlayer(&gmap, Player1,&Players[0].Units, &Players[0].Seed)
 	initializePlayer(&gmap, Player2,&Players[1].Units, &Players[1].Seed)
+
+    go updater(register(-1))
 
 	// Listen
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d",conf.Hostname, conf.Port))
@@ -110,8 +180,7 @@ func main() {
 		conn, err := listener.Accept()
 
 		Check(err)
-		channels[ok] = make(chan string)
-		go client_handler(conn, conf.MapPath,channels[ok], ok)
+		go client_handler(conn, conf.MapPath,register(ok), ok)
 		ok += 1
 	}
 
@@ -129,6 +198,9 @@ func main() {
 			case s := <-c :
 				if s == "FINISHED" {
 					ok--
+				}
+                if s == "CLIENT_ERROR" {
+					logging("Server", "Received client error")
 				}
 			default:
 			}

@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bufio"
 	_ "image/png"
-	"github.com/gen2brain/raylib-go/raylib"
 	"math"
 	"time"
+    "encoding/json"
+	"rts/events"
+	"github.com/gen2brain/raylib-go/raylib"
 )
 
 const (
@@ -68,6 +71,7 @@ func RunGui(gmap *Map, players *[]Player, config Configuration_t, config_menus M
 
 	rl.BeginMode2D(camera)
 
+    writer := bufio.NewWriter(serv_conn)
 
 	for !rl.WindowShouldClose() {
 		// check that shouldn't quit
@@ -124,6 +128,19 @@ func RunGui(gmap *Map, players *[]Player, config Configuration_t, config_menus M
 		}
 
 		offsetThisFrame := cameraSpeed*rl.GetFrameTime()
+
+        // test d'envoie d'event
+        if (rl.IsKeyDown(rl.KeyQ)) {
+            e := events.Event{EventType : events.MoveUnits,Data : "test"}
+            e_marsh, err := json.Marshal(e)
+            Check(err)
+			logging("GUI","Trying to send event")
+            _,err = writer.Write([]byte(string(e_marsh)+"\n"))
+            writer.Flush()
+            Check(err)
+			logging("GUI","Event sent")
+
+        }
 
 		if (rl.IsKeyDown(config.Keys.Right)){
 			//camera.Offset.X -= 2.0
