@@ -1,5 +1,5 @@
 {
-	"Hostname": "0.0.0.0",
-	"Port": 4444,
+	"Hostname": "localhost",
+	"Port": 8888,
 	"MapPath": "../maps/map2.json"
 }

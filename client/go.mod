@@ -13,3 +13,8 @@ require (
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20210917161153-d61c044b1678 // indirect
 )
+
+require "rts/events" v0.0.1
+
+replace "rts/events" v0.0.1 => "../events"
+
