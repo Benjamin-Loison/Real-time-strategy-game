@@ -170,15 +170,6 @@ func RunGui(gmap *utils.Map,
 					}
 				}
 			}
-
-			// Print chat messages
-			for i := 0 ; i < len(currentMessages) ; i ++ {
-				rl.DrawText(currentMessages[i].Message,
-					int32(currentMessages[i].Position_x),
-					int32(currentMessages[i].Position_y),
-					40,
-					rl.Red)
-			}
 		}
 
 		// Check wether a menu has to be printed
@@ -270,6 +261,16 @@ func RunGui(gmap *utils.Map,
                 selRect := getRectangle2Pt(selectionStart, rl.GetMousePosition() )
                 rl.DrawRectangleLines( selRect.ToInt32().X , selRect.ToInt32().Y, selRect.ToInt32().Width, selRect.ToInt32().Height, rl.Magenta)
             }
+
+		// Print chat messages
+		for i := 0 ; i < len(currentMessages) ; i ++ {
+			rl.DrawText(currentMessages[i].Message,
+				int32(currentMessages[i].Position_x),
+				int32(currentMessages[i].Position_y),
+				40,
+				rl.Red)
+		}
+
 		rl.EndDrawing();
 	}
 

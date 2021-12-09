@@ -2,10 +2,10 @@ package main
 
 import (
 	"bufio"
+	"strconv"
 	"fmt"
 	"net"
 	"os"
-	"strconv"
 	"strings"
 	"encoding/json"
 	"rts/utils"
@@ -36,23 +36,9 @@ func run_client(config Configuration_t,
 	chan_server := make(chan string, 2)
 
     var err error// defines a single variable to check the functions errors.
-	var serv_conn net.Conn
+	serv_conn := connectToServer(config.Server.Hostname, config.Server.Port)
 
-	// Connection to the server
-	serv_conn, err = net.Dial("tcp", config.Server.Hostname + ":" + strconv.Itoa(config.Server.Port))
-	if err != nil {
-		utils.Logging("Connection",
-			fmt.Sprintf("Error durig TCP dial (%s:%d)): %v",
-				config.Server.Hostname,
-				config.Server.Port,
-				err))
-		chan_link_gui<-"QUIT"
-		return
-	}
 	defer serv_conn.Close()
-	utils.Logging("CLIENT",
-		fmt.Sprintf("Connection established with %s:%d",
-			config.Server.Hostname, config.Server.Port))
 
 
 	// Fetch the map from the server
@@ -132,13 +118,18 @@ func run_client(config Configuration_t,
 				chan_link_gui<- s2
 				utils.Logging("client", fmt.Sprintf("I recieved '%s'", s2))
 			}
-		default:
 		}
 	}
 }
 
 
 
+/*           +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+             | Auxiliary function: listens to the server and dump the       |
+             | incomming packets as string into the channel.                |
+             | The data is expected to end with '\n', character that is not |
+             | forwarded into the chan.                                     |
+             +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+ */
 func listenServer(conn net.Conn, channel chan string) {
 	reader := bufio.NewReader(conn)
 	for {
@@ -151,5 +142,19 @@ func listenServer(conn net.Conn, channel chan string) {
 			return
 		}
 	}
+}
+
+
+
+/*          +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+            | Auxiliary function that initiates a connection with the server |
+            +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+*/
+func connectToServer(hostname string, port int) (net.Conn) {
+	serv_conn, err := net.Dial("tcp", hostname + ":" + strconv.Itoa(port))
+	utils.Check(err)
+	utils.Logging("CLIENT",
+		fmt.Sprintf("Connection established with %s:%d",
+			hostname, port))
+	return serv_conn
 }
 
