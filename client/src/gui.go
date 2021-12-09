@@ -10,7 +10,15 @@ import (
 	"rts/events"
     "rts/utils"
 	"github.com/gen2brain/raylib-go/raylib"
+	"strings"
 )
+
+type MessageItem_t struct {
+	Message string
+	Position_x int
+	Position_y int
+	ArrivalTime time.Time
+}
 
 const (
 	screenWidth = 1280
@@ -22,17 +30,18 @@ const (
 type GameState int32
 
 const (
-	StateNone GameState = 0
-	StateMenu GameState = 1
-	StateAction GameState = 2
-	StateChat GameState = 3
+	StateNone GameState = 1
+	StateChat GameState = 2
+	StateMenu GameState = 4
+	StateWaitClick GameState = 8
 )
 
 var (
 	currentState = StateNone
 	currentMenu = -1
 	currentAction = -1
-	timeMenu = time.Now()
+	lastInputTime = time.Now()
+	max_messages_nb = 15
 )
 
 func drawGrid(width int32, height int32) {
@@ -42,6 +51,18 @@ func drawGrid(width int32, height int32) {
 	for i := int32(0) ; i <= width ; i++ {
 		rl.DrawLine(utils.TileSize*i, 0, utils.TileSize*i ,utils.TileSize*height,rl.Red)
 	}
+}
+
+func isPrintable(key int32) (bool) {
+	return key >= 32 && key <= 126
+}
+
+func NewMessageItem(current []MessageItem_t, new_message string) ([]MessageItem_t) {
+	if len(current) == max_messages_nb {
+		// On enlève le premier!
+		return append(current[1:], (MessageItem_t {new_message, 0, 0, time.Now()}))
+	}
+	return append(current, (MessageItem_t {new_message, 0, 0, time.Now()}))
 }
 
 func get_mouse_grid_pos(camera rl.Camera2D, width , height int32) (rl.Vector2, bool) {
@@ -58,6 +79,7 @@ func get_mouse_grid_pos(camera rl.Camera2D, width , height int32) (rl.Vector2, b
 
 func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, config_menus MenuConfiguration_t, chan_client chan string) {
 	ChatText := ""
+	currentMessages := make([]MessageItem_t, 0)
 
 	rl.SetTraceLog(rl.LogNone)
 	rl.InitWindow(screenWidth, screenHeight, "RTS")
@@ -79,131 +101,167 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
     writer := bufio.NewWriter(serv_conn)
 
 	for !rl.WindowShouldClose() {
-		// check that shouldn't quit
+		/*           +~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+		             | Check that shouldn't quit |
+		             +~~~~~~~~~~~~~~~~~~~~~~~~~~~+ */
 		select {
 		case x, _ := <-chan_client:
 			if x == "QUIT" {
 				utils.Logging("gui","Forced to quit")
 				return
+			} else if strings.HasPrefix(x, "CHAT:") {
+				utils.Logging("gui", " Hé mais j'ai un message quoi !")
+				currentMessages = NewMessageItem(currentMessages, x[5:])
+			} else {
+				utils.Logging("gui", fmt.Sprintf("Je comprendspas %s", x))
 			}
 		default:
 		}
 
-		// Updateelse
-		//----------------------------------------------------------------------------------
+		/*           +~~~~~~~~~~~~~~~~~+
+		             | Update the game |
+		             +~~~~~~~~~~~~~~~~~+ */
 
-		switch currentState {
-			case StateMenu:
-				menu_options := make(map[int32]MenuElement_t)
-				if currentMenu >= 0 {
-					// Print the current menu and its elements, and check for its hotkeys:
-					current_menu := FindMenuByRef(config_menus.Menus, currentMenu)
-					// Menu title
-					rl.DrawText(current_menu.Title, 0, 0, 40, rl.Red)
-					// Menu options and keys
-					for i := 0 ; i < len(current_menu.Elements) ; i ++ {
-						rl.DrawText(current_menu.Elements[i].Name,
-							100,
-							int32(40 + (20 * i)),
-							15,
-							rl.Blue)
+		// Check wether the movements have to be detected
+		if (currentState & StateNone > 0) {
+			// Print chat messages
+			for i := 0 ; i < len(currentMessages) ; i ++ {
+				rl.DrawText(currentMessages[i].Message,
+					int32(currentMessages[i].Position_x),
+					int32(currentMessages[i].Position_y),
+					40,
+					rl.Red)
+			}
 
-						// Adding the menu option to the [menu_options] mapping
-						menu_options[current_menu.Elements[i].Key] = current_menu.Elements[i]
-					}
+			offsetThisFrame := cameraSpeed*rl.GetFrameTime()
+
+			// test d'envoie d'event
+			if (rl.IsKeyDown(rl.KeyQ)) {
+				e := events.Event{EventType : events.MoveUnits,Data : "test"}
+				e_marsh, err := json.Marshal(e)
+				utils.Check(err)
+				utils.Logging("GUI","Trying to send event")
+				_,err = writer.Write([]byte(string(e_marsh)+"\n"))
+				writer.Flush()
+				utils.Check(err)
+				utils.Logging("GUI","Event sent")
+			}
+
+			if (rl.IsKeyDown(config.Keys.Chat)) {
+				utils.Logging("GUI", "Entering chat state.")
+				currentState = StateChat
+			}
+			if (rl.IsKeyDown(config.Keys.Right)){
+				//camera.Offset.X -= 2.0
+				camera.Target.X += offsetThisFrame
+			}
+			if (rl.IsKeyDown(config.Keys.Left)){
+				//camera.Offset.X += 2.0
+				camera.Target.X -= offsetThisFrame
+			}
+			if (rl.IsKeyDown(config.Keys.Up)){
+				//camera.Offset.Y += 2.0
+				camera.Target.Y -= offsetThisFrame
+			}
+			if (rl.IsKeyDown(config.Keys.Down)){
+				//camera.Offset.Y -= 2.0
+				camera.Target.Y += offsetThisFrame
+			}
+			if (rl.IsKeyDown(config.Keys.ZoomIn)){
+				camera.Zoom *= zoomFactor
+			}
+			if (rl.IsKeyDown(config.Keys.ZoomOut)){
+				camera.Zoom /= zoomFactor
+			}
+			if (rl.IsKeyDown(config.Keys.Menu)){
+				if (currentMenu == -1 && time.Since(lastInputTime) > time.Second) {
+					currentState = StateMenu
+					currentMenu = 0
+					lastInputTime = time.Now()
+				} else if (time.Since(lastInputTime) > time.Second) {
+					currentState = StateNone
+					currentMenu = -1
+					lastInputTime = time.Now()
 				}
-				// Check the delay since last interaction
-				if(time.Since(timeMenu) > time.Second) {
-					for key, val := range menu_options {
-						if(rl.IsKeyDown(key)) {
-							switch val.Type {
-								case MenuElementSubMenu:
-									currentMenu = val.Ref
-									timeMenu = time.Now()
-								default:
-									///
-							}
+			}
+			if (rl.IsKeyDown(config.Keys.ResetCamera)){
+				camera.Zoom = 1.0
+				camera.Target.X = map_middle.X
+				camera.Target.Y = map_middle.Y
+			}
+		}
+
+		// Check wether a menu has to be printed
+		if (currentState & StateMenu > 0) {
+			menu_options := make(map[int32]MenuElement_t)
+			if currentMenu >= 0 {
+				// Print the current menu and its elements, and check for its hotkeys:
+				current_menu := FindMenuByRef(config_menus.Menus, currentMenu)
+				// Menu title
+				rl.DrawText(current_menu.Title, 0, 0, 40, rl.Red)
+				// Menu options and keys
+				for i := 0 ; i < len(current_menu.Elements) ; i ++ {
+					rl.DrawText(current_menu.Elements[i].Name,
+						100,
+						int32(40 + (20 * i)),
+						15,
+						rl.Blue)
+
+					// Adding the menu option to the [menu_options] mapping
+					menu_options[current_menu.Elements[i].Key] = current_menu.Elements[i]
+				}
+			}
+			// Check the delay since last interaction
+			if(time.Since(lastInputTime) > time.Second) {
+				for key, val := range menu_options {
+					if(rl.IsKeyDown(key)) {
+						switch val.Type {
+							case MenuElementSubMenu:
+								currentMenu = val.Ref
+								lastInputTime = time.Now()
+							default:
+								///
 						}
 					}
 				}
-				break
-			case StateAction:
-				// Wait for the action to be achieved.
-				break
-			case StateChat:
-				// Wait for a message to be entered
-				key := rl.GetKeyPressed()
-				if (key == rl.KeyEnter) {
-					utils.Logging("GUI", "On arrête tout, le chat c'est fini là hein 2, Troie (un canasson et non pas un canon la musique)")
-					currentState = StateNone
-				} else if (time.Since(timeMenu) > 10 * time.Millisecond && key > 0) {
-					ChatText += fmt.Sprintf("%c", key)
-					utils.Logging("GUI", fmt.Sprintf("Current text: %s", ChatText))
-					timeMenu = time.Now()
-				}
-				break
-			default:
-				// This case is used when the current state is StateNone
+			}
+		}
 
-				offsetThisFrame := cameraSpeed*rl.GetFrameTime()
-
-				// test d'envoie d'event
-				if (rl.IsKeyDown(rl.KeyQ)) {
-					e := events.Event{EventType : events.MoveUnits,Data : "test"}
+		// Check wether or not to listen to the keys
+		if (currentState & StateChat > 0) {
+			// Wait for a message to be entered
+			key := rl.GetKeyPressed()
+			if (key == rl.KeyEnter) {
+				// Sending the message if it is not empty ("")
+				if len(ChatText) > 0 {
+					e := events.Event{
+						EventType : events.ChatEvent,
+						Data: fmt.Sprintf("%s: %s", config.Pseudo, ChatText[1:])}
 					e_marsh, err := json.Marshal(e)
 					utils.Check(err)
-					utils.Logging("GUI","Trying to send event")
 					_,err = writer.Write([]byte(string(e_marsh)+"\n"))
 					writer.Flush()
 					utils.Check(err)
-					utils.Logging("GUI","Event sent")
-				}
 
-				if (rl.IsKeyDown(config.Keys.Chat)) {
-					utils.Logging("GUI", "Entering chat state.")
-					currentState = StateChat
+					// Reset the lmessage and state
+					ChatText = ""
+					currentState = StateNone
 				}
-				if (rl.IsKeyDown(config.Keys.Right)){
-					//camera.Offset.X -= 2.0
-					camera.Target.X += offsetThisFrame
+			} else if (key == rl.KeyBackspace) {
+				length := len(ChatText)
+				if length > 2 {
+					ChatText = ChatText[:(length-1)]
 				}
-				if (rl.IsKeyDown(config.Keys.Left)){
-					//camera.Offset.X += 2.0
-					camera.Target.X -= offsetThisFrame
-				}
-				if (rl.IsKeyDown(config.Keys.Up)){
-					//camera.Offset.Y += 2.0
-					camera.Target.Y -= offsetThisFrame
-				}
-				if (rl.IsKeyDown(config.Keys.Down)){
-					//camera.Offset.Y -= 2.0
-					camera.Target.Y += offsetThisFrame
-				}
-				if (rl.IsKeyDown(config.Keys.ZoomIn)){
-					camera.Zoom *= zoomFactor
-				}
-				if (rl.IsKeyDown(config.Keys.ZoomOut)){
-					camera.Zoom /= zoomFactor
-				}
-				if (rl.IsKeyDown(config.Keys.Menu)){
-					if (currentMenu == -1 && time.Since(timeMenu) > time.Second) {
-						currentState = StateMenu
-						currentMenu = 0
-						timeMenu = time.Now()
-					} else if (time.Since(timeMenu) > time.Second) {
-						currentState = StateNone
-						currentMenu = -1
-						timeMenu = time.Now()
-					}
-				}
-				if (rl.IsKeyDown(config.Keys.ResetCamera)){
-					camera.Zoom = 1.0
-					camera.Target.X = map_middle.X
-					camera.Target.Y = map_middle.Y
-				}
-
-				break
+			} else if (time.Since(lastInputTime) > 10 * time.Millisecond && isPrintable(key)) {
+				ChatText += fmt.Sprintf("%c", key)
+			}
+			if (key > 0) {
+				lastInputTime = time.Now()
+			}
 		}
+
+
+
 		// Draw to screenTexture
 		//----------------------------------------------------------------------------------
 		rl.BeginDrawing();

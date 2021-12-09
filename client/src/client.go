@@ -118,6 +118,9 @@ func run_client(config Configuration_t, players *[]utils.Player, gmap *utils.Map
 			if s2 == "QUIT" {
                 chan_client<-"QUIT"
 				os.Exit(0)
+			} else if strings.HasPrefix(s2, "CHAT:") {
+				chan_client<- s2
+				utils.Logging("client", fmt.Sprintf("I recieved '%s'", s2))
 			}
 			//err = json.Unmarshal([]byte(string(s2)), gmap)
 			//Check(err)
