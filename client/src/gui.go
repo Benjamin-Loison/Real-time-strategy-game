@@ -125,79 +125,79 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 			case StateAction:
 				// Wait for the action to be achieved.
 			default:
+				offsetThisFrame := cameraSpeed*rl.GetFrameTime()
+
+				// test d'envoie d'event
+				if (rl.IsKeyDown(rl.KeyQ)) {
+					e := events.Event{EventType : events.MoveUnits,Data : "test"}
+					e_marsh, err := json.Marshal(e)
+					utils.Check(err)
+					utils.Logging("GUI","Trying to send event")
+					_,err = writer.Write([]byte(string(e_marsh)+"\n"))
+					writer.Flush()
+					utils.Check(err)
+					utils.Logging("GUI","Event sent")
+
+				}
+
+				if (rl.IsKeyDown(config.Keys.Right)){
+					//camera.Offset.X -= 2.0
+					camera.Target.X += offsetThisFrame
+				}
+				if (rl.IsKeyDown(config.Keys.Left)){
+					//camera.Offset.X += 2.0
+					camera.Target.X -= offsetThisFrame
+				}
+				if (rl.IsKeyDown(config.Keys.Up)){
+					//camera.Offset.Y += 2.0
+					camera.Target.Y -= offsetThisFrame
+				}
+				if (rl.IsKeyDown(config.Keys.Down)){
+					//camera.Offset.Y -= 2.0
+					camera.Target.Y += offsetThisFrame
+				}
+				if (rl.IsKeyDown(config.Keys.ZoomIn)){
+					camera.Zoom *= zoomFactor
+				}
+				if (rl.IsKeyDown(config.Keys.ZoomOut)){
+					camera.Zoom /= zoomFactor
+				}
+				if (rl.IsKeyDown(config.Keys.Menu)){
+					if (currentMenu == -1 && time.Since(timeMenu) > time.Second) {
+						currentState = StateMenu
+						currentMenu = 0
+						timeMenu = time.Now()
+					} else if (time.Since(timeMenu) > time.Second) {
+						currentState = StateNone
+						currentMenu = -1
+						timeMenu = time.Now()
+					}
+				}
+				if (rl.IsKeyDown(config.Keys.ResetCamera)){
+					camera.Zoom = 1.0
+					camera.Target.X = map_middle.X
+					camera.Target.Y = map_middle.Y
+				}
+
+				// Draw to screenTexture
+				//----------------------------------------------------------------------------------
+				rl.BeginDrawing();
+					rl.ClearBackground(rl.Black);
+					rl.BeginMode2D(camera);
+						// DRAW MAP
+						utils.DrawMap(*gmap)
+						// DRAW UNITS
+						for i, player := range *players {
+							for _, player_unit := range player.Units {
+								utils.DrawUnit(player_unit, i== client_id)
+							}
+						}
+
+					rl.EndMode2D();
+				rl.EndDrawing();
 				break
 		}
 
-		offsetThisFrame := cameraSpeed*rl.GetFrameTime()
-
-        // test d'envoie d'event
-        if (rl.IsKeyDown(rl.KeyQ)) {
-            e := events.Event{EventType : events.MoveUnits,Data : "test"}
-            e_marsh, err := json.Marshal(e)
-            utils.Check(err)
-			utils.Logging("GUI","Trying to send event")
-            _,err = writer.Write([]byte(string(e_marsh)+"\n"))
-            writer.Flush()
-            utils.Check(err)
-			utils.Logging("GUI","Event sent")
-
-        }
-
-		if (rl.IsKeyDown(config.Keys.Right)){
-			//camera.Offset.X -= 2.0
-			camera.Target.X += offsetThisFrame
-		}
-		if (rl.IsKeyDown(config.Keys.Left)){
-			//camera.Offset.X += 2.0
-			camera.Target.X -= offsetThisFrame
-		}
-		if (rl.IsKeyDown(config.Keys.Up)){
-			//camera.Offset.Y += 2.0
-			camera.Target.Y -= offsetThisFrame
-		}
-		if (rl.IsKeyDown(config.Keys.Down)){
-			//camera.Offset.Y -= 2.0
-			camera.Target.Y += offsetThisFrame
-		}
-		if (rl.IsKeyDown(config.Keys.ZoomIn)){
-			camera.Zoom *= zoomFactor
-		}
-		if (rl.IsKeyDown(config.Keys.ZoomOut)){
-			camera.Zoom /= zoomFactor
-		}
-		if (rl.IsKeyDown(config.Keys.Menu)){
-			if (currentMenu == -1 && time.Since(timeMenu) > time.Second) {
-				currentState = StateMenu
-				currentMenu = 0
-				timeMenu = time.Now()
-			} else if (time.Since(timeMenu) > time.Second) {
-				currentState = StateNone
-				currentMenu = -1
-				timeMenu = time.Now()
-			}
-		}
-		if (rl.IsKeyDown(config.Keys.ResetCamera)){
-			camera.Zoom = 1.0
-			camera.Target.X = map_middle.X
-			camera.Target.Y = map_middle.Y
-        }
-
-		// Draw to screenTexture
-		//----------------------------------------------------------------------------------
-		rl.BeginDrawing();
-			rl.ClearBackground(rl.Black);
-			rl.BeginMode2D(camera);
-				// DRAW MAP
-				utils.DrawMap(*gmap)
-				// DRAW UNITS
-				for i, player := range *players {
-					for _, player_unit := range player.Units {
-						utils.DrawUnit(player_unit, i== client_id)
-					}
-				}
-
-			rl.EndMode2D();
-		rl.EndDrawing();
 
 	}
 

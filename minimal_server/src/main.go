@@ -190,6 +190,7 @@ func main() {
 	//start game
     go gameLoop(register(-2))
 
+	utils.Logging("Server", fmt.Sprintf("%d remaining clients.", ok))
     //wait for end game
 	for {
 		if ok <= 0 {
@@ -198,16 +199,20 @@ func main() {
 		for _, c := range channels {
 			select {
 			case s := <-c :
-				if s == "FINISHED" {
+				switch(s) {
+				case "FINISHED" :
 					ok--
-				}
-				if s == "STOP" {
+					utils.Logging("Server", fmt.Sprintf("%d remaining clients.", ok))
+					break
+				case "STOP" :
 					ok = 0
-				}
-                if s == "CLIENT_ERROR" {
+					break
+				case "CLIENT_ERROR" :
 					utils.Logging("Server", "Received client error")
+					break
 				}
 			default:
+				break
 			}
 		}
 	}
