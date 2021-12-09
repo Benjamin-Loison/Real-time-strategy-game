@@ -21,7 +21,8 @@ func Logging(src string, msg string) {
 type TileType int64
 
 var (
-    GroundColor = color.RGBA{20,99,6,255}
+    GroundColor = color.RGBA{101,67,33,255}
+	unit_size float32 = 0.4+float32(fontSize)
 )
 
 const (
@@ -36,7 +37,6 @@ const (
 
     TileSize  int32 = 32
 	fontSize int32 = TileSize/4
-	unit_size float32 = 0.4+float32(fontSize)
 )
 
 type Tile struct {
@@ -72,10 +72,13 @@ func DrawTile(x,y int32,tileType TileType, startpoint factory.Owner){
     switch tileType {
     case Rock :
         rl.DrawCircle(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.DarkGray)
+        rl.DrawCircleLines(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.Black)
     case Gold :
         rl.DrawCircle(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.Gold)
+        rl.DrawCircleLines(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.Black)
     case Tree :
         rl.DrawCircle(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.Green)
+        rl.DrawCircleLines(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.Black)
     default:
     }
 }
@@ -188,7 +191,12 @@ func DrawUnit(u factory.Unit, owned bool){
 	}else{
         rl.DrawCircle(u.X,u.Y,unit_size,rl.Red)
 	}
+    rl.DrawCircleLines(u.X,u.Y,unit_size,rl.Black)
 	rl.DrawText(u.Name,u.X-fontSize/2,u.Y-fontSize/2,fontSize,rl.White)
+
+    rl.DrawRectangle(u.X-int32(unit_size),u.Y-int32(unit_size*1.2),int32(unit_size*2), int32(unit_size*0.5),rl.Red)
+    ratio := float32(u.Health) / float32(u.MaxHealth)
+    rl.DrawRectangle(u.X-int32(unit_size),u.Y-int32(unit_size*1.2),int32(unit_size*2*ratio), int32(unit_size*0.5),rl.Green)
 }
 
 

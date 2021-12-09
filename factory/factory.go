@@ -14,8 +14,8 @@ type Unit struct {
 	Name string `json:"Name"`
 	Id int32 `json:"Id"`
 	OwnerPlayer Owner `json:"OwnerPlayer"`
-    Health int32 `json:"Health"`
-    MaxHealth int32 `json:"MaxHealth"`
+    Health float32 `json:"Health"`
+    MaxHealth float32 `json:"MaxHealth"`
     LastAttack uint32 `json:"LastAttack"` // time of last attack
     AttackCoolDown uint32 `json:"AttackCoolDown"` // number of server ticks between atacks
 }
@@ -23,5 +23,5 @@ type Unit struct {
 //********************************** HUMANS ***********************************
 
 func MakeHumanPeon(x int32, y int32, id  int32, own Owner) Unit {
-    return Unit{X : x, Y: y ,Name : "P",Id: id, OwnerPlayer: own, Health: 200, MaxHealth: 200, LastAttack: 0, AttackCoolDown: 150}
+    return Unit{X : x, Y: y ,Name : "P",Id: id, OwnerPlayer: own, Health: 200.0, MaxHealth: 200.0, LastAttack: 0, AttackCoolDown: 150}
 }
