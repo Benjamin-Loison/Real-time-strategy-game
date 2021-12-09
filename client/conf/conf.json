@@ -11,7 +11,8 @@
 		"ZoomIn": 74,
 		"ZoomOut": 75,
 		"Menu": 59,
-		"ResetCamera": 76
+		"ResetCamera": 76,
+		"Chat": 84
 	},
 	"Pseudo": "JoueurTest"
 }

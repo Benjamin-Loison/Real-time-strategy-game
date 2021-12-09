@@ -38,6 +38,7 @@ type Keys_t struct {
 	ZoomOut int32 `json:"ZoomOut"`
 	Menu int32 `json:"Menu"`
 	ResetCamera int32 `json:"ResetCamera"`
+	Chat int32 `json:"Chat"`
 }
 
 // The actual config file: the keys are replaced by their raylib values

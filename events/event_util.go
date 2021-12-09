@@ -8,6 +8,7 @@ type Event_t int32
 
 const (
     MoveUnits Event_t = iota
+    SendText
     Attack
 )
 

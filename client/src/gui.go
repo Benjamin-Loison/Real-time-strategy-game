@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"bufio"
 	_ "image/png"
 	"math"
@@ -24,6 +25,7 @@ const (
 	StateNone GameState = 0
 	StateMenu GameState = 1
 	StateAction GameState = 2
+	StateChat GameState = 3
 )
 
 var (
@@ -55,6 +57,8 @@ func get_mouse_grid_pos(camera rl.Camera2D, width , height int32) (rl.Vector2, b
 }
 
 func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, config_menus MenuConfiguration_t, chan_client chan string) {
+	ChatText := ""
+
 	rl.SetTraceLog(rl.LogNone)
 	rl.InitWindow(screenWidth, screenHeight, "RTS")
 
@@ -85,7 +89,7 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 		default:
 		}
 
-		// Update
+		// Updateelse
 		//----------------------------------------------------------------------------------
 
 		switch currentState {
@@ -108,7 +112,7 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 						menu_options[current_menu.Elements[i].Key] = current_menu.Elements[i]
 					}
 				}
-				//~Check the delay since last interaction
+				// Check the delay since last interaction
 				if(time.Since(timeMenu) > time.Second) {
 					for key, val := range menu_options {
 						if(rl.IsKeyDown(key)) {
@@ -122,9 +126,25 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 						}
 					}
 				}
+				break
 			case StateAction:
 				// Wait for the action to be achieved.
+				break
+			case StateChat:
+				// Wait for a message to be entered
+				key := rl.GetKeyPressed()
+				if (key == rl.KeyEnter) {
+					utils.Logging("GUI", "On arrête tout, le chat c'est fini là hein 2, Troie (un canasson et non pas un canon la musique)")
+					currentState = StateNone
+				} else if (time.Since(timeMenu) > 10 * time.Millisecond && key > 0) {
+					ChatText += fmt.Sprintf("%c", key)
+					utils.Logging("GUI", fmt.Sprintf("Current text: %s", ChatText))
+					timeMenu = time.Now()
+				}
+				break
 			default:
+				// This case is used when the current state is StateNone
+
 				offsetThisFrame := cameraSpeed*rl.GetFrameTime()
 
 				// test d'envoie d'event
@@ -137,9 +157,12 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 					writer.Flush()
 					utils.Check(err)
 					utils.Logging("GUI","Event sent")
-
 				}
 
+				if (rl.IsKeyDown(config.Keys.Chat)) {
+					utils.Logging("GUI", "Entering chat state.")
+					currentState = StateChat
+				}
 				if (rl.IsKeyDown(config.Keys.Right)){
 					//camera.Offset.X -= 2.0
 					camera.Target.X += offsetThisFrame
@@ -179,26 +202,24 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 					camera.Target.Y = map_middle.Y
 				}
 
-				// Draw to screenTexture
-				//----------------------------------------------------------------------------------
-				rl.BeginDrawing();
-					rl.ClearBackground(rl.Black);
-					rl.BeginMode2D(camera);
-						// DRAW MAP
-						utils.DrawMap(*gmap)
-						// DRAW UNITS
-						for i, player := range *players {
-							for _, player_unit := range player.Units {
-								utils.DrawUnit(player_unit, i== client_id)
-							}
-						}
-
-					rl.EndMode2D();
-				rl.EndDrawing();
 				break
 		}
+		// Draw to screenTexture
+		//----------------------------------------------------------------------------------
+		rl.BeginDrawing();
+			rl.ClearBackground(rl.Black);
+			rl.BeginMode2D(camera);
+				// DRAW MAP
+				utils.DrawMap(*gmap)
+				// DRAW UNITS
+				for i, player := range *players {
+					for _, player_unit := range player.Units {
+						utils.DrawUnit(player_unit, i== client_id)
+					}
+				}
 
-
+			rl.EndMode2D();
+		rl.EndDrawing();
 	}
 
 }
