@@ -1,6 +1,6 @@
 {
 	"Server": {
-		"Hostname": "138.231.155.121",
+		"Hostname": "127.0.0.1",
 		"Port": 8888
 	},
 	"Keys": {

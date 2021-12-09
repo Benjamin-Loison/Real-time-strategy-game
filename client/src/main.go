@@ -23,8 +23,7 @@ func main(){
 
 	game_map := utils.Map{}
 
-
-	chan_client := make(chan string, 2)
+	chan_client := make(chan string, 3)
 
 	// starting a co-process to deal with the server
 	go run_client(config,&players,&game_map,chan_client)

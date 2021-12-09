@@ -45,46 +45,6 @@ var (
     selectedUnits = map[string]bool{}
 )
 
-func drawGrid(width int32, height int32) {
-	for i := int32(0) ; i <= height ; i++ {
-		rl.DrawLine(0, utils.TileSize *i, utils.TileSize*width ,utils.TileSize*i,rl.Red)
-	}
-	for i := int32(0) ; i <= width ; i++ {
-		rl.DrawLine(utils.TileSize*i, 0, utils.TileSize*i ,utils.TileSize*height,rl.Red)
-	}
-}
-
-func isPrintable(key int32) (bool) {
-	return key >= 32 && key <= 126
-}
-
-func NewMessageItem(current []MessageItem_t, new_message string) ([]MessageItem_t) {
-	if len(current) == max_messages_nb {
-		// On enlève le premier!
-		return append(current[1:], (MessageItem_t {new_message, 0, 0, time.Now()}))
-	}
-	return append(current, (MessageItem_t {new_message, 0, 0, time.Now()}))
-}
-
-func get_mouse_grid_pos(camera rl.Camera2D, width , height int32) (rl.Vector2, bool) {
-	mouse_screen_pos := rl.GetMousePosition()
-	mouse_world_pos := rl.GetScreenToWorld2D(mouse_screen_pos, camera)
-	ret := rl.Vector2{ X : float32(math.Floor(float64(mouse_world_pos.X / float32(utils.TileSize)))), Y : float32(math.Floor(float64(mouse_world_pos.Y / float32(utils.TileSize)))) }
-	//fmt.Printf("test : %d %d",int(),int())
-	if ret.X < 0 || int32(ret.X) >= width || ret.Y < 0 || int32(ret.Y) >= height {
-		return ret,true
-	}else {
-		return ret,false
-	}
-}
-func getRectangle2Pt(p1 rl.Vector2, p2 rl.Vector2) rl.Rectangle{
-    width :=  float32(math.Abs(float64(p1.X-p2.X)))
-    height := float32(math.Abs(float64(p1.Y-p2.Y)))
-    startX := float32(math.Min(float64(p1.X),float64(p2.X)))
-    startY := float32(math.Min(float64(p1.Y),float64(p2.Y)))
-    return rl.NewRectangle(startX,startY,width,height)
-}
-
 func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, config_menus MenuConfiguration_t, chan_client chan string) {
 	ChatText := ""
 	currentMessages := make([]MessageItem_t, 0)
@@ -316,4 +276,44 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 		rl.EndDrawing();
 	}
 
+}
+
+func drawGrid(width int32, height int32) {
+	for i := int32(0) ; i <= height ; i++ {
+		rl.DrawLine(0, utils.TileSize *i, utils.TileSize*width ,utils.TileSize*i,rl.Red)
+	}
+	for i := int32(0) ; i <= width ; i++ {
+		rl.DrawLine(utils.TileSize*i, 0, utils.TileSize*i ,utils.TileSize*height,rl.Red)
+	}
+}
+
+func isPrintable(key int32) (bool) {
+	return key >= 32 && key <= 126
+}
+
+func NewMessageItem(current []MessageItem_t, new_message string) ([]MessageItem_t) {
+	if len(current) == max_messages_nb {
+		// On enlève le premier!
+		return append(current[1:], (MessageItem_t {new_message, 0, 0, time.Now()}))
+	}
+	return append(current, (MessageItem_t {new_message, 0, 0, time.Now()}))
+}
+
+func get_mouse_grid_pos(camera rl.Camera2D, width , height int32) (rl.Vector2, bool) {
+	mouse_screen_pos := rl.GetMousePosition()
+	mouse_world_pos := rl.GetScreenToWorld2D(mouse_screen_pos, camera)
+	ret := rl.Vector2{ X : float32(math.Floor(float64(mouse_world_pos.X / float32(utils.TileSize)))), Y : float32(math.Floor(float64(mouse_world_pos.Y / float32(utils.TileSize)))) }
+	//fmt.Printf("test : %d %d",int(),int())
+	if ret.X < 0 || int32(ret.X) >= width || ret.Y < 0 || int32(ret.Y) >= height {
+		return ret,true
+	}else {
+		return ret,false
+	}
+}
+func getRectangle2Pt(p1 rl.Vector2, p2 rl.Vector2) rl.Rectangle{
+    width :=  float32(math.Abs(float64(p1.X-p2.X)))
+    height := float32(math.Abs(float64(p1.Y-p2.Y)))
+    startX := float32(math.Min(float64(p1.X),float64(p2.X)))
+    startY := float32(math.Min(float64(p1.Y),float64(p2.Y)))
+    return rl.NewRectangle(startX,startY,width,height)
 }
