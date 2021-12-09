@@ -25,8 +25,8 @@ var (
 
 func broadcast(channels map[int]chan string, msg string) {
 	utils.Logging("broadcast", msg)
-	channels[0] <- msg
-	channels[1] <- msg
+	channels[0] <- msg // Sending to player 0
+	channels[1] <- msg // Sending to player 1
 }
 
 func register(id int) chan string {
@@ -73,7 +73,6 @@ func main() {
 	// Listen
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d",conf.Hostname, conf.Port))
 	utils.Check(err)
-	defer listener.Close()
 
 	nb_clients := 0
 
@@ -81,15 +80,16 @@ func main() {
 		conn, err := listener.Accept()
 
 		utils.Check(err)
-		go client_handler(conn, conf.MapPath,register(nb_clients), nb_clients)
+		go client_handler(conn, conf.MapPath, register(nb_clients), nb_clients)
 		nb_clients += 1
 	}
+	// Close the listener as soon as the two clients are connected
+	listener.Close()
 
+	// Launch the updater function and start the game
 	go updater(channels, register(-1))
 	utils.Logging("Server", "Send start!")
 	broadcast(channels, "START")
-
-	//start game
 	go gameLoop(register(-2))
 
 	//wait for end game

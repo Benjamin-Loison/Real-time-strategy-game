@@ -15,7 +15,7 @@ import (
 )
 
 func Logging(src string, msg string) {
-	fmt.Println(time.Now().Format(time.ANSIC) + "[" + src + "] " + msg)
+	fmt.Printf("%s [%15s] %s\n", time.Now().Format(time.ANSIC), src, msg)
 }
 
 type TileType int64
