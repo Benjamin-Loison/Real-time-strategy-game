@@ -10,6 +10,7 @@ import (
 
 	"rts/events"
 	"rts/utils"
+    "rts/factory"
 )
 
 var (
@@ -151,11 +152,11 @@ func main() {
 	gmap = utils.LoadMap(conf.MapPath)
 
 	// initializing
-	Players = append(Players, utils.Player{Units: map[string]utils.Unit{},Seed: 0} )
-	Players = append(Players, utils.Player{Units: map[string]utils.Unit{},Seed: 0} )
+	Players = append(Players, utils.Player{Units: map[string]factory.Unit{},Seed: 0} )
+	Players = append(Players, utils.Player{Units: map[string]factory.Unit{},Seed: 0} )
 
-	utils.InitializePlayer(&gmap, utils.Player1,&Players[0].Units, &Players[0].Seed)
-	utils.InitializePlayer(&gmap, utils.Player2,&Players[1].Units, &Players[1].Seed)
+	utils.InitializePlayer(&gmap, factory.Player1,&Players[0].Units, &Players[0].Seed)
+	utils.InitializePlayer(&gmap, factory.Player2,&Players[1].Units, &Players[1].Seed)
 
     go updater(register(-1))
 

@@ -19,4 +19,5 @@ require "rts/utils" v0.0.1
 
 replace "rts/events" v0.0.1 => "../events"
 replace "rts/utils" v0.0.1 => "../utils"
+replace "rts/factory" v0.0.1 => "../factory"
 

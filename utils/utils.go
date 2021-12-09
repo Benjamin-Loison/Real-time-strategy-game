@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
     "strings"
+    "rts/factory"
 
 	"github.com/gen2brain/raylib-go/raylib"
 )
@@ -30,12 +31,8 @@ const (
     None          = 3
 )
 
-type Owner int64
 
 const (
-    Player1 Owner = 1
-    Player2       = 2
-    NoOne         = 0
 
     TileSize  int32 = 32
 	fontSize int32 = TileSize/4
@@ -44,7 +41,7 @@ const (
 
 type Tile struct {
     Tile_Type TileType `json:"Tile_Type"`
-    Startpoint Owner  `json:"Startpoint"`
+    Startpoint factory.Owner  `json:"Startpoint"`
 }
 
 type Map struct {
@@ -65,13 +62,13 @@ func MakeMap(width, height int32) Map {
     for i := range m {
         m[i] = make([]Tile, height)
         for j := range m[i] {
-            m[i][j] = Tile{Tile_Type: None, Startpoint: NoOne}
+            m[i][j] = Tile{Tile_Type: None, Startpoint: factory.NoOne}
         }
     }
     return Map{width, height, m}
 }
 
-func DrawTile(x,y int32,tileType TileType, startpoint Owner){
+func DrawTile(x,y int32,tileType TileType, startpoint factory.Owner){
     switch tileType {
     case Rock :
         rl.DrawCircle(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.DarkGray)
@@ -125,7 +122,7 @@ type ServerMessageType int32
 
 const (
 	MapInfo ServerMessageType = 0
-	StartingUnits = 1
+	Startingfactory = 1
 	Update = 2
 )
 
@@ -137,7 +134,7 @@ func getId(seed *int) int {
 }
 
 type Player struct {
-	Units map[string]Unit `json:"Units"`
+	Units map[string]factory.Unit `json:"Units"`
 	Seed int `json:"Seed"`
 }
 
@@ -174,31 +171,24 @@ func KeyOfString(s string)(int32) {
 }
 
 
-func InitializePlayer(gmap *Map, own Owner, units *map[string]Unit,id *int){
+func InitializePlayer(gmap *Map, own factory.Owner, units *map[string]factory.Unit,id *int){
     for i := int32(0) ; i < gmap.Width ; i++ {
         for j := int32(0) ; j < gmap.Height ; j++ {
             if gmap.Grid[i][j].Startpoint == own {
                 id_unit := getId(id)
-                (*units)[strconv.Itoa(id_unit)] = Unit{TileSize*i+TileSize/2.0,TileSize*j+TileSize/2.0,"P",int32(id_unit),own}
+                (*units)[strconv.Itoa(id_unit)] = factory.MakeHumanPeon(TileSize*i+TileSize/2.0, TileSize*j+TileSize/2.0, int32(id_unit), own)
             }
         }
     }
 }
 
-func DrawUnit(u Unit, owned bool){
+func DrawUnit(u factory.Unit, owned bool){
 	if owned {
-		rl.DrawCircle(u.X,u.Y,unit_size,rl.Blue)
+        rl.DrawCircle(u.X,u.Y,unit_size,rl.Blue)
 	}else{
-		rl.DrawCircle(u.X,u.Y,unit_size,rl.Red)
+        rl.DrawCircle(u.X,u.Y,unit_size,rl.Red)
 	}
 	rl.DrawText(u.Name,u.X-fontSize/2,u.Y-fontSize/2,fontSize,rl.White)
 }
 
 
-type Unit struct {
-	X int32 `json:"X"`
-	Y int32 `json:"Y"`
-	Name string `json:"Name"`
-	Id int32 `json:"Id"`
-	OwnerPlayer Owner `json:"OwnerPlayer"`
-}
