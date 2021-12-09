@@ -27,6 +27,7 @@ var (
 )
 
 func broadcast(channels map[int]chan string, msg string) {
+	utils.Logging("broadcast", msg)
 	for _, val := range channels {
 		val <- msg
 	}
@@ -120,8 +121,8 @@ func listenClient(conn net.Conn, channel chan string) {
 	for {
 		utils.Logging("Listener","listening to client")
 		netData, err := reader.ReadString('\n')
-		utils.Logging("Listener","received from client")
 		netData = strings.TrimSpace(string(netData))
+		utils.Logging("Listener","received from client: " + netData)
 		if err == nil {
 			channel <- netData
 		} else {
@@ -147,12 +148,15 @@ func updater(channels map[int]chan string, stopper_chan chan string){
 					break
 				default:
 					utils.Logging("Updater", "Received an event")
+					break
 			}
 		case s := <-stopper_chan:
 			if s == "QUIT" {
 				utils.Logging("Updater", "Quitting")
 				os.Exit(0)
 			}
+		default:
+			break
 		}
 	}
 }
@@ -174,18 +178,14 @@ func main() {
 	utils.Check(err)
 	defer listener.Close()
 
-	ok := 0
+	nb_clients := 0
 
-	for {
-		// Wait for a new connection
-		if ok == 2 {
-			break
-		}
+	for nb_clients < 2 {
 		conn, err := listener.Accept()
 
 		utils.Check(err)
-		go client_handler(conn, conf.MapPath,register(ok), ok)
-		ok += 1
+		go client_handler(conn, conf.MapPath,register(nb_clients), nb_clients)
+		nb_clients += 1
 	}
 
 	go updater(channels, register(-1))
@@ -195,17 +195,17 @@ func main() {
 	go gameLoop(register(-2))
 
 	//wait for end game
-	for ok > 0{
+	for nb_clients > 0{
 		for _, c := range channels {
 			select {
 			case s := <-c :
 				switch(s) {
 				case "FINISHED" :
-					ok--
-					utils.Logging("Server", fmt.Sprintf("%d remaining clients.", ok))
+					nb_clients--
+					utils.Logging("Server", fmt.Sprintf("%d remaining clients.", nb_clients))
 					break
 				case "STOP" :
-					ok = 0
+					nb_clients = 0
 					break
 				case "CLIENT_ERROR" :
 					utils.Logging("Server", "Received client error")
@@ -223,18 +223,17 @@ func main() {
 
 func gameLoop(quit chan string){
 	gameOver := false
-	for {
-		if gameOver{
-			break
-		}
+	for !gameOver {
 		select {
 		case s :=<-quit :
 			if s=="QUIT"{
 				return
 			}
+			break
 		default: // not quitting, updating game state
 			serverTime += 1
 			//utils.Logging("GameLoop",fmt.Sprintf("Server time = %d",serverTime))
+			break
 		}
 		time.Sleep(serverSpeed * time.Millisecond)
 	}
