@@ -92,8 +92,6 @@ func run_client(config Configuration_t,
 		return
 	}
 
-	chan_link_gui<-"OK"
-
 	// Launch a goroutine that listens to the server
 	go listenServer(serv_conn, chan_server)
     writer := bufio.NewWriter(serv_conn)
@@ -117,7 +115,10 @@ func run_client(config Configuration_t,
 			} else if strings.HasPrefix(s2, "CHAT:") {
 				chan_link_gui<- s2
 				utils.Logging("client", fmt.Sprintf("I recieved '%s'", s2))
+			} else {
+				utils.Logging("client", fmt.Sprintf("Server: %s", s2))
 			}
+		default:
 		}
 	}
 }

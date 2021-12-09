@@ -13,6 +13,7 @@ import (
 )
 
 type MessageItem_t struct {
+	Ownership bool
 	Message string
 	Position_x int
 	Position_y int
@@ -41,8 +42,15 @@ var (
 	currentAction = -1
 	lastInputTime = time.Now()
 	max_messages_nb = 15
-    selectedUnits = map[string]bool{}
+	message_duration = 10 * time.Second
+	message_font_size = 15
+	message_max_len = 20
+	message_color = rl.Red
+	message_color_ours = rl.Blue
+	message_padding = 5
+	selectedUnits = map[string]bool{}
 )
+
 
 
 /*           +~~~~~~~~~~~~~~~~~~~~~~+
@@ -52,8 +60,11 @@ func RunGui(gmap *utils.Map,
 			players *[]utils.Player,
 			config Configuration_t, config_menus MenuConfiguration_t,
 			chan_link_gui chan string, chan_gui_link chan string) {
+	
 	ChatText := ""
+	has_send := 0
 	currentMessages := make([]MessageItem_t, 0)
+	lastMessagesUpdate := time.Now()
 
     var selectionStart rl.Vector2
     var inSelection = false
@@ -71,11 +82,9 @@ func RunGui(gmap *utils.Map,
 	map_middle := rl.Vector2{X:float32(utils.TileSize)*float32(map_width)/2.0,Y: float32(utils.TileSize)*float32(map_height)/2.0 }
 
 
-	camera := rl.NewCamera2D(rl.Vector2{X:screenWidth/2.0,Y:screenHeight/2.0},rl.Vector2{X: float32(utils.TileSize)*float32(map_width)/2.0, Y: float32(utils.TileSize)*float32(map_height)/2.0},0,1.0)
+	camera := rl.NewCamera2D(rl.Vector2{X:screenWidth/2.0,Y:screenHeight/2.0},rl.Vector2{X: float32(utils.TileSize)*float32(map_width)/2.0, Y: float32(utils.TileSize)*float32(map_height)/2.0}, 0, 1.0)
 
 	rl.BeginMode2D(camera)
-
-	chan_link_gui<- "Haha, je suis là!\n"
 
 	for !rl.WindowShouldClose() {
 		/*           +~~~~~~~~~~~~~~~~~~~~~~~~~~~+
@@ -87,12 +96,15 @@ func RunGui(gmap *utils.Map,
 				utils.Logging("gui","Forced to quit")
 				return
 			} else if strings.HasPrefix(x, "CHAT:") {
-				utils.Logging("gui", " Hé mais j'ai un message quoi !")
-				currentMessages = NewMessageItem(currentMessages, x[5:])
+				currentMessages = NewMessageItem(currentMessages, x[5:], has_send)
+				organizeMessages(currentMessages)
+				has_send -= 1
 			} else {
-				utils.Logging("gui", fmt.Sprintf("Je comprendspas %s", x))
+				utils.Logging("gui", fmt.Sprintf("Je ne comprends pas %s", x))
 			}
+			break
 		default:
+			break
 		}
 
 		/*           +~~~~~~~~~~~~~~~~~+
@@ -102,15 +114,6 @@ func RunGui(gmap *utils.Map,
 		// Check wether the movements have to be detected
 		if (currentState & StateNone > 0) {
 			offsetThisFrame := cameraSpeed*rl.GetFrameTime()
-
-			// test d'envoie d'event
-			if (rl.IsKeyDown(rl.KeyQ)) {
-				e := events.Event{EventType : events.MoveUnits,Data : "test"}
-				e_marsh, err := json.Marshal(e)
-				utils.Check(err)
-				chan_gui_link<- string(e_marsh)
-				utils.Logging("GUI","Event sent")
-			}
 
 			if (rl.IsKeyDown(config.Keys.Chat)) {
 				utils.Logging("GUI", "Entering chat state.")
@@ -200,8 +203,9 @@ func RunGui(gmap *utils.Map,
 							case MenuElementSubMenu:
 								currentMenu = val.Ref
 								lastInputTime = time.Now()
+								break
 							default:
-								///
+								break
 						}
 					}
 				}
@@ -214,18 +218,21 @@ func RunGui(gmap *utils.Map,
 			key := rl.GetKeyPressed()
 			if (key == rl.KeyEnter) {
 				// Sending the message if it is not empty ("")
-				if len(ChatText) > 0 {
+				splitted_message := SplitMessage(ChatText, message_max_len)
+				for i := 0 ; i < len(splitted_message) ; i ++ {
 					e := events.Event{
 						EventType : events.ChatEvent,
-						Data: fmt.Sprintf("%s: %s", config.Pseudo, ChatText[1:])}
+						Data: fmt.Sprintf("%s: %s",
+							config.Pseudo,
+							splitted_message[i])}
 					e_marsh, err := json.Marshal(e)
 					utils.Check(err)
 					chan_gui_link<- string(e_marsh)
-
-					// Reset the lmessage and state
-					ChatText = ""
-					currentState = StateNone
+					has_send += 1
 				}
+				// Reset the lmessage and state
+				ChatText = ""
+				currentState = StateNone
 			} else if (key == rl.KeyBackspace) {
 				length := len(ChatText)
 				if length > 2 {
@@ -251,31 +258,105 @@ func RunGui(gmap *utils.Map,
 				// DRAW UNITS
 				for i, player := range *players {
 					for k , player_unit := range player.Units {
-                        _, found := selectedUnits[k]
+						_, found := selectedUnits[k]
 						utils.DrawUnit(player_unit, i== client_id, found )
 					}
 				}
 
 			rl.EndMode2D();
-            if( inSelection ){
-                selRect := getRectangle2Pt(selectionStart, rl.GetMousePosition() )
-                rl.DrawRectangleLines( selRect.ToInt32().X , selRect.ToInt32().Y, selRect.ToInt32().Width, selRect.ToInt32().Height, rl.Magenta)
-            }
+			if( inSelection ){
+				selRect := getRectangle2Pt(selectionStart, rl.GetMousePosition() )
+				rl.DrawRectangleLines( selRect.ToInt32().X , selRect.ToInt32().Y, selRect.ToInt32().Width, selRect.ToInt32().Height, rl.Magenta)
+			}
 
+		// Recompute the location of messages
+		if time.Since(lastMessagesUpdate) > time.Second {
+			for i := 0 ; i < len(currentMessages) ; i ++ {
+				old_len := len(currentMessages)
+				currentMessages = FilterMessages(currentMessages)
+				if len(currentMessages) < old_len {
+					organizeMessages(currentMessages)
+				}
+			}
+		}
 		// Print chat messages
 		for i := 0 ; i < len(currentMessages) ; i ++ {
-			rl.DrawText(currentMessages[i].Message,
-				int32(currentMessages[i].Position_x),
-				int32(currentMessages[i].Position_y),
-				40,
-				rl.Red)
+			if currentMessages[i].Ownership {
+				rl.DrawText(currentMessages[i].Message,
+					int32(currentMessages[i].Position_x),
+					int32(currentMessages[i].Position_y),
+					int32(message_font_size),
+					message_color_ours)
+			} else {
+				rl.DrawText(currentMessages[i].Message,
+					int32(currentMessages[i].Position_x),
+					int32(currentMessages[i].Position_y),
+					int32(message_font_size),
+					message_color)
+			}
 		}
-
 		rl.EndDrawing();
 	}
-
 }
 
+
+
+
+/*                +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+                  | Messages auxiliary functions |
+                  +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+ */
+func SplitMessage(m string, length int) []string {
+	split := make([]string, 0)
+	if len(m) < 2 {
+		return split
+	}
+	m = m[1:]
+	for {
+		if len(m) <= length {
+			return append(split, m)
+		} else {
+			split = append(split, m[:length])
+			m = m[length:]
+		}
+	}
+}
+
+func FilterMessages(messages []MessageItem_t) []MessageItem_t {
+	res := make([]MessageItem_t, 0)
+	for i := 0 ; i < len(messages) ; i ++ {
+		if (time.Since(messages[i].ArrivalTime) < message_duration) {
+			res = append(res, messages[i])
+		}
+	}
+	return res
+}
+
+func organizeMessages(messages []MessageItem_t) {
+	// The messages are printed on the bottom left corner of the screen
+	for i := 0 ; i < len(messages) ; i ++ {
+		messages[i].Position_x = 0
+		messages[i].Position_y = rl.GetScreenHeight() - (i+1) * (message_font_size + message_padding)
+	}
+}
+
+func NewMessageItem(current []MessageItem_t, new_message string, has_send int) ([]MessageItem_t) {
+	ownership := has_send > 0
+	if len(current) == max_messages_nb {
+		// On enlève le premier!
+		return append(current[1:], (MessageItem_t {ownership, new_message, 0, 0, time.Now()}))
+	}
+	return append(current, (MessageItem_t {ownership, new_message, 0, 0, time.Now()}))
+}
+
+func isPrintable(key int32) (bool) {
+	return key >= 32 && key <= 126
+}
+
+
+
+/*                +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+                  | Drawing auxiliary functions |
+                  +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+ */
 func drawGrid(width int32, height int32) {
 	for i := int32(0) ; i <= height ; i++ {
 		rl.DrawLine(0, utils.TileSize *i, utils.TileSize*width ,utils.TileSize*i,rl.Red)
@@ -283,18 +364,6 @@ func drawGrid(width int32, height int32) {
 	for i := int32(0) ; i <= width ; i++ {
 		rl.DrawLine(utils.TileSize*i, 0, utils.TileSize*i ,utils.TileSize*height,rl.Red)
 	}
-}
-
-func isPrintable(key int32) (bool) {
-	return key >= 32 && key <= 126
-}
-
-func NewMessageItem(current []MessageItem_t, new_message string) ([]MessageItem_t) {
-	if len(current) == max_messages_nb {
-		// On enlève le premier!
-		return append(current[1:], (MessageItem_t {new_message, 0, 0, time.Now()}))
-	}
-	return append(current, (MessageItem_t {new_message, 0, 0, time.Now()}))
 }
 
 func get_mouse_grid_pos(camera rl.Camera2D, width , height int32) (rl.Vector2, bool) {
@@ -308,6 +377,7 @@ func get_mouse_grid_pos(camera rl.Camera2D, width , height int32) (rl.Vector2, b
 		return ret,false
 	}
 }
+
 func getRectangle2Pt(p1 rl.Vector2, p2 rl.Vector2) rl.Rectangle{
     width :=  float32(math.Abs(float64(p1.X-p2.X)))
     height := float32(math.Abs(float64(p1.Y-p2.Y)))
@@ -315,3 +385,4 @@ func getRectangle2Pt(p1 rl.Vector2, p2 rl.Vector2) rl.Rectangle{
     startY := float32(math.Min(float64(p1.Y),float64(p2.Y)))
     return rl.NewRectangle(startX,startY,width,height)
 }
+
