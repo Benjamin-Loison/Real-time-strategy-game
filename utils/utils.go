@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"encoding/json"
@@ -8,11 +8,12 @@ import (
 	"os"
 	"strconv"
 	"time"
+    "strings"
 
 	"github.com/gen2brain/raylib-go/raylib"
 )
 
-func logging(src string, msg string) {
+func Logging(src string, msg string) {
 	fmt.Println(time.Now().Format(time.ANSIC) + "[" + src + "] " + msg)
 }
 
@@ -37,7 +38,8 @@ const (
     NoOne         = 0
 
     TileSize  int32 = 32
-    fontSize int32 = 20
+	fontSize int32 = TileSize/4
+	unit_size float32 = 0.4+float32(fontSize)
 )
 
 type Tile struct {
@@ -79,13 +81,6 @@ func DrawTile(x,y int32,tileType TileType, startpoint Owner){
         rl.DrawCircle(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.Green)
     default:
     }
-    switch startpoint {
-    case Player1 :
-        rl.DrawText( "P1" ,TileSize*x+TileSize/5.0,TileSize*y+TileSize/5.0, fontSize,rl.Blue)
-    case Player2 :
-        rl.DrawText( "P2" ,TileSize*x+TileSize/5.0,TileSize*y+TileSize/5.0, fontSize,rl.Red)
-    default:
-    }
 }
 
 func DrawMap(gmap Map) {
@@ -125,7 +120,61 @@ func LoadMap(path string) Map {
     return *result_map
 }
 
-func initializePlayer(gmap *Map, own Owner, units *map[string]Unit,id *int){
+
+type ServerMessageType int32
+
+const (
+	MapInfo ServerMessageType = 0
+	StartingUnits = 1
+	Update = 2
+)
+
+
+func getId(seed *int) int {
+	ret := *seed
+	(*seed) ++
+	return ret
+}
+
+type Player struct {
+	Units map[string]Unit `json:"Units"`
+	Seed int `json:"Seed"`
+}
+
+type ServerMessage struct {
+	MessageType ServerMessageType `json:"MessageType"`
+	GameMap Map `json:"GameMap"`
+	Players []Player `json:"Players"`
+	Id int `json:"Id"`
+}
+
+//Raylib represents keys as int32 values
+func KeyOfString(s string)(int32) {
+	switch l := len(s); l {
+		case 0:
+			panic("An empty string cannot represent a key in the configuration file.")
+		case 1:
+			return int32([]rune(strings.ToUpper(s))[0])
+		default:
+			switch s {
+				case "SPACE":
+					return rl.KeySpace
+				case "RIGHT":
+					return rl.KeyRight
+				case "LEFT":
+					return rl.KeyLeft
+				case "DOWN":
+					return rl.KeyDown
+				case "UP":
+					return rl.KeyUp
+				default:
+					panic("Not implemented: recognition of non-ascii characters and description")
+			}
+	}
+}
+
+
+func InitializePlayer(gmap *Map, own Owner, units *map[string]Unit,id *int){
     for i := int32(0) ; i < gmap.Width ; i++ {
         for j := int32(0) ; j < gmap.Height ; j++ {
             if gmap.Grid[i][j].Startpoint == own {
@@ -134,4 +183,22 @@ func initializePlayer(gmap *Map, own Owner, units *map[string]Unit,id *int){
             }
         }
     }
+}
+
+func DrawUnit(u Unit, owned bool){
+	if owned {
+		rl.DrawCircle(u.X,u.Y,unit_size,rl.Blue)
+	}else{
+		rl.DrawCircle(u.X,u.Y,unit_size,rl.Red)
+	}
+	rl.DrawText(u.Name,u.X-fontSize/2,u.Y-fontSize/2,fontSize,rl.White)
+}
+
+
+type Unit struct {
+	X int32 `json:"X"`
+	Y int32 `json:"Y"`
+	Name string `json:"Name"`
+	Id int32 `json:"Id"`
+	OwnerPlayer Owner `json:"OwnerPlayer"`
 }

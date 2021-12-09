@@ -9,21 +9,15 @@ import (
 	"strings"
 
 	"rts/events"
+	"rts/utils"
 )
 
 var (
-	Players []Player
+	Players []utils.Player
 	channels = make(map[int]chan string)
     updater_chan = make(chan events.Event)
-	gmap Map
+	gmap utils.Map
 )
-
-func getId(seed *int) int {
-	ret := *seed
-	(*seed) ++
-	return ret
-}
-
 
 func broadcast(channels map[int]chan string, msg string) {
 	for _, val := range channels {
@@ -36,27 +30,27 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 	defer conn.Close()
 
 	// Load the map and send it to the client
-	init_json := ServerMessage { MapInfo, gmap, nil , id}
+	init_json := utils.ServerMessage { utils.MapInfo, gmap, nil , id}
 	init_marshall, err := json.Marshal(init_json)
-	Check(err)
+	utils.Check(err)
 	init_message := []byte(string(init_marshall)+"\n")
 
 	buffer := bufio.NewWriter(conn)
 	_, err = buffer.Write(init_message)
-	Check(err)
+	utils.Check(err)
 	buffer.Flush()
 
-	units_json := ServerMessage { MapInfo,Map{}, Players, id}
+	units_json := utils.ServerMessage { utils.MapInfo,utils.Map{}, Players, id}
 	units_marshall, err := json.Marshal(units_json)
-	Check(err)
+	utils.Check(err)
 	units_message := []byte(string(units_marshall)+"\n")
 
 	_, err = buffer.Write(units_message)
-	Check(err)
+	utils.Check(err)
 	buffer.Flush()
 
 	// Wait for the other player
-	logging("CLIENT_HANDLER", fmt.Sprintf("Waiting for other player (%d)", id))
+	utils.Logging("CLIENT_HANDLER", fmt.Sprintf("Waiting for other player (%d)", id))
 	keepGoing := true
 	for keepGoing {
 		select {
@@ -68,10 +62,10 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 	}
     /////////////////// Starting so sending go to the client
     _,err = buffer.Write([]byte("GO\n"))
-    Check(err)
+    utils.Check(err)
     buffer.Flush()
 
-	logging("CLIENT_HANDLER", fmt.Sprintf("Entering the main event loop (%d)", id))
+	utils.Logging("CLIENT_HANDLER", fmt.Sprintf("Entering the main event loop (%d)", id))
 	// Main Event loop
     // starting the client listener
     listener_chan := make(chan string)
@@ -86,28 +80,28 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 					keepGoing = false
 				}
             case x, _ :=<-listener_chan:
-                logging("CLIENT_HANDLER","Received info from listener")
+                utils.Logging("CLIENT_HANDLER","Received info from listener")
                 if x == "QUIT" {
-                    logging("CLIENT_HANDLER", "Error when listening to the client")
+                    utils.Logging("CLIENT_HANDLER", "Error when listening to the client")
                     main_chan<-"CLIENT_ERROR"
                     keepGoing = false
                 }else {
                     var client_event = &events.Event{}
                     err = json.Unmarshal([]byte(x), client_event)
                     if err != nil {
-                        logging("CLIENT_HANDLER", fmt.Sprintf("Error when receiving event from client (%d)", id))
+                        utils.Logging("CLIENT_HANDLER", fmt.Sprintf("Error when receiving event from client (%d)", id))
                     }
                     // should now send to the updater
-                    logging("CLIENT_HANDLER","Sending info to updater")
+                    utils.Logging("CLIENT_HANDLER","Sending info to updater")
                     updater_chan<-*client_event
-                    logging("CLIENT_HANDLER","info for updater sent")
+                    utils.Logging("CLIENT_HANDLER","info for updater sent")
                 }
 		}
 	}
 
 	// Exit
 	main_chan<-"FINISHED"
-	logging("CLIENT_HANDLER", fmt.Sprintf("%d quits.", id))
+	utils.Logging("CLIENT_HANDLER", fmt.Sprintf("%d quits.", id))
 	return
 }
 
@@ -116,9 +110,9 @@ func listenClient(conn net.Conn, channel chan string) {
     // -> to do so, créer une fonction register.
     reader := bufio.NewReader(conn)
     for {
-        logging("Listener","listening to client")
+        utils.Logging("Listener","listening to client")
         netData, err := reader.ReadString('\n')
-        logging("Listener","received from client")
+        utils.Logging("Listener","received from client")
         netData = strings.TrimSpace(string(netData))
         if err == nil {
             channel <- netData
@@ -140,11 +134,11 @@ func updater(stopper_chan chan string){
         case e := <-updater_chan:
             switch e {
                 default:
-                    logging("Updater", "Received an event")
+                    utils.Logging("Updater", "Received an event")
             }
         case s := <-stopper_chan:
             if s == "QUIT" {
-                logging("Updater", "Quitting")
+                utils.Logging("Updater", "Quitting")
                 os.Exit(0)
             }
         }
@@ -154,20 +148,20 @@ func updater(stopper_chan chan string){
 func main() {
 	// Load the config file
 	conf := loadConfig("conf/conf.json")
-	gmap = LoadMap(conf.MapPath)
+	gmap = utils.LoadMap(conf.MapPath)
 
 	// initializing
-	Players = append(Players, Player{Units: map[string]Unit{},Seed: 0} )
-	Players = append(Players, Player{Units: map[string]Unit{},Seed: 0} )
+	Players = append(Players, utils.Player{Units: map[string]utils.Unit{},Seed: 0} )
+	Players = append(Players, utils.Player{Units: map[string]utils.Unit{},Seed: 0} )
 
-	initializePlayer(&gmap, Player1,&Players[0].Units, &Players[0].Seed)
-	initializePlayer(&gmap, Player2,&Players[1].Units, &Players[1].Seed)
+	utils.InitializePlayer(&gmap, utils.Player1,&Players[0].Units, &Players[0].Seed)
+	utils.InitializePlayer(&gmap, utils.Player2,&Players[1].Units, &Players[1].Seed)
 
     go updater(register(-1))
 
 	// Listen
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d",conf.Hostname, conf.Port))
-	Check(err)
+	utils.Check(err)
 	defer listener.Close()
 
 	ok := 0
@@ -179,7 +173,7 @@ func main() {
 		}
 		conn, err := listener.Accept()
 
-		Check(err)
+		utils.Check(err)
 		go client_handler(conn, conf.MapPath,register(ok), ok)
 		ok += 1
 	}
@@ -200,7 +194,7 @@ func main() {
 					ok--
 				}
                 if s == "CLIENT_ERROR" {
-					logging("Server", "Received client error")
+					utils.Logging("Server", "Received client error")
 				}
 			default:
 			}

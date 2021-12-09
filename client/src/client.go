@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"encoding/json"
+
+    "rts/utils"
 )
 
 var (
@@ -31,9 +33,9 @@ func listenServer(conn net.Conn, channel chan string) {
 
 // Main fucntion for the part of the client that chats both with the server and
 // the gui part.
-func run_client(config Configuration_t, players *[]Player, gmap *Map, chan_client chan string) {
+func run_client(config Configuration_t, players *[]utils.Player, gmap *utils.Map, chan_client chan string) {
 	// Verbose
-	logging("CLIENT", "The client id is " + config.Pseudo)
+	utils.Logging("CLIENT", "The client id is " + config.Pseudo)
 
 	chan_server := make(chan string, 2)
 
@@ -41,43 +43,43 @@ func run_client(config Configuration_t, players *[]Player, gmap *Map, chan_clien
 
 	serv_conn, err = net.Dial("tcp", config.Server.Hostname + ":" + strconv.Itoa(config.Server.Port))
 	if err != nil {
-		logging("Connection", fmt.Sprintf("Error durig TCP dial: %v", err))
-		logging("Connection", fmt.Sprintf("\tHostname: %s, port: %d", config.Server.Hostname, config.Server.Port))
+		utils.Logging("Connection", fmt.Sprintf("Error durig TCP dial: %v", err))
+		utils.Logging("Connection", fmt.Sprintf("\tHostname: %s, port: %d", config.Server.Hostname, config.Server.Port))
 		chan_client<-"QUIT"
 		return
 	}
 	defer serv_conn.Close()
-	logging("CLIENT",
+	utils.Logging("CLIENT",
 		fmt.Sprintf("Connection established with %s:%d", config.Server.Hostname, config.Server.Port))
 
 	//GET MAP
 	buffer := bufio.NewReader(serv_conn)
 
-	logging("client", "requesting map")
+	utils.Logging("client", "requesting map")
 	netData, err := buffer.ReadString('\n')
-	logging("client", "obtained map")
+	utils.Logging("client", "obtained map")
 	if (err != nil) {
-		logging("Socket", fmt.Sprintf("error while reading MAP INFO from server: %v", err))
+		utils.Logging("Socket", fmt.Sprintf("error while reading MAP INFO from server: %v", err))
 		chan_client<-"QUIT"
 		return
 	}
 
 	map_info_data := strings.TrimSpace(string(netData))
 
-	var map_info = &ServerMessage{}
+	var map_info = &utils.ServerMessage{}
 	err = json.Unmarshal([]byte(string(map_info_data)), map_info)
-	Check(err)
+	utils.Check(err)
 	//fmt.Printf(" wtf %b", gmap.mut == nil)
 	*gmap = map_info.GameMap
 	client_id = map_info.Id
 
 
 	//GET UNITS
-	logging("client", "requesting units")
+	utils.Logging("client", "requesting units")
 	netData, err = buffer.ReadString('\n')
-	logging("client", "obtained units")
+	utils.Logging("client", "obtained units")
 	if (err != nil) {
-		logging("Socket", fmt.Sprintf("error while reading INIT UNITS from server: %v", err))
+		utils.Logging("Socket", fmt.Sprintf("error while reading INIT UNITS from server: %v", err))
 		chan_client<-"QUIT"
 		return
 	}
@@ -86,18 +88,18 @@ func run_client(config Configuration_t, players *[]Player, gmap *Map, chan_clien
 
 	//print(players_data)
 
-	var players_info = &ServerMessage{}
+	var players_info = &utils.ServerMessage{}
 	err = json.Unmarshal([]byte(string(players_data)), players_info)
-	Check(err)
+	utils.Check(err)
 
 	*players = players_info.Players
 
     // now we wait for the go
-	logging("client", "waiting for go")
+	utils.Logging("client", "waiting for go")
 	netData, err = buffer.ReadString('\n')
-	logging("client", "go received")
+	utils.Logging("client", "go received")
 	if (err != nil) {
-		logging("Socket", fmt.Sprintf("error while reading MAP INFO from server: %v", err))
+		utils.Logging("Socket", fmt.Sprintf("error while reading MAP INFO from server: %v", err))
 		chan_client<-"QUIT"
 		return
 	}

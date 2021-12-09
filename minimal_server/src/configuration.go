@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"os"
 	"flag"
+    "rts/utils"
 )
 
 type Configuration_t struct {
@@ -18,7 +19,7 @@ func loadConfig(file_name string) Configuration_t {
 	// Read the main configuration file
 	file, err := ioutil.ReadFile(file_name)
 	if err != nil {
-		logging("Configuration", fmt.Sprintf("Cannot open the config file: %v", err))
+		utils.Logging("Configuration", fmt.Sprintf("Cannot open the config file: %v", err))
 		os.Exit(-1)
 	}
 
@@ -26,7 +27,7 @@ func loadConfig(file_name string) Configuration_t {
 	var configuration = &Configuration_t{}
 	err = json.Unmarshal(file, &configuration)
 	if err != nil {
-		logging("Configuration", fmt.Sprintf("Cannot parse the config file: %v", err))
+		utils.Logging("Configuration", fmt.Sprintf("Cannot parse the config file: %v", err))
 		os.Exit(1)
 	}
 	// Parse the command line and overwrite the configuration if needed
@@ -37,7 +38,7 @@ func loadConfig(file_name string) Configuration_t {
 	configuration.Hostname = *override_addr_parsed
 	configuration.Port = *override_port_parsed
 
-	logging("Configuration",
+	utils.Logging("Configuration",
 		fmt.Sprintf("Hostname: %s, port: %d", configuration.Hostname, configuration.Port))
 
 	return *configuration

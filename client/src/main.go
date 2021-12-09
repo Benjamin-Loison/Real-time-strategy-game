@@ -3,16 +3,17 @@ package main
 import (
 	_ "image/png"
 	"os"
+    "rts/utils"
 )
 
 var (
 	config Configuration_t
 	config_menus MenuConfiguration_t
-	players []Player
+	players []utils.Player
 	client_id int
 )
 
-type ServerMap Map
+type ServerMap utils.Map
 
 func main(){
 	// Load the configuration
@@ -20,7 +21,7 @@ func main(){
 	config_menus = loadTextMenus("conf/menus.json")
 	//TODO: check theat there is no conflict between the two configuration files
 
-	game_map := Map{}
+	game_map := utils.Map{}
 
 
 	chan_client := make(chan string, 2)
@@ -41,7 +42,7 @@ func main(){
 			if x == "OK" {
 				ok = true
 			}else if x == "QUIT" {
-				logging("client","Error while retrieving map data")
+				utils.Logging("client","Error while retrieving map data")
 				os.Exit(-1)
 			}
 		default:

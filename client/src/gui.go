@@ -7,6 +7,7 @@ import (
 	"time"
     "encoding/json"
 	"rts/events"
+    "rts/utils"
 	"github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -34,17 +35,17 @@ var (
 
 func drawGrid(width int32, height int32) {
 	for i := int32(0) ; i <= height ; i++ {
-		rl.DrawLine(0, TileSize *i, TileSize*width ,TileSize*i,rl.Red)
+		rl.DrawLine(0, utils.TileSize *i, utils.TileSize*width ,utils.TileSize*i,rl.Red)
 	}
 	for i := int32(0) ; i <= width ; i++ {
-		rl.DrawLine(TileSize*i, 0, TileSize*i ,TileSize*height,rl.Red)
+		rl.DrawLine(utils.TileSize*i, 0, utils.TileSize*i ,utils.TileSize*height,rl.Red)
 	}
 }
 
 func get_mouse_grid_pos(camera rl.Camera2D, width , height int32) (rl.Vector2, bool) {
 	mouse_screen_pos := rl.GetMousePosition()
 	mouse_world_pos := rl.GetScreenToWorld2D(mouse_screen_pos, camera)
-	ret := rl.Vector2{ X : float32(math.Floor(float64(mouse_world_pos.X / float32(TileSize)))), Y : float32(math.Floor(float64(mouse_world_pos.Y / float32(TileSize)))) }
+	ret := rl.Vector2{ X : float32(math.Floor(float64(mouse_world_pos.X / float32(utils.TileSize)))), Y : float32(math.Floor(float64(mouse_world_pos.Y / float32(utils.TileSize)))) }
 	//fmt.Printf("test : %d %d",int(),int())
 	if ret.X < 0 || int32(ret.X) >= width || ret.Y < 0 || int32(ret.Y) >= height {
 		return ret,true
@@ -53,7 +54,7 @@ func get_mouse_grid_pos(camera rl.Camera2D, width , height int32) (rl.Vector2, b
 	}
 }
 
-func RunGui(gmap *Map, players *[]Player, config Configuration_t, config_menus MenuConfiguration_t, chan_client chan string) {
+func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, config_menus MenuConfiguration_t, chan_client chan string) {
 	rl.SetTraceLog(rl.LogNone)
 	rl.InitWindow(screenWidth, screenHeight, "RTS")
 
@@ -64,10 +65,10 @@ func RunGui(gmap *Map, players *[]Player, config Configuration_t, config_menus M
 	var map_width int32 = gmap.Width
 	var map_height int32 = gmap.Height
 
-	map_middle := rl.Vector2{X:float32(TileSize)*float32(map_width)/2.0,Y: float32(TileSize)*float32(map_height)/2.0 }
+	map_middle := rl.Vector2{X:float32(utils.TileSize)*float32(map_width)/2.0,Y: float32(utils.TileSize)*float32(map_height)/2.0 }
 
 
-	camera := rl.NewCamera2D(rl.Vector2{X:screenWidth/2.0,Y:screenHeight/2.0},rl.Vector2{X: float32(TileSize)*float32(map_width)/2.0, Y: float32(TileSize)*float32(map_height)/2.0},0,1.0)
+	camera := rl.NewCamera2D(rl.Vector2{X:screenWidth/2.0,Y:screenHeight/2.0},rl.Vector2{X: float32(utils.TileSize)*float32(map_width)/2.0, Y: float32(utils.TileSize)*float32(map_height)/2.0},0,1.0)
 
 	rl.BeginMode2D(camera)
 
@@ -78,7 +79,7 @@ func RunGui(gmap *Map, players *[]Player, config Configuration_t, config_menus M
 		select {
 		case x, _ := <-chan_client:
 			if x == "QUIT" {
-				logging("gui","Forced to quit")
+				utils.Logging("gui","Forced to quit")
 				return
 			}
 		default:
@@ -133,12 +134,12 @@ func RunGui(gmap *Map, players *[]Player, config Configuration_t, config_menus M
         if (rl.IsKeyDown(rl.KeyQ)) {
             e := events.Event{EventType : events.MoveUnits,Data : "test"}
             e_marsh, err := json.Marshal(e)
-            Check(err)
-			logging("GUI","Trying to send event")
+            utils.Check(err)
+			utils.Logging("GUI","Trying to send event")
             _,err = writer.Write([]byte(string(e_marsh)+"\n"))
             writer.Flush()
-            Check(err)
-			logging("GUI","Event sent")
+            utils.Check(err)
+			utils.Logging("GUI","Event sent")
 
         }
 
@@ -187,11 +188,11 @@ func RunGui(gmap *Map, players *[]Player, config Configuration_t, config_menus M
 			rl.ClearBackground(rl.Black);
 			rl.BeginMode2D(camera);
 				// DRAW MAP
-				DrawMap(*gmap)
+				utils.DrawMap(*gmap)
 				// DRAW UNITS
 				for i, player := range *players {
 					for _, player_unit := range player.Units {
-						DrawUnit(player_unit, i== client_id)
+						utils.DrawUnit(player_unit, i== client_id)
 					}
 				}
 

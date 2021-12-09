@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"os"
 	"flag"
+    "rts/utils"
 )
 
 // This file loads the configuration of the application. This configuration
@@ -50,7 +51,7 @@ func loadConfig(file_name string) Configuration_t {
 	// Read the main configuration file
 	file, err := ioutil.ReadFile(file_name)
 	if err != nil {
-		logging("Configuration", fmt.Sprintf("Cannot open the config file: %v", err))
+		utils.Logging("Configuration", fmt.Sprintf("Cannot open the config file: %v", err))
 		os.Exit(-1)
 	}
 
@@ -58,7 +59,7 @@ func loadConfig(file_name string) Configuration_t {
 	var configuration = &Configuration_t{}
 	err = json.Unmarshal(file, &configuration)
 	if err != nil {
-		logging("Configuration", fmt.Sprintf("Cannot parse the config file: %v", err))
+		utils.Logging("Configuration", fmt.Sprintf("Cannot parse the config file: %v", err))
 		os.Exit(1)
 	}
 
@@ -70,7 +71,7 @@ func loadConfig(file_name string) Configuration_t {
 	configuration.Server.Hostname = *override_addr_parsed
 	configuration.Server.Port = *override_port_parsed
 
-	logging("Configuration",
+	utils.Logging("Configuration",
 		fmt.Sprintf("Hostname: %s, port: %d", configuration.Server.Hostname, configuration.Server.Port))
 
 	return *configuration
@@ -137,7 +138,7 @@ func loadTextMenus(file_name string) MenuConfiguration_t {
 	// Read the menus configuration file
 	file, err := ioutil.ReadFile(file_name)
 	if err != nil {
-		logging("Menu configuration", fmt.Sprintf("Cannot open the config file: %v", err))
+		utils.Logging("Menu configuration", fmt.Sprintf("Cannot open the config file: %v", err))
 		os.Exit(-1)
 	}
 
@@ -146,7 +147,7 @@ func loadTextMenus(file_name string) MenuConfiguration_t {
 	var configuration = &MenuConfiguration_t{}
 	err = json.Unmarshal(file, &configuration_tmp)
 	if err != nil {
-		logging("Menu configuration", fmt.Sprintf("Cannot parse the config file: %v", err))
+		utils.Logging("Menu configuration", fmt.Sprintf("Cannot parse the config file: %v", err))
 		os.Exit(1)
 	}
 
@@ -193,14 +194,14 @@ func loadTextMenus(file_name string) MenuConfiguration_t {
 					configuration_tmp.Menus[i].Elements[j].Name,
 					MenuElementTypeIfString(
 						configuration_tmp.Menus[i].Elements[j].Type),
-					keyOfString(configuration_tmp.Menus[i].Elements[j].Key),
+					utils.KeyOfString(configuration_tmp.Menus[i].Elements[j].Key),
 					idx })
 		}
 
 		active_menu.Elements= inner_elements
 		configuration.Menus = append(configuration.Menus, active_menu)
 	}
-	logging("Menus configuration", "Done.")
+	utils.Logging("Menus configuration", "Done.")
 
 	// Verbose and build the clean (well-typed) actions configuration
 	for i := 0 ; i < len(configuration_tmp.Actions); i ++ {
@@ -210,7 +211,7 @@ func loadTextMenus(file_name string) MenuConfiguration_t {
 				Title: configuration_tmp.Actions[i].Title,
 				Ref: actions_ref_mapping[configuration_tmp.Actions[i].Ref] })
 	}
-	logging("Actions configuration", "Done.")
+	utils.Logging("Actions configuration", "Done.")
 
 	return *configuration
 }
