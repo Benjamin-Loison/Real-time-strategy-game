@@ -8,7 +8,7 @@ type Point struct {
 	X int32
 	Y int32
 }
-func pathFinding(mapp Map, endPos rl.Vector2, step int32) [][]rl.Vector2 {
+func PathFinding(mapp Map, endPos rl.Vector2, step int32) [][]rl.Vector2 {
 
 	map_width  := mapp.Width * TileSize
 	map_height := mapp.Height * TileSize
@@ -31,19 +31,21 @@ func pathFinding(mapp Map, endPos rl.Vector2, step int32) [][]rl.Vector2 {
 			if x == 0 || int32(x) == array_width -1 || y == 0 || int32(y) == array_height -1 {
 				cost_field[x][y] = ^uint16(0)
 			} else {
-				x_s := int32(x) * step
-				y_s := int32(y) * step
+				x_s := int32(x-1) * step
+				y_s := int32(y-1) * step
 				map_x := x_s / TileSize
 				map_y := y_s / TileSize
 				rect := rl.NewRectangle(float32(x_s), float32(y_s), float32(step), float32(step))
-				to_test := [4]rl.Vector2{ {X: 0, Y: 0}, {X: 1, Y: 0}, {X: 0, Y:1}, {X: 1, Y: 1} } 
+				to_test := [4]rl.Vector2{ {X: 0, Y: 0}, {X: 1, Y: 0}, {X: 0, Y:1}, {X: 1, Y: 1} }
 				curr_vect := rl.Vector2{X: float32(map_x), Y: float32(map_y)}
 				half_vect := rl.Vector2{X: 0.5, Y: 0.5}
 				for _, v :=  range to_test {
 					matrix := rl.Vector2Add(curr_vect, v)
 
 					cost_field[x][y] = 1
-					if mapp.Grid[int32(matrix.X)][int32(matrix.Y)].Tile_Type != None {
+					if int32(matrix.X) < mapp.Width &&
+                       int32(matrix.Y) < mapp.Height &&
+                       mapp.Grid[int32(matrix.X)][int32(matrix.Y)].Tile_Type != None {
 						center := rl.Vector2Add(curr_vect, half_vect)
 						center = rl.Vector2Add(center, v)
 						center = rl.Vector2Scale(center, float32(TileSize))
