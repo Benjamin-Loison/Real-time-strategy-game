@@ -7,10 +7,15 @@ import (
 	"net"
     "os"
 	"strings"
+    "time"
 
 	"rts/events"
 	"rts/utils"
     "rts/factory"
+)
+
+const (
+    serverSpeed = 10
 )
 
 var (
@@ -18,6 +23,7 @@ var (
 	channels = make(map[int]chan string)
     updater_chan = make(chan events.Event)
 	gmap utils.Map
+    serverTime uint32
 )
 
 func broadcast(channels map[int]chan string, msg string) {
@@ -107,8 +113,7 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 }
 
 func listenClient(conn net.Conn, channel chan string) {
-    // ajouter soi même dans la liste des channels pour bien être fermé
-    // -> to do so, créer une fonction register.
+    // TODO utiliser la fonction register, pour assurer la mort du listenClient
     reader := bufio.NewReader(conn)
     for {
         utils.Logging("Listener","listening to client")
@@ -181,11 +186,13 @@ func main() {
 
 	broadcast(channels, "START")
 	//
-	//broadcast(channels, "QUIT")
 
 	//start game
+    go gameLoop(register(-2))
+
+    //wait for end game
 	for {
-		if ok == 0 {
+		if ok <= 0 {
 			break
 		}
 		for _, c := range channels {
@@ -194,6 +201,9 @@ func main() {
 				if s == "FINISHED" {
 					ok--
 				}
+				if s == "STOP" {
+					ok = 0
+				}
                 if s == "CLIENT_ERROR" {
 					utils.Logging("Server", "Received client error")
 				}
@@ -201,5 +211,25 @@ func main() {
 			}
 		}
 	}
+	broadcast(channels, "QUIT")
 }
 
+func gameLoop(quit chan string){
+    gameOver := false
+    for {
+        if gameOver{
+            break
+        }
+        select {
+        case s :=<-quit :
+            if s=="QUIT"{
+                return
+            }
+        default: // not quitting, updating game state
+            serverTime += 1
+            //utils.Logging("GameLoop",fmt.Sprintf("Server time = %d",serverTime))
+        }
+        time.Sleep(serverSpeed * time.Millisecond)
+    }
+    quit<-"STOP"
+}
