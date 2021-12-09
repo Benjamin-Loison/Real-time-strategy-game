@@ -34,6 +34,7 @@ const (
 	StateChat GameState = 2
 	StateMenu GameState = 4
 	StateWaitClick GameState = 8
+    ffstep = utils.TileSize
 )
 
 var (
@@ -65,6 +66,8 @@ func RunGui(gmap *utils.Map,
 	has_send := 0
 	currentMessages := make([]MessageItem_t, 0)
 	lastMessagesUpdate := time.Now()
+    
+    var flowField  [][]rl.Vector2 = nil
 
     var selectionStart rl.Vector2
     var inSelection = false
@@ -158,6 +161,10 @@ func RunGui(gmap *utils.Map,
 				camera.Zoom = 1.0
 				camera.Target.X = map_middle.X
 				camera.Target.Y = map_middle.Y
+			}
+
+			if (rl.IsMouseButtonPressed(rl.MouseRightButton)) { // && len(selectedUnits)> 0){
+                flowField = utils.PathFinding(*gmap,rl.GetScreenToWorld2D(rl.GetMousePosition(),camera),ffstep)
 			}
 
 			if (rl.IsMouseButtonPressed(rl.MouseLeftButton)){
@@ -264,6 +271,10 @@ func RunGui(gmap *utils.Map,
 						utils.DrawUnit(player_unit, i== client_id, found )
 					}
 				}
+                // DEBUG
+                if flowField != nil {
+                    utils.DrawFlowField(flowField,ffstep)
+                }
 
 			rl.EndMode2D();
 			if( inSelection ){
