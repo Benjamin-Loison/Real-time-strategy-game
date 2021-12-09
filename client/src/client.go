@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"encoding/json"
-
+	"time"
     "rts/utils"
 )
 
@@ -121,6 +121,8 @@ func run_client(config Configuration_t, players *[]utils.Player, gmap *utils.Map
 			if s1 == "QUIT" {
 				chan_server<-"QUIT"
 				os.Exit(0)
+			} else {
+				utils.Logging("client_oh no :()", s1)
 			}
 		case s2 := <-chan_server:
 			if s2 == "QUIT" {
@@ -129,6 +131,7 @@ func run_client(config Configuration_t, players *[]utils.Player, gmap *utils.Map
 			} else if strings.HasPrefix(s2, "CHAT:") {
 				chan_client<- s2
 				utils.Logging("client", fmt.Sprintf("I recieved '%s'", s2))
+				time.Sleep(1 * time.Second)
 			}
 			//err = json.Unmarshal([]byte(string(s2)), gmap)
 			//Check(err)

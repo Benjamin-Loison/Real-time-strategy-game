@@ -45,6 +45,10 @@ var (
     selectedUnits = map[string]bool{}
 )
 
+
+/*           +~~~~~~~~~~~~~~~~~~~~~~+
+             | Main loop of the gui |
+             +~~~~~~~~~~~~~~~~~~~~~~+ */
 func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, config_menus MenuConfiguration_t, chan_client chan string) {
 	ChatText := ""
 	currentMessages := make([]MessageItem_t, 0)
@@ -71,8 +75,7 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 
     writer := bufio.NewWriter(serv_conn)
 
-    mabite := "fhjsdfshk"
-    fmt.Printf("looool : %s\n", string(mabite) )
+	chan_client<- "Haha, je suis là!\n"
 
 	for !rl.WindowShouldClose() {
 		/*           +~~~~~~~~~~~~~~~~~~~~~~~~~~~+
