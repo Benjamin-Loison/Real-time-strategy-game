@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"bufio"
 	_ "image/png"
 	"math"
 	"time"
@@ -49,7 +48,10 @@ var (
 /*           +~~~~~~~~~~~~~~~~~~~~~~+
              | Main loop of the gui |
              +~~~~~~~~~~~~~~~~~~~~~~+ */
-func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, config_menus MenuConfiguration_t, chan_client chan string) {
+func RunGui(gmap *utils.Map,
+			players *[]utils.Player,
+			config Configuration_t, config_menus MenuConfiguration_t,
+			chan_link_gui chan string, chan_gui_link chan string) {
 	ChatText := ""
 	currentMessages := make([]MessageItem_t, 0)
 
@@ -73,16 +75,14 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 
 	rl.BeginMode2D(camera)
 
-    writer := bufio.NewWriter(serv_conn)
-
-	chan_client<- "Haha, je suis là!\n"
+	chan_link_gui<- "Haha, je suis là!\n"
 
 	for !rl.WindowShouldClose() {
 		/*           +~~~~~~~~~~~~~~~~~~~~~~~~~~~+
 		             | Check that shouldn't quit |
 		             +~~~~~~~~~~~~~~~~~~~~~~~~~~~+ */
 		select {
-		case x, _ := <-chan_client:
+		case x, _ := <-chan_link_gui:
 			if x == "QUIT" {
 				utils.Logging("gui","Forced to quit")
 				return
@@ -101,15 +101,6 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 
 		// Check wether the movements have to be detected
 		if (currentState & StateNone > 0) {
-			// Print chat messages
-			for i := 0 ; i < len(currentMessages) ; i ++ {
-				rl.DrawText(currentMessages[i].Message,
-					int32(currentMessages[i].Position_x),
-					int32(currentMessages[i].Position_y),
-					40,
-					rl.Red)
-			}
-
 			offsetThisFrame := cameraSpeed*rl.GetFrameTime()
 
 			// test d'envoie d'event
@@ -117,10 +108,7 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 				e := events.Event{EventType : events.MoveUnits,Data : "test"}
 				e_marsh, err := json.Marshal(e)
 				utils.Check(err)
-				utils.Logging("GUI","Trying to send event")
-				_,err = writer.Write([]byte(string(e_marsh)+"\n"))
-				writer.Flush()
-				utils.Check(err)
+				chan_gui_link<- string(e_marsh)
 				utils.Logging("GUI","Event sent")
 			}
 
@@ -183,7 +171,15 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 				}
 			}
 
-	}
+			// Print chat messages
+			for i := 0 ; i < len(currentMessages) ; i ++ {
+				rl.DrawText(currentMessages[i].Message,
+					int32(currentMessages[i].Position_x),
+					int32(currentMessages[i].Position_y),
+					40,
+					rl.Red)
+			}
+		}
 
 		// Check wether a menu has to be printed
 		if (currentState & StateMenu > 0) {
@@ -233,9 +229,7 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 						Data: fmt.Sprintf("%s: %s", config.Pseudo, ChatText[1:])}
 					e_marsh, err := json.Marshal(e)
 					utils.Check(err)
-					_,err = writer.Write([]byte(string(e_marsh)+"\n"))
-					writer.Flush()
-					utils.Check(err)
+					chan_gui_link<- string(e_marsh)
 
 					// Reset the lmessage and state
 					ChatText = ""

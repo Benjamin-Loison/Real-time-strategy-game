@@ -174,18 +174,18 @@ func main() {
 	utils.Check(err)
 	defer listener.Close()
 
-	ok := 0
+	nb_clients := 0
 
 	for {
 		// Wait for a new connection
-		if ok == 2 {
+		if nb_clients == 2 {
 			break
 		}
 		conn, err := listener.Accept()
 
 		utils.Check(err)
-		go client_handler(conn, conf.MapPath,register(ok), ok)
-		ok += 1
+		go client_handler(conn, conf.MapPath,register(nb_clients), nb_clients)
+		nb_clients += 1
 	}
 
 	go updater(channels, register(-1))
@@ -195,17 +195,17 @@ func main() {
 	go gameLoop(register(-2))
 
 	//wait for end game
-	for ok > 0{
+	for nb_clients > 0{
 		for _, c := range channels {
 			select {
 			case s := <-c :
 				switch(s) {
 				case "FINISHED" :
-					ok--
-					utils.Logging("Server", fmt.Sprintf("%d remaining clients.", ok))
+					nb_clients--
+					utils.Logging("Server", fmt.Sprintf("%d remaining clients.", nb_clients))
 					break
 				case "STOP" :
-					ok = 0
+					nb_clients = 0
 					break
 				case "CLIENT_ERROR" :
 					utils.Logging("Server", "Received client error")
@@ -213,6 +213,7 @@ func main() {
 				default:
 					break
 				}
+				break
 			default:
 				break
 			}

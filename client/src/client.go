@@ -8,17 +8,9 @@ import (
 	"strconv"
 	"strings"
 	"encoding/json"
-	"time"
-    "rts/utils"
+	"rts/utils"
 )
 
-/*           +~~~~~~~~~~~~~~~~~~+
-             | Global variables |
-             +~~~~~~~~~~~~~~~~~~+ */
-
-var (
-    serv_conn net.Conn
-)
 
 /*           +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
              | Main function:                                                |
@@ -30,16 +22,21 @@ var (
              | An auxiliary function `listenServer` listens to the connection|
              | and transmits to this function the incomming messages using a |
              | channel `chan_server`.                                        |
-             | A channel `chan_client` is used in order to communicate with  |
+             | A channel `chan_link_gui` is used in order to communicate with|
              | the gui part of the client.                                   |
              +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+*/
-func run_client(config Configuration_t, players *[]utils.Player, gmap *utils.Map, chan_client chan string) {
+func run_client(config Configuration_t,
+			players *[]utils.Player,
+			gmap *utils.Map,
+			chan_link_gui chan string,
+			chan_gui_link chan string) {
 	// Verbose
 	utils.Logging("CLIENT", "The client id is " + config.Pseudo)
 
 	chan_server := make(chan string, 2)
 
     var err error// defines a single variable to check the functions errors.
+	var serv_conn net.Conn
 
 	// Connection to the server
 	serv_conn, err = net.Dial("tcp", config.Server.Hostname + ":" + strconv.Itoa(config.Server.Port))
@@ -49,7 +46,7 @@ func run_client(config Configuration_t, players *[]utils.Player, gmap *utils.Map
 				config.Server.Hostname,
 				config.Server.Port,
 				err))
-		chan_client<-"QUIT"
+		chan_link_gui<-"QUIT"
 		return
 	}
 	defer serv_conn.Close()
@@ -67,7 +64,7 @@ func run_client(config Configuration_t, players *[]utils.Player, gmap *utils.Map
 	if (err != nil) {
 		utils.Logging("Socket",
 			fmt.Sprintf("error while reading MAP INFO from server: %v", err))
-		chan_client<-"QUIT"
+		chan_link_gui<-"QUIT"
 		return
 	}
 
@@ -86,7 +83,7 @@ func run_client(config Configuration_t, players *[]utils.Player, gmap *utils.Map
 	utils.Logging("client", "obtained units")
 	if (err != nil) {
 		utils.Logging("Socket", fmt.Sprintf("error while reading INIT UNITS from server: %v", err))
-		chan_client<-"QUIT"
+		chan_link_gui<-"QUIT"
 		return
 	}
 
@@ -105,36 +102,36 @@ func run_client(config Configuration_t, players *[]utils.Player, gmap *utils.Map
 	if (err != nil) {
 		utils.Logging("Socket",
 			fmt.Sprintf("error while reading GO from server: %v", err))
-		chan_client<-"QUIT"
+		chan_link_gui<-"QUIT"
 		return
 	}
 
-	chan_client<-"OK"
+	chan_link_gui<-"OK"
 
 	// Launch a goroutine that listens to the server
 	go listenServer(serv_conn, chan_server)
+    writer := bufio.NewWriter(serv_conn)
 
 	// Main loop
 	for {
 		select {
-		case s1 := <-chan_client:
+		case s1 := <-chan_gui_link:
 			if s1 == "QUIT" {
 				chan_server<-"QUIT"
 				os.Exit(0)
 			} else {
-				utils.Logging("client_oh no :()", s1)
+				_,err = writer.Write([]byte(string(s1)+"\n"))
+				writer.Flush()
+				utils.Check(err)
 			}
 		case s2 := <-chan_server:
 			if s2 == "QUIT" {
-                chan_client<-"QUIT"
+				chan_link_gui<-"QUIT"
 				os.Exit(0)
 			} else if strings.HasPrefix(s2, "CHAT:") {
-				chan_client<- s2
+				chan_link_gui<- s2
 				utils.Logging("client", fmt.Sprintf("I recieved '%s'", s2))
-				time.Sleep(1 * time.Second)
 			}
-			//err = json.Unmarshal([]byte(string(s2)), gmap)
-			//Check(err)
 		default:
 		}
 	}

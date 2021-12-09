@@ -23,21 +23,19 @@ func main(){
 
 	game_map := utils.Map{}
 
-	chan_client := make(chan string, 3)
+	chan_link_gui := make(chan string, 3)
+	chan_gui_link := make(chan string, 3)
 
 	// starting a co-process to deal with the server
-	go run_client(config,&players,&game_map,chan_client)
+	go run_client(config, &players, &game_map, chan_link_gui, chan_gui_link)
 
 	//wait to have received all data before starting gui
 
 	ok := false
 
-	for {
-		if ok {
-			break
-		}
+	for ok {
 		select {
-		case x, _ := <-chan_client:
+		case x, _ := <-chan_link_gui:
 			if x == "OK" {
 				ok = true
 			}else if x == "QUIT" {
@@ -49,7 +47,7 @@ func main(){
 	}
 
 	//running gui
-	RunGui(&game_map, &players, config, config_menus,chan_client)
+	RunGui(&game_map, &players, config, config_menus, chan_link_gui, chan_gui_link)
 
-	chan_client <- "QUIT"
+	chan_link_gui <- "QUIT"
 }
