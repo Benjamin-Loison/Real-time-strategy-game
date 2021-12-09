@@ -33,6 +33,7 @@ var (
 	currentMenu = -1
 	currentAction = -1
 	timeMenu = time.Now()
+    selectedUnits = map[string]bool{}
 )
 
 func drawGrid(width int32, height int32) {
@@ -55,9 +56,19 @@ func get_mouse_grid_pos(camera rl.Camera2D, width , height int32) (rl.Vector2, b
 		return ret,false
 	}
 }
+func getRectangle2Pt(p1 rl.Vector2, p2 rl.Vector2) rl.Rectangle{
+    width :=  float32(math.Abs(float64(p1.X-p2.X)))
+    height := float32(math.Abs(float64(p1.Y-p2.Y)))
+    startX := float32(math.Min(float64(p1.X),float64(p2.X)))
+    startY := float32(math.Min(float64(p1.Y),float64(p2.Y)))
+    return rl.NewRectangle(startX,startY,width,height)
+}
 
 func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, config_menus MenuConfiguration_t, chan_client chan string) {
 	ChatText := ""
+
+    var selectionStart rl.Vector2
+    var inSelection = false
 
 	rl.SetTraceLog(rl.LogNone)
 	rl.InitWindow(screenWidth, screenHeight, "RTS")
@@ -77,6 +88,9 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 	rl.BeginMode2D(camera)
 
     writer := bufio.NewWriter(serv_conn)
+
+    mabite := "fhjsdfshk"
+    fmt.Printf("looool : %s\n", string(mabite) )
 
 	for !rl.WindowShouldClose() {
 		// check that shouldn't quit
@@ -202,6 +216,22 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 					camera.Target.Y = map_middle.Y
 				}
 
+                if (rl.IsMouseButtonPressed(rl.MouseLeftButton)){
+                    if inSelection == false {
+                        inSelection = true
+                        selectionStart = rl.GetMousePosition()
+                    }
+                }
+                if( rl.IsMouseButtonReleased(rl.MouseLeftButton)) {
+                    inSelection = false
+                    selectedUnits = map[string]bool{}
+                    for k, v := range (*players)[client_id].Units {
+                        if rl.CheckCollisionCircleRec(rl.Vector2{float32(v.X),float32(v.Y)}, utils.Unit_size, getRectangle2Pt(rl.GetScreenToWorld2D( selectionStart, camera),  rl.GetScreenToWorld2D( rl.GetMousePosition(), camera))  ) {
+                            selectedUnits[k] = true
+                        }
+                    }
+                }
+
 				break
 		}
 		// Draw to screenTexture
@@ -213,12 +243,17 @@ func RunGui(gmap *utils.Map, players *[]utils.Player, config Configuration_t, co
 				utils.DrawMap(*gmap)
 				// DRAW UNITS
 				for i, player := range *players {
-					for _, player_unit := range player.Units {
-						utils.DrawUnit(player_unit, i== client_id)
+					for k , player_unit := range player.Units {
+                        _, found := selectedUnits[k]
+						utils.DrawUnit(player_unit, i== client_id, found )
 					}
 				}
 
 			rl.EndMode2D();
+            if( inSelection ){
+                selRect := getRectangle2Pt(selectionStart, rl.GetMousePosition() )
+                rl.DrawRectangleLines( selRect.ToInt32().X , selRect.ToInt32().Y, selRect.ToInt32().Width, selRect.ToInt32().Height, rl.Magenta)
+            }
 		rl.EndDrawing();
 	}
 

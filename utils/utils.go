@@ -22,7 +22,7 @@ type TileType int64
 
 var (
     GroundColor = color.RGBA{101,67,33,255}
-	unit_size float32 = 0.4+float32(fontSize)
+	Unit_size float32 = 0.4+float32(fontSize)
 )
 
 const (
@@ -185,18 +185,23 @@ func InitializePlayer(gmap *Map, own factory.Owner, units *map[string]factory.Un
     }
 }
 
-func DrawUnit(u factory.Unit, owned bool){
+func DrawUnit(u factory.Unit, owned bool, selected bool){
 	if owned {
-        rl.DrawCircle(u.X,u.Y,unit_size,rl.Blue)
+        rl.DrawCircle(u.X,u.Y,Unit_size,rl.Blue)
 	}else{
-        rl.DrawCircle(u.X,u.Y,unit_size,rl.Red)
+        rl.DrawCircle(u.X,u.Y,Unit_size,rl.Red)
 	}
-    rl.DrawCircleLines(u.X,u.Y,unit_size,rl.Black)
+    if !selected || !owned {
+        rl.DrawCircleLines(u.X,u.Y,Unit_size,rl.Black)
+    }else {
+        rl.DrawCircleLines(u.X,u.Y,Unit_size*1.3,rl.Magenta)
+        //rl.DrawRing(rl.Vector2{X: float32(u.X),Y: float32(u.Y)}, Unit_size*0.7,Unit_size, 0, 360, 30,rl.Magenta)
+    }
 	rl.DrawText(u.Name,u.X-fontSize/2,u.Y-fontSize/2,fontSize,rl.White)
 
-    rl.DrawRectangle(u.X-int32(unit_size),u.Y-int32(unit_size*1.2),int32(unit_size*2), int32(unit_size*0.5),rl.Red)
+    rl.DrawRectangle(u.X-int32(Unit_size),u.Y-int32(Unit_size*1.2),int32(Unit_size*2), int32(Unit_size*0.5),rl.Red)
     ratio := float32(u.Health) / float32(u.MaxHealth)
-    rl.DrawRectangle(u.X-int32(unit_size),u.Y-int32(unit_size*1.2),int32(unit_size*2*ratio), int32(unit_size*0.5),rl.Green)
+    rl.DrawRectangle(u.X-int32(Unit_size),u.Y-int32(Unit_size*1.2),int32(Unit_size*2*ratio), int32(Unit_size*0.5),rl.Green)
 }
 
 
