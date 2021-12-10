@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net"
 	"strings"
-
+	"time"
 	"rts/events"
 	"rts/utils"
 )
@@ -30,20 +30,16 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 	keepGoing := true
 	for keepGoing {
 		select {
-			case x, _ :=<-main_chan :
+			case x :=<-main_chan :
+				utils.Logging("CLIENT_HANDLER",
+					fmt.Sprintf("(%d) from main_chan %s",
+						id, x))
+
 				if x == "QUIT" {
 					writer.Write([]byte("QUIT\n"))
 					writer.Flush()
-					utils.Logging("CLIENT_HANDLER",
-						fmt.Sprintf("(%d) stop sent: %s",
-							id,
-							x))
 					keepGoing = false
 				} else if strings.HasPrefix(x, "CHAT:") {
-					utils.Logging("CLIENT_HANDLER",
-						fmt.Sprintf("(%d) chat string will be send: %s",
-							id,
-							x))
 					writer.Write([]byte(fmt.Sprintf("%s\n", x)))
 					writer.Flush()
 					utils.Logging("CLIENT_HANDLER",
@@ -58,7 +54,7 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 				}
 				break
 
-			case x, _ :=<-listener_chan:
+			case x :=<-listener_chan:
 				if x == "QUIT" {
 					utils.Logging("CLIENT_HANDLER",
 						fmt.Sprintf("(%d) Error when listening to the client",
@@ -68,10 +64,8 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 				} else {
 					var client_event = &events.Event{}
 					err := json.Unmarshal([]byte(x), client_event)
-					if err != nil {
-						utils.Logging("CLIENT_HANDLER",
-							fmt.Sprintf("(%d) Error when receiving event from client.", id))
-					}
+					utils.Check(err)
+
 					// should now send to the updater
 					utils.Logging("CLIENT_HANDLER",
 						fmt.Sprintf("(%d) Sending info to updater", id))
@@ -83,6 +77,7 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 			default:
 				break
 		}
+		time.Sleep(10 * time.Millisecond)
 	}
 
 	// Exit
@@ -106,6 +101,7 @@ func listenClient(id int, conn net.Conn, channel chan string) {
 			channel <- "QUIT"
 			return
 		}
+		time.Sleep(10 * time.Millisecond)
 	}
 }
 
