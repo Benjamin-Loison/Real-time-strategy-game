@@ -195,7 +195,7 @@ func gameLoop(quit chan string){
             updateEvent := events.ServerUpdate_e{Units: updatedUnits}
             dataupdate, err := json.Marshal(updateEvent)
             utils.Check(err)
-            event := events.Event{EventType: events.ServerUpdate, Data: string(dataupdate)+"\n"}
+            event := events.Event{EventType: events.ServerUpdate, Data: string(dataupdate)}
             dataevent, errr := json.Marshal(event)
             utils.Check(errr)
 

@@ -9,6 +9,7 @@ import (
 	"strings"
 	"encoding/json"
 	"rts/utils"
+    "rts/events"
 )
 
 
@@ -88,6 +89,36 @@ func run_client(config Configuration_t,
 				utils.Logging("client", fmt.Sprintf("I recieved '%s'", s2))
 			} else {
 				utils.Logging("client", fmt.Sprintf("Server: %s", s2))
+                var event = &events.Event{}
+                err := json.Unmarshal([]byte(s2), event)
+                utils.Check(err)
+                switch event.EventType {
+                case events.ServerUpdate:
+                    var update = &events.ServerUpdate_e{}
+                    err := json.Unmarshal([]byte(event.Data), update)
+                    utils.Check(err)
+                    playersRWLock.Lock()
+                    
+                    for _, u := range update.Units {
+        
+                        _,ok := (*players)[0].Units[string(u.Id)]
+                        if ok {
+                            (*players)[0].Units[string(u.Id)] = u
+                            continue
+                        }
+                        _,ok = (*players)[1].Units[string(u.Id)]
+                        if ok {
+                            (*players)[1].Units[string(u.Id)] = u
+                        }
+        
+                    }
+
+
+                    playersRWLock.Unlock()
+
+                default:
+				    utils.Logging("client", "Unknown event\n")
+                }
 			}
 		default:
 		}
