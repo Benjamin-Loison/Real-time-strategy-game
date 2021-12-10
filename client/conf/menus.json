@@ -43,12 +43,12 @@
 		{
 			"Type": "Building",
 			"Ref": "TownHall",
-			"Title": "A townhall for a village or town"
+			"Title": "Rock"
 		},
 		{
 			"Type": "Building",
 			"Ref": "House",
-			"Title": "A house for a small familly"
+			"Title": "Rock"
 		},
 		{
 			"Type": "Quit",

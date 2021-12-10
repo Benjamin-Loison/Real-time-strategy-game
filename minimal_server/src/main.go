@@ -28,6 +28,8 @@ var (
 	gmap utils.Map
 	serverTime uint32
     genSeed = 0
+	buildingsToBuild = make([]Building, 0)
+	technologicalTree = LoadTechnologicalTree()
 )
 
 // broadcast send msg to all the channels to which clients listen
@@ -47,7 +49,6 @@ func register(id int) chan string {
 // sent on the updater_chan channel and to broadcast them
 // to the client when needed
 func updater(channels map[int]chan string, stopper_chan chan string){
-	technologicalTree := LoadTechnologicalTree()
 	for{
 		select{
 		case e := <-updater_chan:
@@ -86,8 +87,17 @@ func updater(channels map[int]chan string, stopper_chan chan string){
 					event := &events.BuildBuilding_e{}
 					err := json.Unmarshal([]byte(e.Data),event)
 					utils.Check(err)
-					// Launch a go routine to wait for the construction:
-					go Build(channels, event, technologicalTree)
+					// Check that the build is authorized wrt the techTree
+					// Add the building to the ToBuild slice
+					buildingsToBuild = append(buildingsToBuild,
+						Building{
+							Name: event.BuildingName,
+							Position_x: int32(event.Position_x),
+							Position_y: int32(event.Position_y),
+							BuildDuration: 100 * time.Second,
+							BuildStartingTime: time.Now()})
+
+					// Remarshal the event and broadcast
 					txt, err := json.Marshal(e)
 					utils.Check(err)
 					broadcast(channels, string(txt))
@@ -241,6 +251,19 @@ func gameLoop(quit chan string){
                 broadcast(channels, string(dataevent))
             }
             PlayersRWLock.Unlock()
+
+			if len(buildingsToBuild) > 0 {
+				new_toBuild := make([]Building, 0)
+				for _, e := range buildingsToBuild {
+					if time.Since(e.BuildStartingTime) > e.BuildDuration {
+						// Build
+						Build(e, technologicalTree)
+					} else {
+						new_toBuild = append(new_toBuild, e)
+					}
+				}
+				buildingsToBuild = new_toBuild
+			}
 		}
 		time.Sleep(serverSpeed * time.Millisecond)
 	}
