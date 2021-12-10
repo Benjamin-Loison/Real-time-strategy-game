@@ -123,6 +123,13 @@ func run_client(config Configuration_t,
 
                             playersRWLock.Unlock()
 
+						case events.BuildEvent :
+							var build = &events.BuildBuilding_e{}
+							err := json.Unmarshal([]byte(event.Data), build)
+							utils.Check(err)
+							gmap.Grid[build.Position_x][build.Position_y].Tile_Type = utils.Rock
+						
+
                         default:
                             utils.Logging("client", "Unknown event\n")
                         }

@@ -341,9 +341,10 @@ func RunGui(gmap *utils.Map,
 											rl.Blue)
 									}
 								} else if currentAction.Type == ActionBuilding {
+									mouse_pos,_ := get_mouse_grid_pos(camera, gmap.Width, gmap.Height)
 									build := events.BuildBuilding_e {
-										Position_x: int32(rl.GetMouseX()) / utils.TileSize,
-										Position_y: int32(rl.GetMouseY()) / utils.TileSize,
+										Position_x: int32(mouse_pos.X),
+										Position_y: int32(mouse_pos.Y),
 										BuildingName: currentAction.Title }
 									data, err := json.Marshal(build)
 									utils.Check(err)
