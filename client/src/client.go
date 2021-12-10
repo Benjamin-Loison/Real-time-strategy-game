@@ -46,14 +46,16 @@ func run_client(config Configuration_t,
 
     // Wait for the server to launch the game
 	utils.Logging("client", "waiting for go")
-	go_recieved := false
-	for go_recieved {
-		select {
-			case s2 := <- chan_from_server:
-				go_recieved = s2 == "GO"
+	reader := bufio.NewReader(serv_conn)
+	for {
+		netData, err := reader.ReadString('\n')
+		utils.Check(err)
+		netData = strings.TrimSpace(string(netData))
+		if netData == "GO" {
 			break
 		}
 	}
+	reader.Close()
 	utils.Logging("client", "go received")
 
 	if (err != nil) {
