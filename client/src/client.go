@@ -127,6 +127,8 @@ func connectToServer(hostname string, port int) (net.Conn) {
 	return serv_conn
 }
 
+// The function ask the server for the map data, and stores the results in
+// the given pointers
 func GetMapInfo(serv_conn net.Conn, gmap *utils.Map, players *[]utils.Player) () {
 	// Fetch the map from the server
 	buffer := bufio.NewReader(serv_conn)

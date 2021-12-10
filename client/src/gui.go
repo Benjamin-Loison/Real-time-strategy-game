@@ -36,6 +36,7 @@ const (
 	StateChat GameState = 2
 	StateMenu GameState = 4
 	StateWaitClick GameState = 8
+
     ffstep = utils.TileSize
 )
 
@@ -43,7 +44,9 @@ var (
 	currentState = StateNone
 	currentMenu = -1
 	currentAction = -1
+
 	lastInputTime = time.Now()
+
 	max_messages_nb = 15
 	message_duration = 10 * time.Second
 	message_font_size = 15
@@ -51,6 +54,7 @@ var (
 	message_color = rl.Red
 	message_color_ours = rl.Blue
 	message_padding = 5
+
 	selectedUnits = map[string]bool{}
 )
 

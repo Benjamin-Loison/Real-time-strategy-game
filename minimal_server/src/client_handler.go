@@ -12,6 +12,8 @@ import (
 	"rts/utils"
 )
 
+// Function to handle the message transmission to and from the client
+// on the socket conn, and uses main_chan to communicate with the server
 func client_handler(conn net.Conn, map_path string, main_chan chan string, id int) {
 	// Close the connection if the handler is exited
 	defer conn.Close()

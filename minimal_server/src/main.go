@@ -30,6 +30,7 @@ var (
     genSeed = 0
 )
 
+// broadcast send msg to all the channels to which clients listen
 func broadcast(channels map[int]chan string, msg string) {
 	utils.Logging("broadcast", fmt.Sprintf("(0) (%s)", msg))
 	channels[0] <- msg // Sending to player 0
@@ -38,11 +39,15 @@ func broadcast(channels map[int]chan string, msg string) {
 	utils.Logging("broadcast", fmt.Sprintf("done(%s).", msg))
 }
 
+// Updates the channels variable to have a new channel identified by [id]
 func register(id int) chan string {
 	channels[id] = make(chan string)
 	return channels[id]
 }
 
+// The updater function's goal is to handle the events that are
+// sent on the updater_chan channel and to broadcast them
+// to the client when needed
 func updater(channels map[int]chan string, stopper_chan chan string){
 	for{
 		select{
@@ -149,6 +154,7 @@ func main() {
 	os.Exit(0)
 }
 
+// Game loop function where most the game logic is handled
 func gameLoop(quit chan string){
 	gameOver := false
 	for !gameOver {
@@ -162,6 +168,7 @@ func gameLoop(quit chan string){
 			serverTime += 1
 			//utils.Logging("GameLoop",fmt.Sprintf("Server time = %d",serverTime))
             PlayersRWLock.Lock()
+			// Moving units to their destination
             var toBeUpdated []string
             for _,p := range Players {
                 for k, u := range p.Units {
@@ -192,6 +199,7 @@ func gameLoop(quit chan string){
                     continue
                 }
             }
+			// Sending update to clients
             updateEvent := events.ServerUpdate_e{Units: updatedUnits}
             dataupdate, err := json.Marshal(updateEvent)
             utils.Check(err)
