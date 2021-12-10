@@ -6,20 +6,20 @@
 				"Title": "Main menu",
 				"Elements": [
 					{
-						"Name": "Build",
-						"Ref": "Build",
-						"Type": "Menu",
+						"Name": "Quit",
+						"Ref": "Quit",
+						"Type": "Action",
 						"Key": "0"
 					}
 				]
 			},
 			{
-				"Ref": "Build",
-				"Title": "Build menu",
+				"Ref": "Selection",
+				"Title": "Selection menu",
 				"Elements": [
 					{
-						"Name": "A townhall",
-						"Ref": "TownHall",
+						"Name": "Build",
+						"Ref": "FirstBui",
 						"Type": "Action",
 						"Key": "0"
 					},
@@ -43,6 +43,11 @@
 			"Type": "Building",
 			"Ref": "House",
 			"Title": "A house for a small familly"
+		},
+		{
+			"Type": "Quit",
+			"Ref": "Quit",
+			"Title": "Quit the app \\(\\ddot\\smile\\)"
 		}
 		]
 }

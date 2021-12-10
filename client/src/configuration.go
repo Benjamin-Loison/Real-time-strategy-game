@@ -113,6 +113,7 @@ const(
 	MenuElementAction = 0
 	MenuElementSubMenu = 1
 	ActionBuilding = 0
+	ActionQuitGame = 1
 	)
 type MenuElement_t struct {
 	Name string
