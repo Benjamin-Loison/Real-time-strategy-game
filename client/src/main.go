@@ -3,6 +3,7 @@ package main
 import (
 	_ "image/png"
 	"os"
+	"time"
     "rts/utils"
     "sync"
 )
@@ -45,6 +46,7 @@ func main(){
 				os.Exit(-1)
 			}
 		default:
+			time.Sleep(20 * time.Millisecond)
 		}
 	}
 

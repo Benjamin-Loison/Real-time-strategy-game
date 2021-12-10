@@ -121,7 +121,6 @@ func run_client(config Configuration_t,
 				    utils.Logging("client", "Unknown event\n")
                 }
 			}
-		default:
 		}
 	}
 }
