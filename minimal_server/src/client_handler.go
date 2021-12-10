@@ -51,9 +51,11 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 								x))
 					} else if x == "CLIENT_ERROR" {
 						os.Exit(0)
-					}else {
+					} else { // on est sur un event
+						writer.Write([]byte(fmt.Sprintf("%s\n", x)))
+						writer.Flush()
 						utils.Logging("CLIENT_HANDLER",
-							fmt.Sprintf("(%d) did not understand %s",
+							fmt.Sprintf("(%d) was sent event %s",
 								id,
 								x))
 					}
