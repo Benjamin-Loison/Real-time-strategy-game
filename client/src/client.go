@@ -45,15 +45,18 @@ func run_client(config Configuration_t,
 	// Fetch map, units and players information
 	GetMapInfo(serv_conn, gmap, players)
 
+	// Launch a goroutine that listens to the server
+	go listenServer(serv_conn, chan_from_server)
+
     // Wait for the server to launch the game
 	utils.Logging("client", "waiting for go")
-	reader := bufio.NewReader(serv_conn)
-	for {
-		netData, err := reader.ReadString('\n')
-		utils.Check(err)
-		netData = strings.TrimSpace(string(netData))
-		if netData == "GO" {
-			break
+	go_rec := false
+	for !go_rec {
+		select {
+			case s := <- chan_from_server:
+				if s == "GO" {
+					go_rec = true
+				}
 		}
 	}
 	utils.Logging("client", "go received")
@@ -64,9 +67,6 @@ func run_client(config Configuration_t,
 		chan_link_gui<-"QUIT"
 		return
 	}
-
-	// Launch a goroutine that listens to the server
-	go listenServer(serv_conn, chan_from_server)
 
 	// Main loop
 	writer := bufio.NewWriter(serv_conn)
