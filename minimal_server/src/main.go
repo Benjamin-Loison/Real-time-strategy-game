@@ -37,7 +37,7 @@ var (
 func broadcast(channels map[int]chan string, msg string) {
 	channels[0] <- msg // Sending to player 0
 	channels[1] <- msg // Sending to player 1
-	utils.Logging("broadcast", fmt.Sprintf("done(%s).", msg))
+	//utils.Logging("broadcast", fmt.Sprintf("done(%s).", msg))
 }
 
 // Updates the channels variable to have a new channel identified by [id]

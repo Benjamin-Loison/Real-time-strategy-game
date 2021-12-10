@@ -83,7 +83,6 @@ func run_client(config Configuration_t,
 					_,err := writer.Write([]byte(s1 + "\n"))
 					writer.Flush()
 					utils.Check(err)
-					utils.Logging("client", "J'ai écrit " + s1)
 				}
 			}
 		}
@@ -99,7 +98,6 @@ func run_client(config Configuration_t,
 						chan_link_gui<- s2
 						utils.Logging("client", fmt.Sprintf("I recieved '%s'", s2))
 					}   else {
-                        utils.Logging("client", fmt.Sprintf("Server: %s", s2))
                         var event = &events.Event{}
                         err := json.Unmarshal([]byte(s2), event)
                         utils.Check(err)
@@ -153,7 +151,6 @@ func listenServer(conn net.Conn, channel chan string) {
 		utils.Check(err)
 		netData = strings.TrimSpace(string(netData))
 		channel <- netData
-		utils.Logging("Server listener", "J'ai reçu " + netData)
 	}
 }
 
