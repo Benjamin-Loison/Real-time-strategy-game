@@ -65,7 +65,7 @@ func updater(channels map[int]chan string, stopper_chan chan string){
                                 if ok {
                                     u.FlowTarget = event.Dest
                                     u.FlowStep = ffstep
-                                    u.FlowField = flowField
+                                    u.FlowField = &flowField
                                 }
                             }
                         }
@@ -169,7 +169,7 @@ func gameLoop(quit chan string){
                         toBeUpdated = append(toBeUpdated,k)
                         x := u.X / ffstep
                         y := u.Y / ffstep
-                        dir := rl.Vector2Normalize(u.FlowField[x][y])
+                        dir := rl.Vector2Normalize((*u.FlowField)[x][y])
                         u.X += int32(dir.X*u.Speed*float32(utils.TileSize))
                         u.Y += int32(dir.X*u.Speed*float32(utils.TileSize))
                         newCoord := rl.Vector2{X: float32(u.X) , Y : float32(u.Y)}
