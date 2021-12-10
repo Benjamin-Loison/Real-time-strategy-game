@@ -164,8 +164,29 @@ func RunGui(gmap *utils.Map,
 			}
 
 			if (rl.IsMouseButtonPressed(rl.MouseRightButton)) { // && len(selectedUnits)> 0){
-                fmt.Println(rl.GetScreenToWorld2D(rl.GetMousePosition(),camera))
-                flowField = utils.PathFinding(*gmap,rl.GetScreenToWorld2D(rl.GetMousePosition(),camera),ffstep)
+                //fmt.Println(rl.GetScreenToWorld2D(rl.GetMousePosition(),camera))
+                //flowField = utils.PathFinding(*gmap,rl.GetScreenToWorld2D(rl.GetMousePosition(),camera),ffstep)
+				
+				// We send the order to move units to the server
+				dest := rl.GetScreenToWorld2D(rl.GetMousePosition(), camera)
+				units := []string{}
+
+				for k := range (*players)[client_id].Units {
+					if selectedUnits[k] {
+						units = append(units, k)
+					}
+				}
+
+				move := events.MoveUnits_e{Units: units, Dest: dest}
+				data, err := json.Marshal(move)
+				utils.Check(err)
+				e := events.Event{EventType: events.MoveUnits, Data: string(data)}
+				e_marsh, err := json.Marshal(e)
+				utils.Check(err)
+				chan_gui_link<-string(e_marsh)
+				has_send++
+
+
 			}
 
 			if (rl.IsMouseButtonPressed(rl.MouseLeftButton)){
