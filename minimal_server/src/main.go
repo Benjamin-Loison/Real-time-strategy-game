@@ -32,9 +32,7 @@ var (
 
 // broadcast send msg to all the channels to which clients listen
 func broadcast(channels map[int]chan string, msg string) {
-	utils.Logging("broadcast", fmt.Sprintf("(0) (%s)", msg))
 	channels[0] <- msg // Sending to player 0
-	utils.Logging("broadcast", fmt.Sprintf("(1) (%s)", msg))
 	channels[1] <- msg // Sending to player 1
 	utils.Logging("broadcast", fmt.Sprintf("done(%s).", msg))
 }
@@ -49,12 +47,12 @@ func register(id int) chan string {
 // sent on the updater_chan channel and to broadcast them
 // to the client when needed
 func updater(channels map[int]chan string, stopper_chan chan string){
+	technologicalTree := LoadTechnologicalTree()
 	for{
 		select{
 		case e := <-updater_chan:
 			switch e.EventType {
 				case events.ChatEvent:
-					utils.Logging("Updater (CHAT)", fmt.Sprintf("%s", e.Data))
 					broadcast(channels, fmt.Sprintf("CHAT:%s", e.Data))
 					break
                 case events.MoveUnits:
@@ -76,7 +74,16 @@ func updater(channels map[int]chan string, stopper_chan chan string){
                         }
                     }
                     PlayersRWLock.Unlock()
-
+				case events.BuildEvent:
+					// Load the event data
+					event := &events.BuildBuilding_e{}
+					err := json.Unmarshal([]byte(e.Data),event)
+					utils.Check(err)
+					// Launch a go routine to wait for the construction:
+					go Build(channels, event, technologicalTree)
+					txt, err := json.Marshal(e)
+					utils.Check(err)
+					broadcast(channels, string(txt))
 				default:
 					utils.Logging("Updater", "Received an unhandeled event")
 					break

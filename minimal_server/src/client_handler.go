@@ -81,10 +81,6 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 						var client_event = &events.Event{}
 						err := json.Unmarshal([]byte(x), client_event)
 						utils.Check(err)
-
-						// should now send to the updater
-						utils.Logging("CLIENT_HANDLER",
-							fmt.Sprintf("(%d) Sending info to updater", id))
 						updater_chan<-*client_event
 						utils.Logging("CLIENT_HANDLER",
 							fmt.Sprintf("(%d) Info sent to updater", id))
