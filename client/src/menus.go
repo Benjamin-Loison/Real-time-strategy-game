@@ -15,10 +15,22 @@ func FindMenuByRef(menus []Menu_t, ref int) Menu_t {
 	}
 }
 
+
+func FindActionByRef(actions []Action_t, ref int) Action_t {
+	for i := 0 ; i < len(actions); i ++ {
+		if actions[i].Ref == ref {
+			return actions[i]
+		}
+	}
+	panic("Could not find the required action")
+}
+
 func ActionTypeOfString(s string) ActionType {
 	switch (s) {
 		case "Building":
 			return ActionBuilding
+		case "Quit":
+			return ActionQuitGame
 		default:
 			panic("Unknown action type.")
 	}

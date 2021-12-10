@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"bufio"
 	"encoding/json"
 	"fmt"
@@ -48,11 +49,13 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 							fmt.Sprintf("(%d) chat string sent: %s",
 								id,
 								x))
+					} else if x == "CLIENT_ERROR" {
+						os.Exit(0)
 					} else { // on est sur un event
 						writer.Write([]byte(fmt.Sprintf("%s\n", x)))
 						writer.Flush()
 						utils.Logging("CLIENT_HANDLER",
-							fmt.Sprintf("(%d) was sent event %d",
+							fmt.Sprintf("(%d) was sent event %s",
 								id,
 								x))
 					}

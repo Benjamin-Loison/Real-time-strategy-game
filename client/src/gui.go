@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	_ "image/png"
 	"math"
 	"time"
@@ -147,13 +148,14 @@ func RunGui(gmap *utils.Map,
 				camera.Zoom /= zoomFactor
 			}
 			if (rl.IsKeyDown(config.Keys.Menu)){
-				if (currentMenu == -1 && time.Since(lastInputTime) > time.Second) {
-					currentState = StateMenu
-					currentMenu = 0
+				if ((currentState & StateMenu > 0) && time.Since(lastInputTime) > time.Second) {
+					utils.Logging("GUI", "Exiting menu mode")
+					currentState -= StateMenu
 					lastInputTime = time.Now()
 				} else if (time.Since(lastInputTime) > time.Second) {
-					currentState = StateNone
-					currentMenu = -1
+					utils.Logging("GUI", "Entering menu mode")
+					currentState += StateMenu
+					currentMenu = -1// undefined menu
 					lastInputTime = time.Now()
 				}
 			}
@@ -201,43 +203,6 @@ func RunGui(gmap *utils.Map,
 				for k, v := range (*players)[client_id].Units {
 					if rl.CheckCollisionCircleRec(rl.Vector2{float32(v.X),float32(v.Y)}, utils.Unit_size, getRectangle2Pt(rl.GetScreenToWorld2D( selectionStart, camera),  rl.GetScreenToWorld2D( rl.GetMousePosition(), camera))  ) {
 						selectedUnits[k] = true
-					}
-				}
-			}
-		}
-
-		// Check wether a menu has to be printed
-		if (currentState & StateMenu > 0) {
-			menu_options := make(map[int32]MenuElement_t)
-			if currentMenu >= 0 {
-				// Print the current menu and its elements, and check for its hotkeys:
-				current_menu := FindMenuByRef(config_menus.Menus, currentMenu)
-				// Menu title
-				rl.DrawText(current_menu.Title, 0, 0, 40, rl.Red)
-				// Menu options and keys
-				for i := 0 ; i < len(current_menu.Elements) ; i ++ {
-					rl.DrawText(current_menu.Elements[i].Name,
-						100,
-						int32(40 + (20 * i)),
-						15,
-						rl.Blue)
-
-					// Adding the menu option to the [menu_options] mapping
-					menu_options[current_menu.Elements[i].Key] = current_menu.Elements[i]
-				}
-			}
-			// Check the delay since last interaction
-			if(time.Since(lastInputTime) > time.Second) {
-				for key, val := range menu_options {
-					if(rl.IsKeyDown(key)) {
-						switch val.Type {
-							case MenuElementSubMenu:
-								currentMenu = val.Ref
-								lastInputTime = time.Now()
-								break
-							default:
-								break
-						}
 					}
 				}
 			}
@@ -303,6 +268,71 @@ func RunGui(gmap *utils.Map,
 				selRect := getRectangle2Pt(selectionStart, rl.GetMousePosition() )
 				rl.DrawRectangleLines( selRect.ToInt32().X , selRect.ToInt32().Y, selRect.ToInt32().Width, selRect.ToInt32().Height, rl.Magenta)
 			}
+
+
+		// Check wether a menu has to be printed
+		if (currentState & StateMenu > 0) {
+			if currentMenu < 0 {
+				// One must define a menu
+				if len(selectedUnits) > 0 {
+					currentMenu = 1 // Selection menu
+				} else {
+					currentMenu = 0 // Default menu
+				}
+				utils.Logging("GUI",
+					fmt.Sprintf("Choosing the current menu: %d", currentMenu))
+			}
+			menu_options := make(map[int32]MenuElement_t, 0)
+			if currentMenu >= 0 {
+				// Print the current menu and its elements, and check for its hotkeys:
+				current_menu := FindMenuByRef(config_menus.Menus, currentMenu)
+				// Menu title
+				rl.DrawText(current_menu.Title, 0, 0, 40, rl.Red)
+				// Menu options and keys
+				for i := 0 ; i < len(current_menu.Elements) ; i ++ {
+					rl.DrawText(
+						fmt.Sprintf("%c) %s",
+							current_menu.Elements[i].Key,
+							current_menu.Elements[i].Name),
+						100,
+						int32(40 + (20 * i)),
+						15,
+						rl.Blue)
+
+					// Adding the menu option to the [menu_options] mapping
+					menu_options[current_menu.Elements[i].Key] = current_menu.Elements[i]
+				}
+			}
+			// Check the delay since last interaction
+			if(time.Since(lastInputTime) > time.Second) {
+				for key, val := range menu_options {
+					if(rl.IsKeyDown(key)) {
+						switch val.Type {
+							case MenuElementSubMenu:
+								utils.Logging("GUI",
+									fmt.Sprintf("Switching to the menu %d.",
+										currentMenu))
+								currentMenu = val.Ref
+								lastInputTime = time.Now()
+								break
+							case MenuElementAction:
+								action := FindActionByRef(config_menus.Actions, val.Ref)
+								utils.Logging("GUI",
+									fmt.Sprintf("Executing the action %d: %s",
+										val.Ref, action.Title))
+								if action.Type == ActionQuitGame {
+									os.Exit(0)
+								} else {
+									utils.Logging("GUI",
+										fmt.Sprintf("Unknown action `%s`", action.Title))
+								}
+								break
+						}
+					}
+				}
+			}
+		}
+
 
 		// Recompute the location of messages
 		if time.Since(lastMessagesUpdate) > time.Second {
