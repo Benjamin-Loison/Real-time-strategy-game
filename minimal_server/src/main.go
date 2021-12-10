@@ -23,7 +23,6 @@ var (
 )
 
 func broadcast(channels map[int]chan string, msg string) {
-	time.Sleep(5 * time.Second)
 	utils.Logging("broadcast", fmt.Sprintf("(0) (%s)", msg))
 	channels[0] <- msg // Sending to player 0
 	utils.Logging("broadcast", fmt.Sprintf("(1) (%s)", msg))
