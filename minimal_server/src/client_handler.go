@@ -33,12 +33,12 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 	keepGoing := true
 	go func() {
 		for keepGoing {
-			utils.Logging("CLIENT_HANDLER", fmt.Sprintf("(%d) Ready to read (main_chan).", id))
+			//utils.Logging("CLIENT_HANDLER", fmt.Sprintf("(%d) Ready to read (main_chan).", id))
 			select {
 				case x :=<-main_chan :
-					utils.Logging("CLIENT_HANDLER",
+					/*utils.Logging("CLIENT_HANDLER",
 						fmt.Sprintf("(%d) from main_chan %s",
-							id, x))
+							id, x))*/
 
 					if x == "QUIT" {
 						writer.Write([]byte("QUIT\n"))
