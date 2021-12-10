@@ -98,8 +98,9 @@ func PathFinding(mapp Map, endPos rl.Vector2, step int32) [][]rl.Vector2 {
 		for y, _ := range line {
 			min_cost := float32(^uint16(0))
 
-            if integration_field[x][y] == 0 || cost_field[x][y] == ^uint16(0) {
-                flow_field[x][y] = rl.Vector2{X: 0.0, Y: 0.0}
+            flow_field[x][y] = rl.Vector2{X: 0.0, Y: 0.0}
+            //if integration_field[x][y] == 0 || cost_field[x][y] == ^uint16(0) {
+            if integration_field[x][y] == 0 {
                 continue
             }
 
@@ -113,7 +114,7 @@ func PathFinding(mapp Map, endPos rl.Vector2, step int32) [][]rl.Vector2 {
 
 				if integration_field[v_x][v_y] < min_cost {
 					min_cost = integration_field[v_x][v_y]
-                    flow_field[x][y] = rl.Vector2{X: float32(voisin.X), Y: float32(voisin.Y)}
+                    flow_field[x][y] = rl.Vector2Normalize( rl.Vector2{X: float32(voisin.X), Y: float32(voisin.Y)})
 				}
 			}
 		}

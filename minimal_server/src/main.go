@@ -58,23 +58,30 @@ func updater(channels map[int]chan string, stopper_chan chan string){
 					broadcast(channels, fmt.Sprintf("CHAT:%s", e.Data))
 					break
                 case events.MoveUnits:
+					utils.Logging("Updater (UPDATE)", fmt.Sprintf("%s", e.Data))
                     event := &events.MoveUnits_e{}
                     err := json.Unmarshal([]byte(e.Data),event)
                     utils.Check(err)
                     PlayersRWLock.Lock()
-                    flowField := utils.PathFinding(gmap,event.Dest, ffstep)
-                    if flowField != nil {
+                    flowField := &[][]rl.Vector2{}
+                    *flowField = utils.PathFinding(gmap,event.Dest, ffstep)
+                    fmt.Println(event)
+                    if *flowField != nil && len(*flowField) > 0 {
                         for _ , us := range event.Units {
                             for _ , p := range Players {
                                 u, ok := p.Units[us]
                                 if ok {
+					                //utils.Logging("Updater", "TARGET FOUND &@~~ø~đ")
                                     u.FlowTarget = event.Dest
                                     u.FlowStep = ffstep
-                                    u.FlowField = &flowField
+                                    u.FlowField = flowField
+                                    p.Units[us] = u
                                 }
                             }
                         }
                     }
+                    //fmt.Println(flowField)
+                    //fmt.Println(Players)
                     PlayersRWLock.Unlock()
 
 				default:
@@ -167,28 +174,42 @@ func gameLoop(quit chan string){
 			break
 		default: // not quitting, updating game state
 			serverTime += 1
-			//utils.Logging("GameLoop",fmt.Sprintf("Server time = %d",serverTime))
             PlayersRWLock.Lock()
 			// Moving units to their destination
             var toBeUpdated []string
             for _,p := range Players {
                 for k, u := range p.Units {
-                    if u.FlowField !=nil {
+                    if u.FlowField !=nil && len(*u.FlowField) > 0 {
                         toBeUpdated = append(toBeUpdated,k)
                         x := u.X / ffstep
                         y := u.Y / ffstep
-                        dir := rl.Vector2Normalize((*u.FlowField)[x][y])
-                        u.X += int32(dir.X*u.Speed*float32(utils.TileSize))
-                        u.Y += int32(dir.X*u.Speed*float32(utils.TileSize))
+                        //fmt.Println("FlOW FIELD #############")
+                        //fmt.Println(*u.FlowField)
+                        //fmt.Println(x)
+                        //fmt.Println(y)
+                        //fmt.Println(u)
+                        //fmt.Println((*u.FlowField)[x][y])
+                        dir := (*u.FlowField)[x][y]
+                        //u.X += int32(dir.X*u.Speed*float32(utils.TileSize))
+                        //u.Y += int32(dir.X*u.Speed*float32(utils.TileSize))
+                        //fmt.Println(dir)
+                        u.X += int32(dir.X*2)
+                        u.Y += int32(dir.Y*2)
                         newCoord := rl.Vector2{X: float32(u.X) , Y : float32(u.Y)}
                         if rl.Vector2Distance(newCoord, u.FlowTarget) <= 1.5*float32(utils.TileSize) {
                             u.FlowField = nil
                         }
+                        //fmt.Println("POST MODIF #################")
+                        //fmt.Println(u)
+                        p.Units[k] = u
                     }
                 }
             }
 			// Sending update to client if necessary
+			//utils.Logging("GameLoop",fmt.Sprintf("calculating update update %d", len(toBeUpdated)))
+            //fmt.Println(Players)
             if len(toBeUpdated)>0 {
+			    //utils.Logging("GameLoop","There is an update")
 				var updatedUnits []factory.Unit
                 for _, k := range toBeUpdated {
                     val, ok := Players[0].Units[k]
@@ -199,7 +220,6 @@ func gameLoop(quit chan string){
                     val, ok = Players[1].Units[k]
                     if ok {
                         updatedUnits = append(updatedUnits, val)
-                        continue
                     }
                 }
                 updateEvent := events.ServerUpdate_e{Units: updatedUnits}
@@ -208,13 +228,12 @@ func gameLoop(quit chan string){
                 event := events.Event{EventType: events.ServerUpdate, Data: string(dataupdate)}
                 dataevent, errr := json.Marshal(event)
                 utils.Check(errr)
+				//utils.Logging("gameLoop", fmt.Sprintf("Sending update %s", string(dataevent)))
 
-                PlayersRWLock.Unlock()
 
                 broadcast(channels, string(dataevent))
             }
-
-            break
+            PlayersRWLock.Unlock()
 		}
 		time.Sleep(serverSpeed * time.Millisecond)
 	}

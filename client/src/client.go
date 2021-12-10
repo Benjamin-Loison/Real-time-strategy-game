@@ -89,7 +89,7 @@ func run_client(config Configuration_t,
 				chan_link_gui<- s2
 				utils.Logging("client", fmt.Sprintf("I recieved '%s'", s2))
 			} else {
-				utils.Logging("client", fmt.Sprintf("Server: %s", s2))
+                utils.Logging("client", fmt.Sprintf("Server: %s", s2))
                 var event = &events.Event{}
                 err := json.Unmarshal([]byte(s2), event)
                 utils.Check(err)
@@ -101,15 +101,15 @@ func run_client(config Configuration_t,
                     playersRWLock.Lock()
                     
                     for _, u := range update.Units {
-        
-                        _,ok := (*players)[0].Units[string(u.Id)]
+                        key := strconv.Itoa(int(u.Id))
+                        _,ok := (*players)[0].Units[key]
                         if ok {
-                            (*players)[0].Units[string(u.Id)] = u
+                            (*players)[0].Units[key] = u
                             continue
                         }
-                        _,ok = (*players)[1].Units[string(u.Id)]
+                        _,ok = (*players)[1].Units[key]
                         if ok {
-                            (*players)[1].Units[string(u.Id)] = u
+                            (*players)[1].Units[key] = u
                         }
         
                     }

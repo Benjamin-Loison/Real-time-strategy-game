@@ -59,7 +59,7 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 						utils.Logging("CLIENT_HANDLER",
 							fmt.Sprintf("(%d) was sent event %s",
 								id,
-								x))
+                                x[0:80]))
 					}
 					break
 			}

@@ -12,6 +12,7 @@ import (
 	"github.com/gen2brain/raylib-go/raylib"
 	"strings"
 	"sort"
+    "strconv"
 )
 
 type MessageItem_t struct {
@@ -173,7 +174,7 @@ func RunGui(gmap *utils.Map,
 				camera.Target.Y = map_middle.Y
 			}
 
-			if (rl.IsMouseButtonPressed(rl.MouseRightButton)) { // && len(selectedUnits)> 0){
+			if (rl.IsMouseButtonPressed(rl.MouseRightButton)) && len(selectedUnits)> 0 {
                 //fmt.Println(rl.GetScreenToWorld2D(rl.GetMousePosition(),camera))
                 //flowField = utils.PathFinding(*gmap,rl.GetScreenToWorld2D(rl.GetMousePosition(),camera),ffstep)
 				
@@ -181,11 +182,19 @@ func RunGui(gmap *utils.Map,
 				dest := rl.GetScreenToWorld2D(rl.GetMousePosition(), camera)
 				units := []string{}
 
-				for k := range (*players)[client_id].Units {
-					if selectedUnits[k] {
-						units = append(units, k)
+                fmt.Println("SELECTED UNITS ##########")
+                fmt.Println(selectedUnits)
+                fmt.Println(*players)
+
+                playersRWLock.RLock()
+				for _, u := range (*players)[client_id].Units {
+                    s := strconv.Itoa(int(u.Id))
+                    fmt.Printf("key : %s\n",s)
+					if selectedUnits[ s ] {
+						units = append(units, s)
 					}
 				}
+                playersRWLock.RUnlock()
 
 				move := events.MoveUnits_e{Units: units, Dest: dest}
 				data, err := json.Marshal(move)
@@ -260,12 +269,14 @@ func RunGui(gmap *utils.Map,
 				// DRAW MAP
 				utils.DrawMap(*gmap)
 				// DRAW UNITS
+                playersRWLock.Lock()
 				for i, player := range *players {
 					for k , player_unit := range player.Units {
 						_, found := selectedUnits[k]
 						utils.DrawUnit(player_unit, i== client_id, found )
 					}
 				}
+                playersRWLock.Unlock()
                 // DEBUG
                 if flowField != nil {
                     utils.DrawFlowField(flowField,ffstep)

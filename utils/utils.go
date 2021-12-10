@@ -15,7 +15,11 @@ import (
 )
 
 func Logging(src string, msg string) {
-	fmt.Printf("%s [%15s] %s\n", time.Now().Format(time.ANSIC), src, msg)
+    if len(msg) > 160 {
+        fmt.Printf("%s [%15s] %s\n", time.Now().Format(time.ANSIC), src, msg[0:160])
+    }else {
+	    fmt.Printf("%s [%15s] %s\n", time.Now().Format(time.ANSIC), src, msg)
+    }
 }
 
 type TileType int64
