@@ -6,22 +6,13 @@ import (
 	_ "image/png"
 	"math"
 	"time"
-    "encoding/json"
+	"encoding/json"
 	"rts/events"
-    "rts/utils"
+	"rts/utils"
 	"github.com/gen2brain/raylib-go/raylib"
 	"strings"
-	"sort"
     "strconv"
 )
-
-type MessageItem_t struct {
-	Ownership bool
-	Message string
-	Position_x int
-	Position_y int
-	ArrivalTime time.Time
-}
 
 const (
 	screenWidth = 1280
@@ -47,14 +38,6 @@ var (
 	currentAction = -1
 
 	lastInputTime = time.Now()
-
-	max_messages_nb = 15
-	message_duration = 10 * time.Second
-	message_font_size = 15
-	message_max_len = 20
-	message_color = rl.Red
-	message_color_ours = rl.Blue
-	message_padding = 5
 
 	selectedUnits = map[string]bool{}
 )
@@ -348,7 +331,6 @@ func RunGui(gmap *utils.Map,
 									need_pause = true
 									keys := GenKeysSubMenu(config.Keys)
 									for i := 0 ; i < len(keys) ; i ++ {
-										fmt.Println("Dessin '%s'", keys[i])
 										rl.DrawText(
 											keys[i],
 											100,
@@ -400,84 +382,6 @@ func RunGui(gmap *utils.Map,
 			need_pause = false
 		}
 	}
-}
-
-
-
-
-/*                +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-                  | Messages auxiliary functions |
-                  +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+ */
-func SplitMessage(m string, length int) []string {
-	split := make([]string, 0)
-	if len(m) < 2 {
-		return split
-	}
-	m = m[1:]
-	for {
-		if len(m) <= length {
-			return append(split, m)
-		} else {
-			split = append(split, m[:length])
-			m = m[length:]
-		}
-	}
-}
-
-func FilterMessages(messages []MessageItem_t) []MessageItem_t {
-	res := make([]MessageItem_t, 0)
-	for i := 0 ; i < len(messages) ; i ++ {
-		if (time.Since(messages[i].ArrivalTime) < message_duration) {
-			res = append(res, messages[i])
-		}
-	}
-	return res
-}
-
-func organizeMessages(messages []MessageItem_t) {
-	// The messages are printed on the bottom left corner of the screen
-	for i := 0 ; i < len(messages) ; i ++ {
-		messages[i].Position_x = 0
-		messages[i].Position_y = rl.GetScreenHeight() - (i+1) * (message_font_size + message_padding)
-	}
-}
-
-func NewMessageItem(current []MessageItem_t, new_message string, has_send int) ([]MessageItem_t) {
-	ownership := has_send > 0
-	if len(current) == max_messages_nb {
-		// On enlève le premier!
-		return append(current[1:], (MessageItem_t {ownership, new_message, 0, 0, time.Now()}))
-	}
-	return append(current, (MessageItem_t {ownership, new_message, 0, 0, time.Now()}))
-}
-
-func isPrintable(key int32) (bool) {
-	return key >= 32 && key <= 126
-}
-
-
-
-/*                +~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-                  | Menus auxiliary functions |
-                  +~~~~~~~~~~~~~~~~~~~~~~~~~~~+ */
-func GenKeysSubMenu(k Keys_t) []string {
-	t := make([]string, 0)
-	m := make(map[string]int32)
-	m["←"] = k.Left
-	m["→"] = k.Right
-	m["↑"] = k.Up
-	m["↓"] = k.Down
-	m["+"] = k.ZoomIn
-	m["-"] = k.ZoomOut
-	m["chat"] = k.Chat
-	m["Menu"] = k.Menu
-	m["ResetCamera"] = k.ResetCamera
-	m["chat"] = k.Chat
-	for s, c := range m {
-		t = append(t, fmt.Sprintf("%c) %s", c, s))
-	}
-	sort.Strings(t)
-	return t
 }
 
 

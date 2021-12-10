@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"sort"
+	)
+
 func FindMenuByRef(menus []Menu_t, ref int) Menu_t {
 	/*
 	for i := 0 ; i < len(menus); i ++ {
@@ -47,3 +52,27 @@ func MenuElementTypeIfString(s string) MenuElementType {
 	}
 }
 
+
+
+/*                +~~~~~~~~~~~~~~~~~~~~~~~~~+
+                  | GUI auxiliary functions |
+                  +~~~~~~~~~~~~~~~~~~~~~~~~~+ */
+func GenKeysSubMenu(k Keys_t) []string {
+	t := make([]string, 0)
+	m := make(map[string]int32)
+	m["←"] = k.Left
+	m["→"] = k.Right
+	m["↑"] = k.Up
+	m["↓"] = k.Down
+	m["+"] = k.ZoomIn
+	m["-"] = k.ZoomOut
+	m["chat"] = k.Chat
+	m["Menu"] = k.Menu
+	m["ResetCamera"] = k.ResetCamera
+	m["chat"] = k.Chat
+	for s, c := range m {
+		t = append(t, fmt.Sprintf("%c) %s", c, s))
+	}
+	sort.Strings(t)
+	return t
+}

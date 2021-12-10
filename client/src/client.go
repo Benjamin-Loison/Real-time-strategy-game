@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"strings"
+	"time"
 	"encoding/json"
 	"rts/utils"
     "rts/events"
@@ -44,15 +45,18 @@ func run_client(config Configuration_t,
 	// Fetch map, units and players information
 	GetMapInfo(serv_conn, gmap, players)
 
+	// Launch a goroutine that listens to the server
+	go listenServer(serv_conn, chan_from_server)
+
     // Wait for the server to launch the game
 	utils.Logging("client", "waiting for go")
-	reader := bufio.NewReader(serv_conn)
-	for {
-		netData, err := reader.ReadString('\n')
-		utils.Check(err)
-		netData = strings.TrimSpace(string(netData))
-		if netData == "GO" {
-			break
+	go_rec := false
+	for !go_rec {
+		select {
+			case s := <- chan_from_server:
+				if s == "GO" {
+					go_rec = true
+				}
 		}
 	}
 	utils.Logging("client", "go received")
@@ -64,66 +68,74 @@ func run_client(config Configuration_t,
 		return
 	}
 
-	// Launch a goroutine that listens to the server
-	go listenServer(serv_conn, chan_from_server)
-
 	// Main loop
 	writer := bufio.NewWriter(serv_conn)
-	for {
-		select {
-		case s1 := <-chan_gui_link:
-			if s1 == "QUIT" {
-				chan_from_server<-"QUIT"
-				os.Exit(0)
-			} else {
-				_,err := writer.Write([]byte(s1 + "\n"))
-				writer.Flush()
-				utils.Check(err)
-				utils.Logging("client", "J'ai écrit " + s1)
+	keepGoing := true
+	go func() {
+		for keepGoing {
+			select {
+			case s1 := <-chan_gui_link:
+				if s1 == "QUIT" {
+					chan_from_server<-"QUIT"
+					keepGoing = false
+					os.Exit(0)
+				} else {
+					_,err := writer.Write([]byte(s1 + "\n"))
+					writer.Flush()
+					utils.Check(err)
+					utils.Logging("client", "J'ai écrit " + s1)
+				}
 			}
-		case s2 := <-chan_from_server:
-			if s2 == "QUIT" {
-				chan_link_gui<-"QUIT"
-				os.Exit(0)
-			} else if strings.HasPrefix(s2, "CHAT:") {
-				chan_link_gui<- s2
-				utils.Logging("client", fmt.Sprintf("I recieved '%s'", s2))
-			} else {
-                utils.Logging("client", fmt.Sprintf("Server: %s", s2))
-                var event = &events.Event{}
-                err := json.Unmarshal([]byte(s2), event)
-                utils.Check(err)
-                switch event.EventType {
-                case events.ServerUpdate:
-                    var update = &events.ServerUpdate_e{}
-                    err := json.Unmarshal([]byte(event.Data), update)
-                    utils.Check(err)
-                    playersRWLock.Lock()
-                    
-                    for _, u := range update.Units {
-                        key := strconv.Itoa(int(u.Id))
-                        _,ok := (*players)[0].Units[key]
-                        if ok {
-                            (*players)[0].Units[key] = u
-                            continue
-                        }
-                        _,ok = (*players)[1].Units[key]
-                        if ok {
-                            (*players)[1].Units[key] = u
-                        }
-        
-                    }
-
-
-                    playersRWLock.Unlock()
-
-                default:
-				    utils.Logging("client", "Unknown event\n")
-                }
-			}
-		default:
 		}
+	} ()
+	go func() {
+		for keepGoing {
+			select {
+				case s2 := <-chan_from_server:
+					if s2 == "QUIT" {
+						chan_link_gui<-"QUIT"
+						os.Exit(0)
+					} else if strings.HasPrefix(s2, "CHAT:") {
+						chan_link_gui<- s2
+						utils.Logging("client", fmt.Sprintf("I recieved '%s'", s2))
+					}   else {
+                        utils.Logging("client", fmt.Sprintf("Server: %s", s2))
+                        var event = &events.Event{}
+                        err := json.Unmarshal([]byte(s2), event)
+                        utils.Check(err)
+                        switch event.EventType {
+                        case events.ServerUpdate:
+                            var update = &events.ServerUpdate_e{}
+                            err := json.Unmarshal([]byte(event.Data), update)
+                            utils.Check(err)
+                            playersRWLock.Lock()
+                            for _, u := range update.Units {
+                                key := strconv.Itoa(int(u.Id))
+                                _,ok := (*players)[0].Units[key]
+                                if ok {
+                                    (*players)[0].Units[key] = u
+                                    continue
+                                }
+                                _,ok = (*players)[1].Units[key]
+                                if ok {
+                                    (*players)[1].Units[key] = u
+                                }
+                            }
+
+
+                            playersRWLock.Unlock()
+
+                        default:
+                            utils.Logging("client", "Unknown event\n")
+                        }
+                    }
+				}
+			}
+	}()
+	for keepGoing {
+		time.Sleep(60 * time.Second)
 	}
+	os.Exit(0)
 }
 
 
