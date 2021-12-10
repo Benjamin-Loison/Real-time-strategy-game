@@ -34,7 +34,7 @@ const (
 	StateChat GameState = 2
 	StateMenu GameState = 4
 	StateWaitClick GameState = 8
-    ffstep = utils.TileSize/2.0
+    ffstep = utils.TileSize
 )
 
 var (
