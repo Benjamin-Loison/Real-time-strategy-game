@@ -25,9 +25,11 @@ var (
 )
 
 func broadcast(channels map[int]chan string, msg string) {
-	utils.Logging("broadcast", msg)
+	utils.Logging("broadcast", fmt.Sprintf("(0) (%s)", msg))
 	channels[0] <- msg // Sending to player 0
+	utils.Logging("broadcast", fmt.Sprintf("(1) (%s)", msg))
 	channels[1] <- msg // Sending to player 1
+	utils.Logging("broadcast", fmt.Sprintf("done(%s).", msg))
 }
 
 func register(id int) chan string {
@@ -56,6 +58,7 @@ func updater(channels map[int]chan string, stopper_chan chan string){
 		default:
 			break
 		}
+		time.Sleep(10 * time.Millisecond)
 	}
 }
 
@@ -93,7 +96,7 @@ func main() {
 	broadcast(channels, "START")
 	go gameLoop(register(-2))
 
-	//wait for end game
+	// wait for end game
 	for nb_clients > 0{
 		for _, c := range channels {
 			select {
@@ -116,6 +119,7 @@ func main() {
 				break
 			}
 		}
+		time.Sleep(10 * time.Millisecond)
 	}
 	broadcast(channels, "QUIT")
 	os.Exit(0)
