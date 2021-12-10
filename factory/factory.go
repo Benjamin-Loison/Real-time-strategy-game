@@ -23,7 +23,7 @@ type Unit struct {
     LastAttack uint32 `json:"LastAttack"` // time of last attack
     AttackCoolDown uint32 `json:"AttackCoolDown"` // number of server ticks between atacks
     Speed float32 `json:"Speed"`
-    FlowField [][]rl.Vector2
+    FlowField *[][]rl.Vector2
     FlowStep  int32
     FlowTarget rl.Vector2
 }
