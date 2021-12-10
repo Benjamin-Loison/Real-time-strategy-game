@@ -5,10 +5,12 @@ import (
 	"net"
 	"os"
 	"time"
+    "encoding/json"
 
 	"rts/events"
 	"rts/utils"
 	"rts/factory"
+    "sync"
 )
 
 const (
@@ -17,6 +19,7 @@ const (
 
 var (
 	Players []utils.Player
+    PlayersRWLock = sync.RWMutex{}
 	channels = make(map[int]chan string)
 	updater_chan = make(chan events.Event)
 	gmap utils.Map
@@ -46,6 +49,17 @@ func updater(channels map[int]chan string, stopper_chan chan string){
 					utils.Logging("Updater (CHAT)", fmt.Sprintf("%s", e.Data))
 					broadcast(channels, fmt.Sprintf("CHAT:%s", e.Data))
 					break
+                case events.MoveUnits:
+                    event := &events.MoveUnits_e{}
+                    err := json.Unmarshal([]byte(e.Data),event)
+                    utils.Check(err)
+                    PlayersRWLock.Lock()
+                    for i , _ := range event.Units {
+                        for p ,_ := range Players {
+                            
+                        }
+                    }
+
 				default:
 					utils.Logging("Updater", "Received an unhandeled event")
 					break
