@@ -101,7 +101,9 @@ func RunGui(gmap *utils.Map,
 			} else if strings.HasPrefix(x, "CHAT:") {
 				currentMessages = NewMessageItem(currentMessages, x[5:], has_send)
 				organizeMessages(currentMessages)
-				has_send -= 1
+				if has_send > 0 {
+					has_send -= 1
+				}
 			} else {
 				utils.Logging("gui", fmt.Sprintf("Je ne comprends pas %s", x))
 			}
