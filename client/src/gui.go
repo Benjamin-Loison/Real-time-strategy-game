@@ -11,6 +11,7 @@ import (
     "rts/utils"
 	"github.com/gen2brain/raylib-go/raylib"
 	"strings"
+	"sort"
 )
 
 type MessageItem_t struct {
@@ -67,6 +68,9 @@ func RunGui(gmap *utils.Map,
 	has_send := 0
 	currentMessages := make([]MessageItem_t, 0)
 	lastMessagesUpdate := time.Now()
+	need_pause := false
+
+	var currentAction Action_t
     
     var flowField  [][]rl.Vector2 = nil
 
@@ -272,6 +276,9 @@ func RunGui(gmap *utils.Map,
 
 		// Check wether a menu has to be printed
 		if (currentState & StateMenu > 0) {
+			if(time.Since(lastInputTime) > 10 * time.Second) {
+				currentState -= StateMenu
+			}
 			if currentMenu < 0 {
 				// One must define a menu
 				if len(selectedUnits) > 0 {
@@ -316,15 +323,28 @@ func RunGui(gmap *utils.Map,
 								lastInputTime = time.Now()
 								break
 							case MenuElementAction:
-								action := FindActionByRef(config_menus.Actions, val.Ref)
+								currentAction = FindActionByRef(config_menus.Actions, val.Ref)
 								utils.Logging("GUI",
 									fmt.Sprintf("Executing the action %d: %s",
-										val.Ref, action.Title))
-								if action.Type == ActionQuitGame {
+										val.Ref, currentAction.Title))
+								if currentAction.Type == ActionQuitGame {
 									os.Exit(0)
+								} else if currentAction.Type == ActionMappedKeys {
+									need_pause = true
+									keys := GenKeysSubMenu(config.Keys)
+									for i := 0 ; i < len(keys) ; i ++ {
+										fmt.Println("Dessin '%s'", keys[i])
+										rl.DrawText(
+											keys[i],
+											100,
+											int32(75 + (20 * i)),
+											15,
+											rl.Blue)
+									}
 								} else {
 									utils.Logging("GUI",
-										fmt.Sprintf("Unknown action `%s`", action.Title))
+										fmt.Sprintf("Unknown action `%s`",
+											currentAction.Title))
 								}
 								break
 						}
@@ -332,7 +352,6 @@ func RunGui(gmap *utils.Map,
 				}
 			}
 		}
-
 
 		// Recompute the location of messages
 		if time.Since(lastMessagesUpdate) > time.Second {
@@ -361,6 +380,10 @@ func RunGui(gmap *utils.Map,
 			}
 		}
 		rl.EndDrawing();
+		if need_pause {
+			time.Sleep(time.Second)
+			need_pause = false
+		}
 	}
 }
 
@@ -415,6 +438,31 @@ func NewMessageItem(current []MessageItem_t, new_message string, has_send int) (
 
 func isPrintable(key int32) (bool) {
 	return key >= 32 && key <= 126
+}
+
+
+
+/*                +~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+                  | Menus auxiliary functions |
+                  +~~~~~~~~~~~~~~~~~~~~~~~~~~~+ */
+func GenKeysSubMenu(k Keys_t) []string {
+	t := make([]string, 0)
+	m := make(map[string]int32)
+	m["←"] = k.Left
+	m["→"] = k.Right
+	m["↑"] = k.Up
+	m["↓"] = k.Down
+	m["+"] = k.ZoomIn
+	m["-"] = k.ZoomOut
+	m["chat"] = k.Chat
+	m["Menu"] = k.Menu
+	m["ResetCamera"] = k.ResetCamera
+	m["chat"] = k.Chat
+	for s, c := range m {
+		t = append(t, fmt.Sprintf("%c) %s", c, s))
+	}
+	sort.Strings(t)
+	return t
 }
 
 

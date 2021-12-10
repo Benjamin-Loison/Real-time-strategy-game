@@ -114,6 +114,7 @@ const(
 	MenuElementSubMenu = 1
 	ActionBuilding = 0
 	ActionQuitGame = 1
+	ActionMappedKeys = 2
 	)
 type MenuElement_t struct {
 	Name string

@@ -31,6 +31,8 @@ func ActionTypeOfString(s string) ActionType {
 			return ActionBuilding
 		case "Quit":
 			return ActionQuitGame
+		case "MappedKeys":
+			return ActionMappedKeys
 		default:
 			panic("Unknown action type.")
 	}
