@@ -55,7 +55,6 @@ func run_client(config Configuration_t,
 			break
 		}
 	}
-	reader.Close()
 	utils.Logging("client", "go received")
 
 	if (err != nil) {
