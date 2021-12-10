@@ -24,8 +24,8 @@
 				"Title": "Selection menu",
 				"Elements": [
 					{
-						"Name": "Build",
-						"Ref": "FirstBui",
+						"Name": "Building",
+						"Ref": "TownHall",
 						"Type": "Action",
 						"Key": "0"
 					},

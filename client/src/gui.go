@@ -338,6 +338,17 @@ func RunGui(gmap *utils.Map,
 											15,
 											rl.Blue)
 									}
+								} else if currentAction.Type == ActionBuilding {
+									build := events.BuildBuilding_e {
+										Position_x: int(rl.GetMouseX()),
+										Position_y: int(rl.GetMouseY()),
+										BuildingName: currentAction.Title }
+									data, err := json.Marshal(build)
+									utils.Check(err)
+									e := events.Event{EventType: events.BuildEvent, Data: string(data)}
+									e_marsh, err := json.Marshal(e)
+									utils.Check(err)
+									chan_gui_link<-string(e_marsh)
 								} else {
 									utils.Logging("GUI",
 										fmt.Sprintf("Unknown action `%s`",
