@@ -60,7 +60,7 @@ func organizeMessages(messages []MessageItem_t) {
 	// The messages are printed on the bottom left corner of the screen
 	for i := 0 ; i < len(messages) ; i ++ {
 		messages[i].Position_x = 0
-		messages[i].Position_y = rl.GetScreenHeight() - (i+1) * (message_font_size + message_padding)
+		messages[i].Position_y = rl.GetScreenHeight() - (i+2) * (message_font_size + message_padding)
 	}
 }
 

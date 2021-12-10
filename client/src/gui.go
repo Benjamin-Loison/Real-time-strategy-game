@@ -188,7 +188,6 @@ func RunGui(gmap *utils.Map,
 				e_marsh, err := json.Marshal(e)
 				utils.Check(err)
 				chan_gui_link<-string(e_marsh)
-				has_send++
 
 
 			}
@@ -374,6 +373,11 @@ func RunGui(gmap *utils.Map,
 					organizeMessages(currentMessages)
 				}
 			}
+		}
+		// display chat box
+		if (currentState & StateChat > 0) {
+			message_position := rl.GetScreenHeight() - (message_font_size + message_padding)
+			rl.DrawText(ChatText, 0,  int32(message_position), int32(message_font_size), message_color_ours)
 		}
 		// Print chat messages
 		for i := 0 ; i < len(currentMessages) ; i ++ {
