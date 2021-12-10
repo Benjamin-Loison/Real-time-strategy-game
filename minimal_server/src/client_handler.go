@@ -29,6 +29,7 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 	utils.Logging("CLIENT_HANDLER", fmt.Sprintf("Entering the main event loop (%d)", id))
 	keepGoing := true
 	for keepGoing {
+		utils.Logging("CLIENT_HANDLER", fmt.Sprintf("(%d) Ready to read.", id))
 		select {
 			case x :=<-main_chan :
 				utils.Logging("CLIENT_HANDLER",
@@ -73,8 +74,6 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 					utils.Logging("CLIENT_HANDLER",
 						fmt.Sprintf("(%d) Info sent to updater", id))
 				}
-				break
-			default:
 				break
 		}
 		time.Sleep(10 * time.Millisecond)

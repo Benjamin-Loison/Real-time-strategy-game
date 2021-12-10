@@ -5,7 +5,6 @@ import (
 	"net"
 	"os"
 	"time"
-
 	"rts/events"
 	"rts/utils"
 	"rts/factory"
@@ -24,6 +23,7 @@ var (
 )
 
 func broadcast(channels map[int]chan string, msg string) {
+	time.Sleep(5 * time.Second)
 	utils.Logging("broadcast", fmt.Sprintf("(0) (%s)", msg))
 	channels[0] <- msg // Sending to player 0
 	utils.Logging("broadcast", fmt.Sprintf("(1) (%s)", msg))
@@ -54,8 +54,6 @@ func updater(channels map[int]chan string, stopper_chan chan string){
 				utils.Logging("Updater", "Quitting")
 				os.Exit(0)
 			}
-		default:
-			break
 		}
 		time.Sleep(10 * time.Millisecond)
 	}
