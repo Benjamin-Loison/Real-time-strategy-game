@@ -21,8 +21,8 @@ type MoveUnits_e struct {
 }
 
 type BuildBuilding_e struct {
-	Position_x   int    `json:"Position_x"`
-	Position_y   int    `json:"Position_y"`
+	Position_x   int32  `json:"Position_x"`
+	Position_y   int32  `json:"Position_y"`
 	BuildingName string `json:"BuildingName"`
 }
 

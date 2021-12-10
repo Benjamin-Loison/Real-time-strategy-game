@@ -30,6 +30,8 @@ const (
 	StateWaitClick GameState = 8
 
     ffstep = utils.TileSize
+
+	helpSize = 13
 )
 
 var (
@@ -226,7 +228,7 @@ func RunGui(gmap *utils.Map,
 					chan_gui_link<- string(e_marsh)
 					has_send += 1
 				}
-				// Reset the lmessage and state
+				// Reset the message and state
 				ChatText = ""
 				currentState = StateNone
 			} else if (key == rl.KeyBackspace) {
@@ -340,8 +342,8 @@ func RunGui(gmap *utils.Map,
 									}
 								} else if currentAction.Type == ActionBuilding {
 									build := events.BuildBuilding_e {
-										Position_x: int(rl.GetMouseX()),
-										Position_y: int(rl.GetMouseY()),
+										Position_x: int32(rl.GetMouseX()) / utils.TileSize,
+										Position_y: int32(rl.GetMouseY()) / utils.TileSize,
 										BuildingName: currentAction.Title }
 									data, err := json.Marshal(build)
 									utils.Check(err)
@@ -349,6 +351,7 @@ func RunGui(gmap *utils.Map,
 									e_marsh, err := json.Marshal(e)
 									utils.Check(err)
 									chan_gui_link<-string(e_marsh)
+									lastInputTime = time.Now()
 								} else {
 									utils.Logging("GUI",
 										fmt.Sprintf("Unknown action `%s`",
@@ -387,6 +390,14 @@ func RunGui(gmap *utils.Map,
 					message_color)
 			}
 		}
+
+		// Print help message
+		rl.DrawText("Press ';' then 1 for the help",
+			int32(rl.GetScreenWidth() / 2),
+			int32(rl.GetScreenHeight() - helpSize),
+			int32(helpSize),
+			rl.Green)
+
 		rl.EndDrawing();
 		if need_pause {
 			time.Sleep(time.Second)

@@ -7,10 +7,18 @@ import (
 	"os"
 	"time"
 	"fmt"
-	"rts/events"
 	"rts/utils"
 
+	//rl "github.com/gen2brain/raylib-go/raylib"
 )
+
+type Building struct {
+	Name string
+	Position_x int32
+	Position_y int32
+	BuildDuration time.Duration
+	BuildStartingTime time.Time
+}
 
 type TechnologicalTree_t struct {
 	Name string `json:"Name"`
@@ -38,24 +46,7 @@ func LoadTechnologicalTree() TechnologicalTree_t {
 	return *technoTree
 }
 
-func Build(channels map[int]chan string,
-			e *events.BuildBuilding_e,
-			technoTree TechnologicalTree_t) {
-	// Check wether or not the building exists in the
-	// technological tree
-	//TODO!
-
-
-
-	// Check wether or not the player is allowed to build it
-	// TODO!
-
-
-
-	// Launch the build
-	time.Sleep(time.Second)
-
-
-	// Broadcast a message to keep the players posted
-	broadcast(channels, fmt.Sprintf("CHAT:building %s", e.BuildingName))
+func Build(b Building, t TechnologicalTree_t) {
+	gmap.Grid[b.Position_x][b.Position_y].Tile_Type = utils.Rock
 }
+
