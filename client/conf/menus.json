@@ -10,6 +10,12 @@
 						"Ref": "Quit",
 						"Type": "Action",
 						"Key": "0"
+					},
+					{
+						"Name": "MappedKeys",
+						"Ref": "MappedKeys",
+						"Type": "Action",
+						"Key": "1"
 					}
 				]
 			},
@@ -48,6 +54,11 @@
 			"Type": "Quit",
 			"Ref": "Quit",
 			"Title": "Quit the app \\(\\ddot\\smile\\)"
+		},
+		{
+			"Type": "MappedKeys",
+			"Ref": "MappedKeys",
+			"Title": "Show the keys"
 		}
 		]
 }
