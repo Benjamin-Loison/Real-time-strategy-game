@@ -34,7 +34,7 @@ const (
 	StateChat GameState = 2
 	StateMenu GameState = 4
 	StateWaitClick GameState = 8
-    ffstep = utils.TileSize
+    ffstep = utils.TileSize/2.0
 )
 
 var (
@@ -162,6 +162,7 @@ func RunGui(gmap *utils.Map,
 			}
 
 			if (rl.IsMouseButtonPressed(rl.MouseRightButton)) { // && len(selectedUnits)> 0){
+                fmt.Println(rl.GetScreenToWorld2D(rl.GetMousePosition(),camera))
                 flowField = utils.PathFinding(*gmap,rl.GetScreenToWorld2D(rl.GetMousePosition(),camera),ffstep)
 			}
 
