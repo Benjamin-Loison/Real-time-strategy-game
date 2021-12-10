@@ -179,29 +179,31 @@ func gameLoop(quit chan string){
                     }
                 }
             }
+            if len(toBeUpdated)>0 {
             var updatedUnits []factory.Unit
-            for _, k := range toBeUpdated {
-                val, ok := Players[0].Units[k]
-                if ok {
-                    updatedUnits = append(updatedUnits, val)
-                    continue
+                for _, k := range toBeUpdated {
+                    val, ok := Players[0].Units[k]
+                    if ok {
+                        updatedUnits = append(updatedUnits, val)
+                        continue
+                    }
+                    val, ok = Players[1].Units[k]
+                    if ok {
+                        updatedUnits = append(updatedUnits, val)
+                        continue
+                    }
                 }
-                val, ok = Players[1].Units[k]
-                if ok {
-                    updatedUnits = append(updatedUnits, val)
-                    continue
-                }
+                updateEvent := events.ServerUpdate_e{Units: updatedUnits}
+                dataupdate, err := json.Marshal(updateEvent)
+                utils.Check(err)
+                event := events.Event{EventType: events.ServerUpdate, Data: string(dataupdate)}
+                dataevent, errr := json.Marshal(event)
+                utils.Check(errr)
+
+                PlayersRWLock.Unlock()
+
+                broadcast(channels, string(dataevent))
             }
-            updateEvent := events.ServerUpdate_e{Units: updatedUnits}
-            dataupdate, err := json.Marshal(updateEvent)
-            utils.Check(err)
-            event := events.Event{EventType: events.ServerUpdate, Data: string(dataupdate)}
-            dataevent, errr := json.Marshal(event)
-            utils.Check(errr)
-
-            PlayersRWLock.Unlock()
-
-			broadcast(channels, string(dataevent))
 
             break
 		}
