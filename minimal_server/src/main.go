@@ -118,6 +118,7 @@ func main() {
 	}
 	// Close the listener as soon as the two clients are connected
 	listener.Close()
+	time.Sleep(time.Second)
 
 	// Launch the updater function and start the game
 	go updater(channels, register(-1))
