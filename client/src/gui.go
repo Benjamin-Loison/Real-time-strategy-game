@@ -164,6 +164,7 @@ func RunGui(gmap *utils.Map,
 			}
 
 			if (rl.IsMouseButtonPressed(rl.MouseRightButton)) { // && len(selectedUnits)> 0){
+                fmt.Println(rl.GetScreenToWorld2D(rl.GetMousePosition(),camera))
                 flowField = utils.PathFinding(*gmap,rl.GetScreenToWorld2D(rl.GetMousePosition(),camera),ffstep)
 			}
 

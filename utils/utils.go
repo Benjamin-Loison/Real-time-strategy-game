@@ -95,8 +95,8 @@ func DrawMap(gmap Map) {
 
 func DrawFlowField(ff [][]rl.Vector2, step int32) {
     half_step := float32(step)/2.0
-    for x ,line := range ff[1:len(ff)-1] {
-        for y ,val := range line[1:len(line)-1] {
+    for x ,line := range ff[0:len(ff)] {
+        for y ,val := range line[0:len(line)] {
             normval := rl.Vector2Scale(rl.Vector2Normalize(val),float32(step)/2.0)
             start := rl.Vector2{X: float32((int32(x))*step) + half_step, Y: float32((int32(y))*step)+ half_step}
             rl.DrawLineV(start,rl.Vector2Add(start,normval),rl.Gold)
