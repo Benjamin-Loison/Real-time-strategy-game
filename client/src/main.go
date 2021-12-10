@@ -4,12 +4,14 @@ import (
 	_ "image/png"
 	"os"
     "rts/utils"
+    "sync"
 )
 
 var (
 	config Configuration_t
 	config_menus MenuConfiguration_t
 	players []utils.Player
+    playersRWLock sync.RWMutex
 	client_id int
 )
 
