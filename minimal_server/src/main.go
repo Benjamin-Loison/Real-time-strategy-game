@@ -20,6 +20,7 @@ var (
 	updater_chan = make(chan events.Event)
 	gmap utils.Map
 	serverTime uint32
+    genSeed = 0
 )
 
 func broadcast(channels map[int]chan string, msg string) {
@@ -67,8 +68,8 @@ func main() {
 	Players = append(Players, utils.Player{Units: map[string]factory.Unit{},Seed: 0} )
 	Players = append(Players, utils.Player{Units: map[string]factory.Unit{},Seed: 0} )
 
-	utils.InitializePlayer(&gmap, factory.Player1,&Players[0].Units, &Players[0].Seed)
-	utils.InitializePlayer(&gmap, factory.Player2,&Players[1].Units, &Players[1].Seed)
+	utils.InitializePlayer(&gmap, factory.Player1,&Players[0].Units, &genSeed)
+	utils.InitializePlayer(&gmap, factory.Player2,&Players[1].Units, &genSeed)
 
 	// Listen
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d",conf.Hostname, conf.Port))
