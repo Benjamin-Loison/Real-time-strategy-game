@@ -11,7 +11,6 @@ import (
 	"rts/utils"
 	"github.com/gen2brain/raylib-go/raylib"
 	"strings"
-	"sort"
 )
 
 const (
