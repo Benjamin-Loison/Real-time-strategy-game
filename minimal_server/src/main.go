@@ -29,6 +29,7 @@ var (
 	serverTime uint32
     genSeed = 0
 	buildingsToBuild = make([]Building, 0)
+	buildingsToBuild_txt = make([]string, 0)
 	technologicalTree = LoadTechnologicalTree()
 )
 
@@ -87,6 +88,12 @@ func updater(channels map[int]chan string, stopper_chan chan string){
 					event := &events.BuildBuilding_e{}
 					err := json.Unmarshal([]byte(e.Data),event)
 					utils.Check(err)
+
+					// Remarshal the event and broadcast
+					txt, err := json.Marshal(e)
+					utils.Check(err)
+					buildingsToBuild_txt = append(buildingsToBuild_txt, string(txt))
+
 					// Check that the build is authorized wrt the techTree
 					// Add the building to the ToBuild slice
 					buildingsToBuild = append(buildingsToBuild,
@@ -97,10 +104,7 @@ func updater(channels map[int]chan string, stopper_chan chan string){
 							BuildDuration: 100 * time.Second,
 							BuildStartingTime: time.Now()})
 
-					// Remarshal the event and broadcast
-					txt, err := json.Marshal(e)
-					utils.Check(err)
-					broadcast(channels, string(txt))
+
 				default:
 					utils.Logging("Updater", "Received an unhandeled event")
 					break
@@ -254,10 +258,11 @@ func gameLoop(quit chan string){
 
 			if len(buildingsToBuild) > 0 {
 				new_toBuild := make([]Building, 0)
-				for _, e := range buildingsToBuild {
+				for i, e := range buildingsToBuild {
 					if time.Since(e.BuildStartingTime) > e.BuildDuration {
 						// Build
 						Build(e, technologicalTree)
+						broadcast(channels, buildingsToBuild_txt[i])
 					} else {
 						new_toBuild = append(new_toBuild, e)
 					}
