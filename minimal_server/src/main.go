@@ -1,20 +1,23 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
 	"os"
 	"time"
-    "encoding/json"
 
 	"rts/events"
-	"rts/utils"
 	"rts/factory"
-    "sync"
+	"rts/utils"
+	"sync"
+
+	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 const (
 	serverSpeed = 10
+    ffstep = utils.TileSize
 )
 
 var (
@@ -54,11 +57,20 @@ func updater(channels map[int]chan string, stopper_chan chan string){
                     err := json.Unmarshal([]byte(e.Data),event)
                     utils.Check(err)
                     PlayersRWLock.Lock()
-                    for i , _ := range event.Units {
-                        for p ,_ := range Players {
-                            
+                    flowField := utils.PathFinding(gmap,event.Dest, ffstep)
+                    if flowField != nil {
+                        for _ , us := range event.Units {
+                            for _ , p := range Players {
+                                u, ok := p.Units[us]
+                                if ok {
+                                    u.FlowTarget = event.Dest
+                                    u.FlowStep = ffstep
+                                    u.FlowField = flowField
+                                }
+                            }
                         }
                     }
+                    PlayersRWLock.Unlock()
 
 				default:
 					utils.Logging("Updater", "Received an unhandeled event")
@@ -69,8 +81,6 @@ func updater(channels map[int]chan string, stopper_chan chan string){
 				utils.Logging("Updater", "Quitting")
 				os.Exit(0)
 			}
-		default:
-			break
 		}
 		time.Sleep(10 * time.Millisecond)
 	}
@@ -151,6 +161,26 @@ func gameLoop(quit chan string){
 		default: // not quitting, updating game state
 			serverTime += 1
 			//utils.Logging("GameLoop",fmt.Sprintf("Server time = %d",serverTime))
+            PlayersRWLock.Lock()
+            var toBeUpdated []string
+            for _,p := range Players {
+                for k, u := range p.Units {
+                    if u.FlowField !=nil {
+                        toBeUpdated = append(toBeUpdated,k)
+                        x := u.X / ffstep
+                        y := u.Y / ffstep
+                        dir := rl.Vector2Normalize(u.FlowField[x][y])
+                        u.X += int32(dir.X*u.Speed*float32(utils.TileSize))
+                        u.Y += int32(dir.X*u.Speed*float32(utils.TileSize))
+                        newCoord := rl.Vector2{X: float32(u.X) , Y : float32(u.Y)}
+                        if rl.Vector2Distance(newCoord, u.FlowTarget) <= 1.5*float32(utils.TileSize) {
+                            u.FlowField = nil
+                        }
+                    }
+                }
+            }
+
+            PlayersRWLock.Unlock()
 			break
 		}
 		time.Sleep(serverSpeed * time.Millisecond)

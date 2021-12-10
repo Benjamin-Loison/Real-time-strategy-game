@@ -28,56 +28,68 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 	// Main Event loop
 	utils.Logging("CLIENT_HANDLER", fmt.Sprintf("Entering the main event loop (%d)", id))
 	keepGoing := true
-	for keepGoing {
-		select {
-			case x :=<-main_chan :
-				utils.Logging("CLIENT_HANDLER",
-					fmt.Sprintf("(%d) from main_chan %s",
-						id, x))
+	go func() {
+		for keepGoing {
+			utils.Logging("CLIENT_HANDLER", fmt.Sprintf("(%d) Ready to read (main_chan).", id))
+			select {
+				case x :=<-main_chan :
+					utils.Logging("CLIENT_HANDLER",
+						fmt.Sprintf("(%d) from main_chan %s",
+							id, x))
 
-				if x == "QUIT" {
-					writer.Write([]byte("QUIT\n"))
-					writer.Flush()
-					keepGoing = false
-				} else if strings.HasPrefix(x, "CHAT:") {
-					writer.Write([]byte(fmt.Sprintf("%s\n", x)))
-					writer.Flush()
-					utils.Logging("CLIENT_HANDLER",
-						fmt.Sprintf("(%d) chat string sent: %s",
-							id,
-							x))
-				} else {
-					utils.Logging("CLIENT_HANDLER",
-						fmt.Sprintf("(%d) did not understand %s",
-							id,
-							x))
-				}
-				break
-
-			case x :=<-listener_chan:
-				if x == "QUIT" {
-					utils.Logging("CLIENT_HANDLER",
-						fmt.Sprintf("(%d) Error when listening to the client",
-							id))
-					main_chan<-"CLIENT_ERROR"
-					keepGoing = false
-				} else {
-					var client_event = &events.Event{}
-					err := json.Unmarshal([]byte(x), client_event)
-					utils.Check(err)
-
-					// should now send to the updater
-					utils.Logging("CLIENT_HANDLER",
-						fmt.Sprintf("(%d) Sending info to updater", id))
-					updater_chan<-*client_event
-					utils.Logging("CLIENT_HANDLER",
-						fmt.Sprintf("(%d) Info sent to updater", id))
-				}
-				break
-			default:
-				break
+					if x == "QUIT" {
+						writer.Write([]byte("QUIT\n"))
+						writer.Flush()
+						keepGoing = false
+					} else if strings.HasPrefix(x, "CHAT:") {
+						writer.Write([]byte(fmt.Sprintf("%s\n", x)))
+						writer.Flush()
+						utils.Logging("CLIENT_HANDLER",
+							fmt.Sprintf("(%d) chat string sent: %s",
+								id,
+								x))
+					} else {
+						utils.Logging("CLIENT_HANDLER",
+							fmt.Sprintf("(%d) did not understand %s",
+								id,
+								x))
+					}
+					break
+			}
+			time.Sleep(10 * time.Millisecond)
 		}
-		time.Sleep(10 * time.Millisecond)
+	}()
+	go func() {
+		for keepGoing {
+			utils.Logging("CLIENT_HANDLER", fmt.Sprintf("(%d) Ready to read (listener_chan).", id))
+			select {
+				case x :=<-listener_chan:
+					if x == "QUIT" {
+						utils.Logging("CLIENT_HANDLER",
+							fmt.Sprintf("(%d) Error when listening to the client",
+								id))
+						main_chan<-"CLIENT_ERROR"
+						keepGoing = false
+					} else {
+						var client_event = &events.Event{}
+						err := json.Unmarshal([]byte(x), client_event)
+						utils.Check(err)
+
+						// should now send to the updater
+						utils.Logging("CLIENT_HANDLER",
+							fmt.Sprintf("(%d) Sending info to updater", id))
+						updater_chan<-*client_event
+						utils.Logging("CLIENT_HANDLER",
+							fmt.Sprintf("(%d) Info sent to updater", id))
+					}
+					break
+			}
+			time.Sleep(10 * time.Millisecond)
+		}
+	}()
+
+	for {
+		time.Sleep(60 * time.Second)
 	}
 
 	// Exit
