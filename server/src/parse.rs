@@ -47,9 +47,9 @@ pub fn parse_incoming(stream: TcpStream, msg: &str, playerlist: Arc<Mutex<Entity
     let re_answer = Regex::new(r"A([a-zA-Z0-9]+).([\d,]*)").unwrap();
     let re_status = Regex::new(r"S([a-zA-Z0-9]+).(ok|nok)").unwrap();
     if re_query.is_match(msg) {
-		println!("are you kiding me?");
+		//println!("are you kiding me?");
         let cap = re_query.captures(msg).unwrap();
-		println!("error here:{}",&cap[3]);
+		//println!("error here:{}",&cap[3]);
         parse_query(stream, &cap[1], &cap[2], &cap[3], playerlist, sender);
     } else if re_answer.is_match(msg) {
         let cap = re_answer.captures(msg).unwrap();

@@ -69,7 +69,15 @@ func RunGui(gmap *utils.Map,
 
 	rl.SetTraceLog(rl.LogNone)
 	rl.InitWindow(screenWidth, screenHeight, "RTS")
+	rl.InitAudioDevice()
 
+	fmt.Print("error may here")
+	xm := rl.LoadMusicStream("music.xm")
+	fmt.Print("error may here")
+	rl.PlayMusicStream(xm)
+	pause := false
+	defer rl.UnloadMusicStream(xm)
+	defer rl.CloseAudioDevice()
 	defer rl.CloseWindow()
 
 	rl.SetTargetFPS(60)
@@ -105,6 +113,27 @@ func RunGui(gmap *utils.Map,
 			break
 		default:
 			break
+		}
+
+		/*           +~~~~~~~~~~~~~~~~~+
+		             | Audio |
+		             +~~~~~~~~~~~~~~~~~+ */
+		rl.UpdateMusicStream(xm) // Update music buffer with new stream data
+		// Restart music playing (stop and play)
+		if rl.IsKeyPressed(rl.KeySpace) {
+			rl.StopMusicStream(xm)
+			rl.PlayMusicStream(xm)
+		}
+
+		// Pause/Resume music playing
+		if rl.IsKeyPressed(rl.KeyP) {
+			pause = !pause
+
+			if pause {
+				rl.PauseMusicStream(xm)
+			} else {
+				rl.ResumeMusicStream(xm)
+			}
 		}
 
 		/*           +~~~~~~~~~~~~~~~~~+
