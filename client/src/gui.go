@@ -71,7 +71,7 @@ func RunGui(gmap *utils.Map,
 	rl.InitWindow(screenWidth, screenHeight, "RTS")
 	rl.InitAudioDevice()
 
-	xm := rl.LoadMusicStream("test.opus")
+	xm := rl.LoadMusicStream("test.m4a")
 	rl.PlayMusicStream(xm)
 	pause := false
 	defer rl.UnloadMusicStream(xm)
