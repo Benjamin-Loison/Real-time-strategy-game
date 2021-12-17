@@ -4,6 +4,8 @@ import (
 	_ "image/png"
 	"time"
 	"github.com/gen2brain/raylib-go/raylib"
+	"regexp"
+	"rts/utils"
 )
 
 type MessageItem_t struct {
@@ -64,8 +66,11 @@ func organizeMessages(messages []MessageItem_t) {
 	}
 }
 
-func NewMessageItem(current []MessageItem_t, new_message string, has_send int) ([]MessageItem_t) {
-	ownership := has_send > 0
+func NewMessageItem(current []MessageItem_t, new_message string, config Configuration_t) ([]MessageItem_t) {
+	//ownership := has_send > 0
+	regex := regexp.MustCompile(`(?P<pseudo>.*):.*`)
+	pseudo := regex.FindStringSubmatch(new_message)[1]
+	ownership := pseudo == config.Pseudo
 	if len(current) == max_messages_nb {
 		// On enlève le premier!
 		return append(current[1:], (MessageItem_t {ownership, new_message, 0, 0, time.Now()}))
