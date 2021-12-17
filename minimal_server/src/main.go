@@ -201,27 +201,44 @@ func gameLoop(quit chan string){
             for _,p := range Players {
                 for k, u := range p.Units {
                     if u.FlowField !=nil && len(*u.FlowField) > 0 {
-                        toBeUpdated = append(toBeUpdated,k)
                         x := u.X / ffstep
                         y := u.Y / ffstep
-                        //fmt.Println("FlOW FIELD #############")
-                        //fmt.Println(*u.FlowField)
-                        //fmt.Println(x)
-                        //fmt.Println(y)
-                        //fmt.Println(u)
-                        //fmt.Println((*u.FlowField)[x][y])
                         dir := (*u.FlowField)[x][y]
                         //u.X += int32(dir.X*u.Speed*float32(utils.TileSize))
                         //u.Y += int32(dir.X*u.Speed*float32(utils.TileSize))
-                        //fmt.Println(dir)
-                        u.X += int32(dir.X*2)
-                        u.Y += int32(dir.Y*2)
-                        newCoord := rl.Vector2{X: float32(u.X) , Y : float32(u.Y)}
+                        //u.X += int32(dir.X*2)
+                        //u.Y += int32(dir.Y*2)
+						new_X := u.X + int32(dir.X*2)
+						new_Y := u.Y + int32(dir.Y*2)
+                        newCoord := rl.Vector2{X: float32(new_X) , Y : float32(new_Y)}
+						
+						canMove := true
+						// Checking if there is a unit on the path
+						for _, q := range Players {
+							for _, v := range q.Units {
+								pos_v := rl.Vector2{X: float32(v.X), Y: float32(v.Y)}
+								if v != u && (rl.Vector2Distance(newCoord, pos_v) < 2*utils.Unit_size) {
+									canMove = false
+									break
+								}
+							}
+							if !(canMove) {
+								break
+							}
+						}
+
+						if !(canMove) {
+							continue
+						}
+
+						u.X = new_X
+						u.Y = new_Y
+
+						// Checking if target was reached
                         if rl.Vector2Distance(newCoord, u.FlowTarget) <= 1.5*float32(utils.TileSize) {
                             u.FlowField = nil
                         }
-                        //fmt.Println("POST MODIF #################")
-                        //fmt.Println(u)
+                        toBeUpdated = append(toBeUpdated,k)
                         p.Units[k] = u
                     }
                 }
@@ -233,11 +250,13 @@ func gameLoop(quit chan string){
 			    //utils.Logging("GameLoop","There is an update")
 				var updatedUnits []factory.Unit
                 for _, k := range toBeUpdated {
+					// Handling the units of player 0
                     val, ok := Players[0].Units[k]
                     if ok {
                         updatedUnits = append(updatedUnits, val)
                         continue
                     }
+					// Handling the units of player 1
                     val, ok = Players[1].Units[k]
                     if ok {
                         updatedUnits = append(updatedUnits, val)
