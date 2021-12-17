@@ -5,7 +5,6 @@ import (
 	"time"
 	"github.com/gen2brain/raylib-go/raylib"
 	"regexp"
-	"rts/utils"
 )
 
 type MessageItem_t struct {
