@@ -2,6 +2,7 @@ package events
 
 import (
     "github.com/gen2brain/raylib-go/raylib"
+	"time"
     "rts/factory"
 )
 
@@ -24,6 +25,7 @@ type BuildBuilding_e struct {
 	Position_x   int32  `json:"Position_x"`
 	Position_y   int32  `json:"Position_y"`
 	BuildingName string `json:"BuildingName"`
+	BuildDuration time.Duration `json:"BuildingDuration"`
 }
 
 type ServerUpdate_e struct {

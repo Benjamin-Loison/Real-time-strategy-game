@@ -31,6 +31,7 @@ var (
 	buildingsToBuild = make([]Building, 0)
 	buildingsToBuild_txt = make([]string, 0)
 	technologicalTree = LoadTechnologicalTree()
+	passedBuilts = make([]Building, 0)
 )
 
 // broadcast send msg to all the channels to which clients listen
@@ -101,8 +102,9 @@ func updater(channels map[int]chan string, stopper_chan chan string){
 							Name: event.BuildingName,
 							Position_x: int32(event.Position_x),
 							Position_y: int32(event.Position_y),
-							BuildDuration: 100 * time.Second,
+							BuildDuration: time.Duration(1000000000 * getDuration(event.BuildingName, technologicalTree)),
 							BuildStartingTime: time.Now()})
+					fmt.Println(buildingsToBuild)
 
 
 				default:
@@ -288,16 +290,25 @@ func gameLoop(quit chan string){
 
 			if len(buildingsToBuild) > 0 {
 				new_toBuild := make([]Building, 0)
+				new_toBuild_txt := make([]string, 0)
 				for i, e := range buildingsToBuild {
-					if time.Since(e.BuildStartingTime) > e.BuildDuration {
-						// Build
-						Build(e, technologicalTree)
-						broadcast(channels, buildingsToBuild_txt[i])
+					if !CheckRights(technologicalTree, passedBuilts, e) {
+						broadcast(channels, "CHAT:SERVER: A building was not built.")
 					} else {
-						new_toBuild = append(new_toBuild, e)
+						if time.Since(e.BuildStartingTime) > e.BuildDuration {
+							// Build
+							utils.Logging("Build", fmt.Sprintf("%d has passed", e.BuildDuration/1000000000))
+							Build(e, technologicalTree)
+							broadcast(channels, buildingsToBuild_txt[i])
+							passedBuilts = append(passedBuilts, e)
+						} else {
+							new_toBuild = append(new_toBuild, e)
+							new_toBuild_txt = append(new_toBuild_txt, buildingsToBuild_txt[i])
+						}
 					}
 				}
 				buildingsToBuild = new_toBuild
+				buildingsToBuild_txt = new_toBuild_txt
 			}
 		}
 		time.Sleep(serverSpeed * time.Millisecond)

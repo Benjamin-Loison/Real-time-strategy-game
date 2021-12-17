@@ -127,7 +127,19 @@ func run_client(config Configuration_t,
 							var build = &events.BuildBuilding_e{}
 							err := json.Unmarshal([]byte(event.Data), build)
 							utils.Check(err)
-							gmap.Grid[build.Position_x][build.Position_y].Tile_Type = utils.Rock
+							utils.Logging("Build", "Test " + build.BuildingName)
+							switch build.BuildingName {
+								case "TownHall":
+									utils.Logging("Build", "Building " + build.BuildingName)
+									gmap.Grid[build.Position_x][build.Position_y].Tile_Type = utils.TownHall
+									break
+								case "House":
+									utils.Logging("Build", "Building " + build.BuildingName)
+									gmap.Grid[build.Position_x][build.Position_y].Tile_Type = utils.House
+									break
+								default:
+									utils.Logging("Build", "Unknown type: " + build.BuildingName)
+							}
 						
 
                         default:

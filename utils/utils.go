@@ -34,6 +34,8 @@ const (
 	Tree		  = 1
 	Gold		  = 2
 	None		  = 3
+	TownHall      = 4
+	House         = 5
 )
 
 
@@ -75,6 +77,12 @@ func MakeMap(width, height int32) Map {
 
 func DrawTile(x,y int32,tileType TileType, startpoint factory.Owner){
 	switch tileType {
+	case House :
+		rl.DrawCircle(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.Maroon)
+		rl.DrawCircleLines(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.Black)
+	case TownHall :
+		rl.DrawCircle(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.Blue)
+		rl.DrawCircleLines(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.Black)
 	case Rock :
 		rl.DrawCircle(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.DarkGray)
 		rl.DrawCircleLines(TileSize*x+TileSize/2.0,TileSize*y+TileSize/2.0,0.5*float32(TileSize),rl.Black)

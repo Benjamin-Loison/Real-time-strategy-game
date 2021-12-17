@@ -24,13 +24,13 @@
 				"Title": "Selection menu",
 				"Elements": [
 					{
-						"Name": "Building",
+						"Name": "Build a Townhall",
 						"Ref": "TownHall",
 						"Type": "Action",
 						"Key": "0"
 					},
 					{
-						"Name": "A house",
+						"Name": "Build a house",
 						"Ref": "House",
 						"Type": "Action",
 						"Key": "1"
@@ -43,12 +43,12 @@
 		{
 			"Type": "Building",
 			"Ref": "TownHall",
-			"Title": "Rock"
+			"Title": "TownHall"
 		},
 		{
 			"Type": "Building",
 			"Ref": "House",
-			"Title": "Rock"
+			"Title": "House"
 		},
 		{
 			"Type": "Quit",

@@ -322,13 +322,17 @@ func RunGui(gmap *utils.Map,
 				// Menu title
 				rl.DrawText(current_menu.Title, 0, 0, 40, rl.Red)
 				// Menu options and keys
+				offset := 0
 				for i := 0 ; i < len(current_menu.Elements) ; i ++ {
+					if false {
+						offset = offset + 1
+					}
 					rl.DrawText(
 						fmt.Sprintf("%c) %s",
 							current_menu.Elements[i].Key,
 							current_menu.Elements[i].Name),
 						100,
-						int32(40 + (20 * i)),
+						int32(40 + (20 * (i - offset))),
 						15,
 						rl.Blue)
 
@@ -349,6 +353,7 @@ func RunGui(gmap *utils.Map,
 								lastInputTime = time.Now()
 								break
 							case MenuElementAction:
+								lastInputTime = time.Now()
 								currentAction = FindActionByRef(config_menus.Actions, val.Ref)
 								utils.Logging("GUI",
 									fmt.Sprintf("Executing the action %d: %s",
@@ -378,7 +383,6 @@ func RunGui(gmap *utils.Map,
 									e_marsh, err := json.Marshal(e)
 									utils.Check(err)
 									chan_gui_link<-string(e_marsh)
-									lastInputTime = time.Now()
 								} else {
 									utils.Logging("GUI",
 										fmt.Sprintf("Unknown action `%s`",

@@ -22,6 +22,7 @@ type Building struct {
 
 type TechnologicalTree_t struct {
 	Name string `json:"Name"`
+	BuildDuration int `json:"BuildDuration"`
 	Children []TechnologicalTree_t `json:"Children"`
 }
 
@@ -46,7 +47,56 @@ func LoadTechnologicalTree() TechnologicalTree_t {
 	return *technoTree
 }
 
+func isIn(slice []Building, element string) bool {
+	for i := 0 ; i < len(slice) ; i ++ {
+		if slice[i].Name == element {
+			return true
+		}
+	}
+	return false
+}
+
+func CheckRights(tree TechnologicalTree_t, currentBuildings []Building, b Building) bool {
+	if tree.Name == b.Name || isIn(currentBuildings, b.Name) {
+		return true
+	}
+	res := false
+	if isIn(currentBuildings, tree.Name) {
+		for i := 0 ; i < len(tree.Children) ; i ++ {
+			res = res || CheckRights(tree.Children[i], currentBuildings, b)
+		}
+	}
+	return res
+}
+
 func Build(b Building, t TechnologicalTree_t) {
-	gmap.Grid[b.Position_x][b.Position_y].Tile_Type = utils.Rock
+	fmt.Println(b.Name)
+	switch (b.Name) {
+		case "TownHall":
+			utils.Logging("Build", "TownHall added.")
+			gmap.Grid[b.Position_x][b.Position_y].Tile_Type = utils.TownHall
+			break
+		case "House":
+			utils.Logging("Build", "House added.")
+			gmap.Grid[b.Position_x][b.Position_y].Tile_Type = utils.House
+			break
+		default:
+			utils.Logging("Build", "Unknown type: " + b.Name)
+			break
+	}
+}
+
+func getDuration(name string, tree TechnologicalTree_t) int {
+	if tree.Name == name {
+		return tree.BuildDuration
+	}
+	for i := 0 ; i < len(tree.Children) ; i ++ {
+		// Checking child i
+		res := getDuration(name, tree.Children[i])
+		if res >= 0 {
+			return res
+		}
+	}
+	return -1
 }
 
