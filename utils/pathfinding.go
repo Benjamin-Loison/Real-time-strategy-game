@@ -2,12 +2,60 @@ package utils
 
 import (
 	"github.com/gen2brain/raylib-go/raylib"
+	"container/heap"
+//	"fmt"
 )
 
 type Point struct {
 	X int32
 	Y int32
 }
+
+// From https://pkg.go.dev/container/heap
+type PointAndDistance struct {
+	value    Point
+	distance float32    // The priority of the item in the queue.
+	// The index is needed by update and is maintained by the heap.Interface methods.
+	index int // The index of the item in the heap.
+}
+
+type PriorityQueue []*PointAndDistance
+
+func (pq PriorityQueue) Len() int { return len(pq) }
+
+func (pq PriorityQueue) Less(i, j int) bool {
+	return pq[i].distance < pq[j].distance
+}
+
+func (pq PriorityQueue) Swap(i, j int) {
+	pq[i], pq[j] = pq[j], pq[i]
+	pq[i].index = i
+	pq[j].index = j
+}
+
+func (pq *PriorityQueue) Push(x interface{}) {
+	n := len(*pq)
+	item := x.(*PointAndDistance)
+	item.index = n
+	*pq = append(*pq, item)
+}
+
+func (pq *PriorityQueue) Pop() interface{} {
+	old := *pq
+	n := len(old)
+	item := old[n-1]
+	old[n-1] = nil  // avoid memory leak
+	item.index = -1 // for safety
+	*pq = old[0 : n-1]
+	return item
+}
+
+func (pq *PriorityQueue) update(item *PointAndDistance, value Point, distance float32) {
+	item.value = value
+	item.distance = distance
+	heap.Fix(pq, item.index)
+}
+
 func PathFinding(mapp Map, endPos rl.Vector2, step int32) [][]rl.Vector2 {
 
 	map_width  := mapp.Width * TileSize
@@ -68,13 +116,31 @@ func PathFinding(mapp Map, endPos rl.Vector2, step int32) [][]rl.Vector2 {
 		}
 	}
 
-	integration_field[end_x][end_y] = 0
-	stack := []Point{{X:end_x, Y:end_y}}
+	/*var visit_order = make([][]uint16, array_width)
+	for x, _ := range visit_order {
+		visit_order[x] = make([]uint16, array_height)
+		for y, _ := range visit_order[x] {
+			visit_order[x][y] = ^uint16(0)
+		}
+	}
+	ivisit := uint16(0)*/
+	queue := make(PriorityQueue, 1)
+	queue[0] = &PointAndDistance{
+		value:		Point{X: end_x, Y: end_y},
+		distance: 	0,
+		index: 0,
+	}
 	to_test := [8]Point{ {X: -1, Y: -1},{X: -1, Y: 0}, {X: -1, Y: 1},{X: 0, Y: -1}, {X: 0, Y: 1}, {X: 1, Y: -1}, {X: 1, Y:0}, {X: 1, Y: 1} }
 
-	for len(stack) > 0 {
-		p := stack[len(stack)-1]
-		stack = stack[:len(stack)-1]
+	for queue.Len() > 0 {
+		point_dist := heap.Pop(&queue).(*PointAndDistance)
+		p := point_dist.value
+		if integration_field[p.X][p.Y] != float32(^uint16(0)) {
+			continue
+		}
+		integration_field[p.X][p.Y] = point_dist.distance
+		/*visit_order[p.X][p.Y] = ivisit
+		ivisit = ivisit + 1*/
 		for _, voisin := range to_test {
 			v_x := p.X + voisin.X
 			v_y := p.Y + voisin.Y
@@ -88,12 +154,19 @@ func PathFinding(mapp Map, endPos rl.Vector2, step int32) [][]rl.Vector2 {
 				c_v := float32(cost_field[v_x][v_y])*rl.Vector2Length(rl.Vector2{X: float32(voisin.X),Y:float32(voisin.Y)})
 
 				if c_p + c_v < integration_field[v_x][v_y] {
-					integration_field[v_x][v_y] = c_p + c_v
-					stack = append(stack, Point{v_x, v_y})
+					heap.Push(&queue, &PointAndDistance{
+						value:		Point{v_x, v_y},
+						distance:	c_p + c_v,
+					})
 				}
 			}
 		}
 	}
+	// Log the visiting order for integration field
+	/*Logging("Pathfinding", "Visiting order for integration field:")
+	for _, line := range visit_order {
+		Logging("Pathfinding", fmt.Sprintf("%v", line))
+	}*/
 	for x, line := range flow_field {
 		for y, _ := range line {
 			min_cost := float32(^uint16(0))
