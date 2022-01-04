@@ -90,6 +90,8 @@ func RunGui(gmap *utils.Map,
 
 	rl.BeginMode2D(camera)
 
+	skipCharPressed := false
+
 	for !rl.WindowShouldClose() {
 		/*           +~~~~~~~~~~~~~~~~~~~~~~~~~~~+
 		             | Check that shouldn't quit |
@@ -118,13 +120,13 @@ func RunGui(gmap *utils.Map,
 		             +~~~~~~~~~~~~~~~~~+ */
 		rl.UpdateMusicStream(xm) // Update music buffer with new stream data
 		// Restart music playing (stop and play)
-		if rl.IsKeyPressed(rl.KeySpace) {
+		if rl.IsKeyPressed(rl.KeySpace) && currentState & StateChat == 0 {
 			rl.StopMusicStream(xm)
 			rl.PlayMusicStream(xm)
 		}
 
 		// Pause/Resume music playing
-		if rl.IsKeyPressed(rl.KeyP) {
+		if rl.IsKeyPressed(rl.KeyP) && currentState & StateChat == 0 {
 			pause = !pause
 
 			if pause {
@@ -144,6 +146,9 @@ func RunGui(gmap *utils.Map,
 
 			if (rl.IsKeyDown(config.Keys.Chat)) {
 				utils.Logging("GUI", "Entering chat state.")
+				// Prevent an extra T from appearing in the chat message
+				rl.GetKeyPressed()
+				skipCharPressed = true
 				currentState = StateChat
 			}
 			if (rl.IsKeyDown(config.Keys.Right)){
@@ -240,6 +245,14 @@ func RunGui(gmap *utils.Map,
 		if (currentState & StateChat > 0) {
 			// Wait for a message to be entered
 			key := rl.GetKeyPressed()
+			charPressed := rl.GetCharPressed()
+			if (skipCharPressed && charPressed > 0) {
+				charPressed = 0
+				skipCharPressed = false
+			}
+			if (key != 0 || charPressed != 0) {
+				utils.Logging("GUI", fmt.Sprintf("Key pressed: %d, char pressed: %d", key, charPressed))
+			}
 			if (key == rl.KeyEnter) {
 				// Sending the message if it is not empty ("")
 				splitted_message := SplitMessage(ChatText, message_max_len)
@@ -259,13 +272,13 @@ func RunGui(gmap *utils.Map,
 				currentState = StateNone
 			} else if (key == rl.KeyBackspace) {
 				length := len(ChatText)
-				if length > 2 {
+				if length > 0 {
 					ChatText = ChatText[:(length-1)]
 				}
-			} else if (time.Since(lastInputTime) > 10 * time.Millisecond && isPrintable(key)) {
-				ChatText += fmt.Sprintf("%c", key)
+			} else if (time.Since(lastInputTime) > 10 * time.Millisecond && charPressed > 0) {
+				ChatText += fmt.Sprintf("%c", charPressed)
 			}
-			if (key > 0) {
+			if (key > 0 || charPressed > 0) {
 				lastInputTime = time.Now()
 			}
 		}
@@ -408,7 +421,7 @@ func RunGui(gmap *utils.Map,
 		// display chat box
 		if (currentState & StateChat > 0) {
 			message_position := rl.GetScreenHeight() - (message_font_size + message_padding)
-			rl.DrawText(ChatText, 0,  int32(message_position), int32(message_font_size), message_color_ours)
+			rl.DrawText(" > " + ChatText + "_", 0,  int32(message_position), int32(message_font_size), message_color_ours)
 		}
 		// Print chat messages
 		for i := 0 ; i < len(currentMessages) ; i ++ {

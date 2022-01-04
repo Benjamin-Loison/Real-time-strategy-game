@@ -33,10 +33,6 @@ var (
                   +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+ */
 func SplitMessage(m string, length int) []string {
 	split := make([]string, 0)
-	if len(m) < 2 {
-		return split
-	}
-	m = m[1:]
 	for {
 		if len(m) <= length {
 			return append(split, m)

@@ -162,7 +162,7 @@ func PathFinding(mapp Map, endPos rl.Vector2, step int32) [][]rl.Vector2 {
 			}
 		}
 	}
-	// Log the visiting order for integration field
+	// Log visiting order for integration field
 	/*Logging("Pathfinding", "Visiting order for integration field:")
 	for _, line := range visit_order {
 		Logging("Pathfinding", fmt.Sprintf("%v", line))
