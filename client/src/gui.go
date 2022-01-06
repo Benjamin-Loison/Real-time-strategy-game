@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+    //"reflect"
 	"os"
 	_ "image/png"
 	"math"
@@ -194,7 +195,7 @@ func RunGui(gmap *utils.Map,
 			if (rl.IsMouseButtonPressed(rl.MouseRightButton)) && len(selectedUnits)> 0 {
                 //fmt.Println(rl.GetScreenToWorld2D(rl.GetMousePosition(),camera))
                 //flowField = utils.PathFinding(*gmap,rl.GetScreenToWorld2D(rl.GetMousePosition(),camera),ffstep)
-				
+
 				// We send the order to move units to the server
 				dest := rl.GetScreenToWorld2D(rl.GetMousePosition(), camera)
 				units := []string{}
@@ -203,25 +204,78 @@ func RunGui(gmap *utils.Map,
                 fmt.Println(selectedUnits)
                 fmt.Println(*players)
 
+                // should maybe use this lock when modifying the enemy player when he is attacked
                 playersRWLock.RLock()
-				for _, u := range (*players)[client_id].Units {
+			    for _, u := range (*players)[client_id].Units {
                     s := strconv.Itoa(int(u.Id))
                     fmt.Printf("key : %s\n",s)
-					if selectedUnits[ s ] {
-						units = append(units, s)
-					}
-				}
+				    if selectedUnits[ s ] {
+					    units = append(units, s)
+				    }
+			    }
                 playersRWLock.RUnlock()
 
-				move := events.MoveUnits_e{Units: units, Dest: dest}
-				data, err := json.Marshal(move)
-				utils.Check(err)
-				e := events.Event{EventType: events.MoveUnits, Data: string(data)}
-				e_marsh, err := json.Marshal(e)
-				utils.Check(err)
-				chan_gui_link<-string(e_marsh)
+				attack := false
+                unitToAttack := ""
 
+                enemy_id := (client_id + 1) % 2
 
+				for k, v := range (*players)[enemy_id].Units {
+                    if rl.CheckCollisionPointCircle(rl.Vector2{float32(v.X),float32(v.Y)}, dest, utils.Unit_size) {
+						attack = true
+                        unitToAttack = k
+                        break
+					}
+                }
+                if attack {
+                    unitToAttackEntity := (*players)[enemy_id].Units[unitToAttack]
+                    for _, v := range units {
+                        unit := (*players)[client_id].Units[v]
+                        r := unit.AttackRange
+                        d := math.Sqrt(float64((unitToAttackEntity.X - unit.X) * (unitToAttackEntity.X - unit.X) + (unitToAttackEntity.Y - unit.Y) * (unitToAttackEntity.Y - unit.Y)))
+                        fmt.Printf("%d <? %d", d, r)
+                        if d > float64(r) {
+                            attack = false
+                            break
+                        }
+                    }
+                }
+				if attack {
+                    fmt.Println("attack")
+                    
+                    attack := events.AttackUnit_e{Units: units, Unit: unitToAttack}
+				    data, err := json.Marshal(attack)
+				    utils.Check(err)
+				    e := events.Event{EventType: events.AttackUnit, Data: string(data)}
+				    e_marsh, err := json.Marshal(e)
+				    utils.Check(err)
+				    chan_gui_link<-string(e_marsh)
+
+                    isDead := false
+                    unit := (*players)[enemy_id].Units[unitToAttack]
+                    for _, v := range units {
+                        damage := (*players)[client_id].Units[v].AttackAmount
+                        fmt.Printf("|%d|", time.Now().Nanosecond())
+                        if unit.Health > damage {
+                            unit.Health -= damage
+                        } else {
+                            isDead = true
+			                delete((*players)[enemy_id].Units, unitToAttack)
+                            break
+                        }
+                    }
+                    if (!isDead) {
+                        (*players)[enemy_id].Units[unitToAttack] = unit
+                    }
+                } else {
+				    move := events.MoveUnits_e{Units: units, Dest: dest}
+				    data, err := json.Marshal(move)
+				    utils.Check(err)
+				    e := events.Event{EventType: events.MoveUnits, Data: string(data)}
+				    e_marsh, err := json.Marshal(e)
+				    utils.Check(err)
+				    chan_gui_link<-string(e_marsh)
+                }
 			}
 
 			if (rl.IsMouseButtonPressed(rl.MouseLeftButton)){
@@ -488,4 +542,3 @@ func getRectangle2Pt(p1 rl.Vector2, p2 rl.Vector2) rl.Rectangle{
     startY := float32(math.Min(float64(p1.Y),float64(p2.Y)))
     return rl.NewRectangle(startX,startY,width,height)
 }
-

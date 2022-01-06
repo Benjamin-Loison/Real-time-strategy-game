@@ -58,6 +58,8 @@ func updater(channels map[int]chan string, stopper_chan chan string){
 				case events.ChatEvent:
 					broadcast(channels, fmt.Sprintf("CHAT:%s", e.Data))
 					break
+				case events.AttackUnit:
+					
                 case events.MoveUnits:
 					utils.Logging("Updater (UPDATE)", fmt.Sprintf("%s", e.Data))
                     event := &events.MoveUnits_e{}
