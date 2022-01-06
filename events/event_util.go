@@ -13,8 +13,13 @@ const (
     ChatEvent
     ServerUpdate
     BuildEvent
-    Attack
+    AttackUnit
 )
+
+type AttackUnit_e struct {
+	Units	[]string		`json:"Units"`
+	Unit	string			`json:"Unit"`
+}
 
 type MoveUnits_e struct {
     Units   []string        `json:"Units"`
