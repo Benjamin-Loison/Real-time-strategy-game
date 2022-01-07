@@ -107,7 +107,7 @@ func PathFinding(mapp Map, endPos rl.Vector2, step int32) [][]rl.Vector2 {
 	endPos = rl.Vector2Scale(endPos, 1/float32(step))
 	end_x := int32(endPos.X)
 	end_y := int32(endPos.Y)
-    if cost_field[end_x][end_y] == ^uint16(0) {
+    if end_x < 0 || end_x >= array_width || end_y < 0 || end_y >= array_height || cost_field[end_x][end_y] == ^uint16(0) {
         return nil
     }
 	for x, line := range integration_field {

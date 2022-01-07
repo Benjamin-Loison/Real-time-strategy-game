@@ -2,3 +2,4 @@
 target
 *.lock
 rts*
+map_builder/map_builder
