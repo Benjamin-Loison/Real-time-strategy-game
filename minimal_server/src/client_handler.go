@@ -1,7 +1,6 @@
 package main
 
 import (
-	"os"
 	"bufio"
 	"encoding/json"
 	"fmt"
@@ -14,7 +13,7 @@ import (
 
 // Function to handle the message transmission to and from the client
 // on the socket conn, and uses main_chan to communicate with the server
-func client_handler(conn net.Conn, map_path string, main_chan chan string, id int) {
+func client_handler(conn net.Conn, map_path string, main_chan chan string, stopper_chan chan string, id int) {
 	// Close the connection if the handler is exited
 	defer conn.Close()
 
@@ -30,43 +29,41 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 
 	// Main Event loop
 	utils.Logging("CLIENT_HANDLER", fmt.Sprintf("Entering the main event loop (%d)", id))
-	keepGoing := true
 	go func() {
+		keepGoing := true
 		for keepGoing {
-			//utils.Logging("CLIENT_HANDLER", fmt.Sprintf("(%d) Ready to read (main_chan).", id))
-			select {
-				case x :=<-main_chan :
-					/*utils.Logging("CLIENT_HANDLER",
-						fmt.Sprintf("(%d) from main_chan %s",
-							id, x))*/
+			utils.Logging("CLIENT_HANDLER", fmt.Sprintf("(%d) Ready to read (main_chan).", id))
+			x :=<-main_chan
+			utils.Logging("CLIENT_HANDLER",
+				fmt.Sprintf("(%d) from main_chan %s",
+					id, x))
 
-					if x == "QUIT" {
-						writer.Write([]byte("QUIT\n"))
-						writer.Flush()
-						keepGoing = false
-					} else if strings.HasPrefix(x, "CHAT:") {
-						writer.Write([]byte(fmt.Sprintf("%s\n", x)))
-						writer.Flush()
-						utils.Logging("CLIENT_HANDLER",
-							fmt.Sprintf("(%d) chat string sent: %s",
-								id,
-								x))
-					} else if x == "CLIENT_ERROR" {
-						os.Exit(0)
-					} else { // on est sur un event
-						writer.Write([]byte(fmt.Sprintf("%s\n", x)))
-						writer.Flush()
-						utils.Logging("CLIENT_HANDLER",
-							fmt.Sprintf("(%d) was sent event %s",
-								id,
-                                x[0:80]))
-					}
-					break
+			if x == "QUIT" {
+				utils.Logging("CLIENT_HANDLER", fmt.Sprintf("(%d) Sending quit", id))
+				writer.Write([]byte("QUIT\n"))
+				writer.Flush()
+				utils.Logging("CLIENT_HANDLER", fmt.Sprintf("(%d) Quit sent", id))
+				keepGoing = false
+			} else if strings.HasPrefix(x, "CHAT:") {
+				writer.Write([]byte(fmt.Sprintf("%s\n", x)))
+				writer.Flush()
+				utils.Logging("CLIENT_HANDLER",
+					fmt.Sprintf("(%d) chat string sent: %s",
+						id,
+						x))
+			} else { // on est sur un event
+				writer.Write([]byte(fmt.Sprintf("%s\n", x)))
+				writer.Flush()
+				utils.Logging("CLIENT_HANDLER",
+					fmt.Sprintf("(%d) was sent event %s",
+						id,
+						x[0:80]))
 			}
 			time.Sleep(10 * time.Millisecond)
 		}
 	}()
 	go func() {
+		keepGoing := true
 		for keepGoing {
 			utils.Logging("CLIENT_HANDLER", fmt.Sprintf("(%d) Ready to read (listener_chan).", id))
 			select {
@@ -75,7 +72,7 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 						utils.Logging("CLIENT_HANDLER",
 							fmt.Sprintf("(%d) Error when listening to the client",
 								id))
-						main_chan<-"CLIENT_ERROR"
+						stopper_chan<-"CLIENT_ERROR"
 						keepGoing = false
 					} else {
 						var client_event = &events.Event{}
@@ -96,7 +93,7 @@ func client_handler(conn net.Conn, map_path string, main_chan chan string, id in
 	}
 
 	// Exit
-	main_chan<-"FINISHED"
+	stopper_chan<-"FINISHED"
 	utils.Logging("CLIENT_HANDLER", fmt.Sprintf("%d quits.", id))
 	return
 }

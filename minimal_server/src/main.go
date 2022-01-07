@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 	"time"
 
 	"rts/events"
@@ -37,7 +38,13 @@ var (
 // broadcast send msg to all the channels to which clients listen
 func broadcast(channels map[int]chan string, msg string) {
 	channels[0] <- msg // Sending to player 0
+	if !strings.HasPrefix(msg, "{\"EventType\":2,") {
+		utils.Logging("Broadcast", "Message sent to player 0: " + msg)
+	}
 	channels[1] <- msg // Sending to player 1
+	if !strings.HasPrefix(msg, "{\"EventType\":2,") {
+		utils.Logging("Broadcast", "Message sent to player 1: " + msg)
+	}
 	//utils.Logging("broadcast", fmt.Sprintf("done(%s).", msg))
 }
 
@@ -139,13 +146,14 @@ func main() {
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d",conf.Hostname, conf.Port))
 	utils.Check(err)
 
+	stopper_chan := register(-3)
 	nb_clients := 0
 
 	for nb_clients < 2 {
 		conn, err := listener.Accept()
 
 		utils.Check(err)
-		go client_handler(conn, conf.MapPath, register(nb_clients), nb_clients)
+		go client_handler(conn, conf.MapPath, register(nb_clients), stopper_chan, nb_clients)
 		nb_clients += 1
 	}
 	// Close the listener as soon as the two clients are connected
@@ -159,27 +167,19 @@ func main() {
 	go gameLoop(register(-2))
 
 	// wait for end game
-	for nb_clients > 0{
-		for _, c := range channels {
-			select {
-			case s := <-c :
-				switch(s) {
-				case "FINISHED" :
-					nb_clients--
-					utils.Logging("Server", fmt.Sprintf("%d remaining clients.", nb_clients))
-					break
-				case "STOP" :
-					nb_clients = 0
-					break
-				case "CLIENT_ERROR" :
-					utils.Logging("Server", "Received client error")
-					break
-				default:
-					break
-				}
-			default:
-				break
-			}
+	keepGoing := true
+	for keepGoing {
+		s := <-stopper_chan
+		switch(s) {
+		case "FINISHED" :
+		case "STOP" :
+		case "CLIENT_ERROR" :
+			utils.Logging("Server", "Received " + s)
+			keepGoing = false
+			break
+		default:
+			utils.Logging("Server", "Received unknown message: " + s)
+			break
 		}
 		time.Sleep(10 * time.Millisecond)
 	}
