@@ -68,7 +68,7 @@ func GenKeysSubMenu(k Keys_t) []string {
 	m["-"] = k.ZoomOut
 	m["chat"] = k.Chat
 	m["Menu"] = k.Menu
-	m["ResetCamera"] = k.ResetCamera
+	m["Reset camera"] = k.ResetCamera
 	m["chat"] = k.Chat
 	for s, c := range m {
 		t = append(t, fmt.Sprintf("%c) %s", c, s))

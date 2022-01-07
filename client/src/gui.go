@@ -449,6 +449,8 @@ func RunGui(gmap *utils.Map,
 									e := events.Event{EventType: events.BuildEvent, Data: string(data)}
 									e_marsh, err := json.Marshal(e)
 									utils.Check(err)
+									currentMessages = NewMessageItem(currentMessages, "CLIENT:Building a " + currentAction.Title, config)
+									organizeMessages(currentMessages)
 									chan_gui_link<-string(e_marsh)
 								} else {
 									utils.Logging("GUI",
@@ -495,7 +497,7 @@ func RunGui(gmap *utils.Map,
 		}
 
 		// Print help message
-		rl.DrawText("Press ';' then 1 for the help",
+		rl.DrawText("Press ';' then 1 for help",
 			int32(rl.GetScreenWidth() / 2),
 			int32(rl.GetScreenHeight() - helpSize),
 			int32(helpSize),

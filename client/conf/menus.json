@@ -12,7 +12,7 @@
 						"Key": "0"
 					},
 					{
-						"Name": "MappedKeys",
+						"Name": "Mapped keys",
 						"Ref": "MappedKeys",
 						"Type": "Action",
 						"Key": "1"
