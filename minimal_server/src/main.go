@@ -207,32 +207,76 @@ func gameLoop(quit chan string){
 					x := u.X / ffstep
 					y := u.Y / ffstep
 					pos := rl.Vector2{X: float32(u.X), Y: float32(u.Y)}
+					tileX := u.X / utils.TileSize
+					tileY := u.Y / utils.TileSize
 					dir := rl.Vector2Zero()
 					if u.FlowField !=nil && len(*u.FlowField) > 0 {
 						dir = (*u.FlowField)[x][y]
 					}
+					utils.Logging("Movement", fmt.Sprintf("Flow field direction: %v", dir))
 					sepDir := rl.Vector2Zero()
 					num_others := 0
 					for k_other, u_other := range p.Units {
 						pos_other := rl.Vector2{X: float32(u_other.X), Y: float32(u_other.Y)}
 						dist := rl.Vector2Distance(pos, pos_other)
-						if k_other != k && dist < 5.0*utils.Unit_size {
+						if k_other != k && dist < 3.0*utils.Unit_size {
 							num_others++
 							normalized_vect := rl.Vector2Normalize(rl.Vector2Subtract(pos, pos_other))
 							sepDir = rl.Vector2Add(sepDir, rl.Vector2Scale(normalized_vect, 1.0/dist))
 						}
 					}
 					if num_others != 0 {
-						sepDir = rl.Vector2Scale(sepDir, 100.0/float32(num_others))
+						sepDir = rl.Vector2Scale(sepDir, 50.0/float32(num_others))
 					}
+					utils.Logging("Movement", fmt.Sprintf("Separation direction: %v", sepDir))
 					dir = rl.Vector2Add(dir, sepDir)
+					// Avoid collisions with walls, trees, houses...
+					avoidDir := rl.Vector2Zero()
+					for dx := int32(-1); dx <= 1; dx++ {
+						for dy := int32(-1); dy <= 1; dy++ {
+							neigh_tileX := tileX + dx
+							neigh_tileY := tileY + dy
+							if (dx == 0 && dy == 0) || neigh_tileX < 0 || neigh_tileX >= gmap.Width || neigh_tileY < 0 || neigh_tileY >= gmap.Height || gmap.Grid[neigh_tileX][neigh_tileY].Tile_Type == utils.None {
+								continue
+							}
+							neigh_coord := rl.Vector2{X: (float32(neigh_tileX)+.5)*float32(utils.TileSize), Y: (float32(neigh_tileY)+.5)*float32(utils.TileSize)}
+							dist := rl.Vector2Distance(pos, neigh_coord)
+							if dist < float32(utils.Unit_size) + float32(utils.TileSize) / 2.0 + 6.0 {
+								normalized_vect := rl.Vector2Normalize(rl.Vector2Subtract(pos, neigh_coord))
+								avoidDir = rl.Vector2Add(avoidDir, rl.Vector2Scale(normalized_vect, 1.0/dist))
+							}
+						}
+					}
+					avoidDir = rl.Vector2Scale(avoidDir, 40.0)
+					utils.Logging("Movement", fmt.Sprintf("Obstacle avoidance direction: %v", avoidDir))
+					dir = rl.Vector2Add(dir, avoidDir)
 					//u.X += int32(dir.X*u.Speed*float32(utils.TileSize))
 					//u.Y += int32(dir.X*u.Speed*float32(utils.TileSize))
 					new_X := u.X + int32(dir.X*2)
 					new_Y := u.Y + int32(dir.Y*2)
 					newCoord := rl.Vector2{X: float32(new_X) , Y : float32(new_Y)}
+					new_tileX := new_X / utils.TileSize
+					new_tileY := new_Y / utils.TileSize
 					
 					canMove := true
+					// Check that the new position is inside the map
+					if new_tileX < 0 || new_tileX >= gmap.Width || new_tileY < 0 || new_tileY >= gmap.Height {
+						canMove = false
+					}
+					// Check for collisions with walls, trees, houses... (might be redundant with the avoidance behaviour above)
+					for dx := int32(-1); dx <= 1; dx++ {
+						for dy := int32(-1); dy <= 1; dy++ {
+							neigh_tileX := new_tileX + dx
+							neigh_tileY := new_tileY + dy
+							if (dx == 0 && dy == 0) || neigh_tileX < 0 || neigh_tileX >= gmap.Width || neigh_tileY < 0 || neigh_tileY >= gmap.Height || gmap.Grid[neigh_tileX][neigh_tileY].Tile_Type == utils.None {
+								continue
+							}
+							neigh_coord := rl.Vector2{X: (float32(neigh_tileX)+.5)*float32(utils.TileSize), Y: (float32(neigh_tileY)+.5)*float32(utils.TileSize)}
+							if rl.Vector2Distance(newCoord, neigh_coord) < float32(utils.Unit_size) + float32(utils.TileSize) / 2.0 {
+								canMove = false
+							}
+						}
+					}
 					// Checking if there is a unit on the path
 					for _, q := range Players {
 						for _, v := range q.Units {
