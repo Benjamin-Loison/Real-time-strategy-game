@@ -93,8 +93,9 @@ func PathFinding(mapp Map, endPos rl.Vector2, step int32) [][]rl.Vector2 {
 					if int32(matrix.X) < mapp.Width &&
                        int32(matrix.Y) < mapp.Height &&
                        mapp.Grid[int32(matrix.X)][int32(matrix.Y)].Tile_Type != None {
-						center := rl.Vector2Add(curr_vect, half_vect)
-						center = rl.Vector2Add(center, v)
+						//center := rl.Vector2Add(curr_vect, half_vect)
+						//center = rl.Vector2Add(center, v)
+						center := rl.Vector2Add(matrix, half_vect)
 						center = rl.Vector2Scale(center, float32(TileSize))
 						if rl.CheckCollisionCircleRec(center, float32(TileSize)/2-1, rect) {
 							cost_field[x][y] = ^uint16(0)
@@ -148,11 +149,12 @@ func PathFinding(mapp Map, endPos rl.Vector2, step int32) [][]rl.Vector2 {
 			if v_x < 0 || v_x >= array_width || v_y < 0 || v_y >= array_height {
 				continue
 			}
-
+			if voisin.X != 0 && voisin.Y != 0 && (cost_field[v_x][p.Y] == ^uint16(0) || cost_field[p.X][v_y] == ^uint16(0)) {
+				continue
+			}
 			if cost_field[v_x][v_y] != ^uint16(0) {
                 c_p := integration_field[p.X][p.Y]
 				c_v := float32(cost_field[v_x][v_y])*rl.Vector2Length(rl.Vector2{X: float32(voisin.X),Y:float32(voisin.Y)})
-
 				if c_p + c_v < integration_field[v_x][v_y] {
 					heap.Push(&queue, &PointAndDistance{
 						value:		Point{v_x, v_y},
@@ -182,6 +184,9 @@ func PathFinding(mapp Map, endPos rl.Vector2, step int32) [][]rl.Vector2 {
 				v_y := int32(y) + voisin.Y
 
 				if v_x < 0 || v_x >= array_width || v_y < 0 || v_y >= array_height {
+					continue
+				}
+				if voisin.X != 0 && voisin.Y != 0 && (cost_field[v_x][y] == ^uint16(0) || cost_field[x][v_y] == ^uint16(0)) {
 					continue
 				}
 
