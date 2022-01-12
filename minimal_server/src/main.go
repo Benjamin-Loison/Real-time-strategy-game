@@ -66,7 +66,44 @@ func updater(channels map[int]chan string, stopper_chan chan string){
 					broadcast(channels, fmt.Sprintf("CHAT:%s", e.Data))
 					break
 				case events.AttackUnit:
-					
+					utils.Logging("AttackUnit", fmt.Sprintf("%s", e.Data))
+					// should use mutex
+					// security doesn't seem to be strong
+					// could add the cooldown feature
+					event := &events.AttackUnit_e{}
+                    err := json.Unmarshal([]byte(e.Data),event)
+                    utils.Check(err)
+					enemy_id := 2
+					for s, p := range Players {
+						for unit := range p.Units {
+							if unit == event.Unit {
+								enemy_id = s
+								break
+							}
+						}
+						if enemy_id != 2 {
+							break
+						}
+					}
+					client_id := (enemy_id + 1) % 2
+					utils.Logging("enemy_id", fmt.Sprintf("!%s!\n", enemy_id))
+					isDead := false
+					unit := Players[enemy_id].Units[event.Unit]
+                    for _, v := range event.Units {
+                        damage := Players[client_id].Units[v].AttackAmount
+                        //fmt.Printf("|%d|", time.Now().Nanosecond())
+                        if unit.Health > damage {
+                            unit.Health -= damage
+                        } else {
+                            isDead = true
+                            delete(Players[enemy_id].Units, event.Unit)
+                            break
+                        }
+                    }
+                    if (!isDead) {
+                        Players[enemy_id].Units[event.Unit] = unit
+                    }
+					break
                 case events.MoveUnits:
 					utils.Logging("Updater (UPDATE)", fmt.Sprintf("%s", e.Data))
                     event := &events.MoveUnits_e{}
