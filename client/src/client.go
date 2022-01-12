@@ -111,12 +111,20 @@ func run_client(config Configuration_t,
                                 key := strconv.Itoa(int(u.Id))
                                 _,ok := (*players)[0].Units[key]
                                 if ok {
-                                    (*players)[0].Units[key] = u
+									if u.Health <= 0 {
+										delete((*players)[0].Units, key)
+									} else {
+										(*players)[0].Units[key] = u
+									}
                                     continue
                                 }
                                 _,ok = (*players)[1].Units[key]
                                 if ok {
-                                    (*players)[1].Units[key] = u
+									if u.Health <= 0 {
+                                        delete((*players)[1].Units, key)
+                                    } else {
+										(*players)[1].Units[key] = u
+									}
                                 }
                             }
 

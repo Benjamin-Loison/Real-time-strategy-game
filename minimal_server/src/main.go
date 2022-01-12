@@ -91,18 +91,27 @@ func updater(channels map[int]chan string, stopper_chan chan string){
 					unit := Players[enemy_id].Units[event.Unit]
                     for _, v := range event.Units {
                         damage := Players[client_id].Units[v].AttackAmount
-                        //fmt.Printf("|%d|", time.Now().Nanosecond())
-                        if unit.Health > damage {
-                            unit.Health -= damage
-                        } else {
-                            isDead = true
-                            delete(Players[enemy_id].Units, event.Unit)
-                            break
+                        if unit.Health >= damage {
+							unit.Health -= damage
+							if unit.Health <= 0 {
+                                isDead = true
+                                break
+							}
                         }
                     }
-                    if (!isDead) {
-                        Players[enemy_id].Units[event.Unit] = unit
-                    }
+                    Players[enemy_id].Units[event.Unit] = unit
+
+					updateEvent := events.ServerUpdate_e{Units: []factory.Unit{Players[enemy_id].Units[event.Unit]}}
+					dataupdate, err := json.Marshal(updateEvent)
+					utils.Check(err)
+					eventt := events.Event{EventType: events.ServerUpdate, Data: string(dataupdate)}
+					dataevent, errr := json.Marshal(eventt)
+					utils.Check(errr)
+
+					broadcast(channels, string(dataevent))
+					if (isDead) {
+						delete(Players[enemy_id].Units, event.Unit)
+					}
 					break
                 case events.MoveUnits:
 					utils.Logging("Updater (UPDATE)", fmt.Sprintf("%s", e.Data))
