@@ -256,8 +256,9 @@ func gameLoop(quit chan string){
 					avoidDir = rl.Vector2Scale(avoidDir, 40.0)
 					//utils.Logging("Movement", fmt.Sprintf("Obstacle avoidance direction: %v", avoidDir))
 					dir = rl.Vector2Add(dir, avoidDir)
-					//u.X += int32(dir.X*u.Speed*float32(utils.TileSize))
-					//u.Y += int32(dir.X*u.Speed*float32(utils.TileSize))
+					if dir == rl.Vector2Zero() {
+						continue
+					}
 					new_X := u.X + int32(dir.X*2)
 					new_Y := u.Y + int32(dir.Y*2)
 					newCoord := rl.Vector2{X: float32(new_X) , Y : float32(new_Y)}
@@ -289,17 +290,6 @@ func gameLoop(quit chan string){
 							pos_v := rl.Vector2{X: float32(v.X), Y: float32(v.Y)}
 							if v != u && (rl.Vector2Distance(newCoord, pos_v) < 2.5*utils.Unit_size) {
 								canMove = false
-								// u will try to move in the same direction as v, if v is heading to the same target
-								// TODO: this will break not going through walls
-								/*if v.FlowTarget == u.FlowTarget && v.FlowField != nil && len(*v.FlowField)  > 0 &&
-									((*v.FlowField)[x][y].X != 0 || (*v.FlowField)[x][y].Y != 0){
-									delta_x := (*v.FlowField)[x][y].X - dir.X
-									delta_y := (*v.FlowField)[x][y].Y - dir.Y
-									(*u.FlowField)[x][y] = (*v.FlowField)[x][y]
-									(*u.FlowField)[x][y].X += delta_x
-									(*u.FlowField)[x][y].Y += delta_y
-
-								}*/
 								break
 							}
 						}
@@ -309,8 +299,6 @@ func gameLoop(quit chan string){
 					}
 
 					if !(canMove) {
-						// TODO: change the way conflicts are handled
-
 						continue
 					}
 
